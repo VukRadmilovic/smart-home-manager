@@ -1,0 +1,18 @@
+2023/11/05 19:50:06 [notice] 27476#20412: signal process started
+2023/11/05 19:50:17 [error] 1588#24904: *1 CreateFile() "C:\Users\Dracooya\Desktop\Fax\7. semestar\Napredno Web Programiranje\smart-home\nginx-1.25.3/html/favicon.ico" failed (2: The system cannot find the file specified), client: 127.0.0.1, server: localhost, request: "GET /favicon.ico HTTP/1.1", host: "localhost", referrer: "http://localhost/"
+2023/11/05 20:34:14 [notice] 29576#27896: signal process started
+2023/11/05 20:35:18 [notice] 4764#16672: signal process started
+2023/11/05 20:35:50 [error] 1588#24904: *14 CreateFile() "C:\Users\Dracooya\Desktop\Fax\7. semestar\Napredno Web Programiranje\smart-home\nginx-1.25.3/html/favicon.ico" failed (2: The system cannot find the file specified), client: 127.0.0.1, server: localhost, request: "GET /favicon.ico HTTP/1.1", host: "localhost", referrer: "http://localhost/"
+2023/11/05 20:37:40 [notice] 26576#20124: signal process started
+2023/11/05 20:40:25 [notice] 18136#7268: signal process started
+2023/11/05 20:40:27 [notice] 22296#30300: signal process started
+2023/11/05 20:41:06 [error] 1588#24904: *20 CreateFile() "C:\Users\Dracooya\Desktop\Fax\7. semestar\Napredno Web Programiranje\smart-home\nginx-1.25.3/html/favicon.ico" failed (2: The system cannot find the file specified), client: 127.0.0.1, server: localhost, request: "GET /favicon.ico HTTP/1.1", host: "localhost", referrer: "http://localhost/"
+2023/11/05 20:41:07 [error] 1588#24904: *20 CreateFile() "C:\Users\Dracooya\Desktop\Fax\7. semestar\Napredno Web Programiranje\smart-home\nginx-1.25.3/html/favicon.ico" failed (2: The system cannot find the file specified), client: 127.0.0.1, server: localhost, request: "GET /favicon.ico HTTP/1.1", host: "localhost", referrer: "http://localhost/"
+2023/11/05 20:42:41 [notice] 29772#16684: signal process started
+2023/11/05 20:44:31 [notice] 30568#2152: signal process started
+2023/11/05 20:45:38 [notice] 29848#24236: signal process started
+2023/11/05 20:46:08 [notice] 22176#23800: signal process started
+2023/11/05 20:46:08 [error] 22176#23800: CreateFile() "C:\Users\Dracooya\Desktop\Fax\7. semestar\Napredno Web Programiranje\smart-home\nginx-1.25.3/logs/nginx.pid" failed (2: The system cannot find the file specified)
+2023/11/05 20:51:29 [notice] 8224#2932: signal process started
+2023/11/05 20:51:41 [notice] 29644#25768: signal process started
+2023/11/05 20:52:32 [notice] 18664#28560: signal process started
