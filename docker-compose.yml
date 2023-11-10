@@ -1,0 +1,63 @@
+version: '3.5'
+
+services:
+  postgres:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: smart-home
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+    networks:
+      - app
+    restart: unless-stopped
+
+
+  mosquitto:
+    image: eclipse-mosquitto:latest
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    networks:
+      - app
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ./mosquitto/pwfile.txt:/mosquitto/config/pwfile.txt
+
+  influxdb:
+    image: influxdb:latest
+    volumes:
+      - /var/lib/influxdb2
+    ports:
+      - "8086:8086"
+    networks:
+      - app
+
+  spring-boot-app-1:
+    image: ftn/smart-home:latest
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mosquitto
+      - postgres
+      - influxdb
+    networks:
+      - app
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/postgres
+      MQTT_HOST: mosquitto
+      INFLUXDB_HOST: influxdb
+
+networks:
+  app:
+    driver: bridge
+
+volumes:
+  postgres:

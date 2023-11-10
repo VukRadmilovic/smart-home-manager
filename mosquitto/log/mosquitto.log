@@ -1,0 +1,21 @@
+1699609127: mosquitto version 2.0.18 starting
+1699609127: Config loaded from /mosquitto/config/mosquitto.conf.
+1699609127: Opening ipv4 listen socket on port 1883.
+1699609127: Opening ipv6 listen socket on port 1883.
+1699609127: mosquitto version 2.0.18 running
+1699609133: New connection from 172.22.0.5:33154 on port 1883.
+1699609134: Client cf42033f-09b2-4931-aec0-d555abfaf735 disconnected, not authorised.
+1699609243: mosquitto version 2.0.18 terminating
+1699609243: Saving in-memory database to mosquitto/data//mosquitto.db.
+1699609499: mosquitto version 2.0.18 starting
+1699609499: Config loaded from /mosquitto/config/mosquitto.conf.
+1699609499: Warning: File mosquitto/config/pwfile.txt has world readable permissions. Future versions will refuse to load this file.
+To fix this, use `chmod 0700 mosquitto/config/pwfile.txt`.
+1699609499: Opening ipv4 listen socket on port 1883.
+1699609499: Opening ipv6 listen socket on port 1883.
+1699609499: mosquitto version 2.0.18 running
+1699609506: New connection from 172.22.0.5:54516 on port 1883.
+1699609506: New client connected from 172.22.0.5:54516 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699609567: Client cf42033f-09b2-4931-aec0-d555abfaf735 closed its connection.
+1699609568: mosquitto version 2.0.18 terminating
+1699609568: Saving in-memory database to mosquitto/data//mosquitto.db.
