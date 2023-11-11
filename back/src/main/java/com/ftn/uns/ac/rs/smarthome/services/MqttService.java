@@ -17,6 +17,6 @@ public class MqttService {
     }
 
     public void subscribe() throws MqttException {
-        this.mqttConfiguration.getClient().subscribe("proba",1);
+        this.mqttConfiguration.getClient().subscribe("$share/group/topic",2);
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.core.env.Environment;
 
 import java.util.Objects;
 import java.util.Properties;
+import java.util.UUID;
 
 @Configuration
 public class MqttConfiguration {
@@ -17,7 +18,6 @@ public class MqttConfiguration {
     private final String uniqueClientIdentifier;
     @Getter
     private final MqttClient client;
-
     private final MqttMessageCallback mqttMessageCallback;
 
     public MqttConfiguration(Environment environment, MqttMessageCallback mqttMessageCallback) throws Exception {
@@ -25,8 +25,8 @@ public class MqttConfiguration {
         this.env = new Properties();
         env.load(MqttConfiguration.class.getClassLoader().getResourceAsStream("application.properties"));
         this.broker = String.format("tcp://%s:%s", environment.getProperty("mqtt.host"), environment.getProperty("mqtt.port"));
-        this.uniqueClientIdentifier = environment.getProperty("mqtt.client_id");
-        System.out.println(this.broker);
+        this.uniqueClientIdentifier = UUID.randomUUID().toString();
+        System.out.println("BACK: " + this.uniqueClientIdentifier);
         this.client = this.mqttClient();
     }
 

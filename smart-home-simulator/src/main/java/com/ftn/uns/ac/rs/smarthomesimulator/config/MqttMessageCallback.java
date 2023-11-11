@@ -1,6 +1,5 @@
-package com.ftn.uns.ac.rs.smarthome.config;
+package com.ftn.uns.ac.rs.smarthomesimulator.config;
 
-import com.ftn.uns.ac.rs.smarthome.services.InfluxService;
 import org.eclipse.paho.mqttv5.client.IMqttToken;
 import org.eclipse.paho.mqttv5.client.MqttCallback;
 import org.eclipse.paho.mqttv5.client.MqttDisconnectResponse;
@@ -9,17 +8,9 @@ import org.eclipse.paho.mqttv5.common.MqttMessage;
 import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.Map;
 
 @Service
 public class MqttMessageCallback implements MqttCallback {
-
-    private final InfluxService influxService;
-
-    public MqttMessageCallback(InfluxService influxService) {
-        this.influxService = influxService;
-    }
 
     @Override
     /*
@@ -43,9 +34,7 @@ public class MqttMessageCallback implements MqttCallback {
      */
     //TODO: Change according to the 4.6 requirement listed in the specification.
     @Override public void messageArrived(String topic, MqttMessage mqttMessage) {
-        String message = new String(mqttMessage.getPayload());
-        System.out.println("Message arrived: " + message + ", ID: " + mqttMessage.getId());
-
+        System.out.println("Message received. ID:" + mqttMessage.getId() + ", Message: " + mqttMessage);
     }
 
     @Override

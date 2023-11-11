@@ -6,24 +6,36 @@ import org.eclipse.paho.mqttv5.client.persist.MemoryPersistence;
 import org.eclipse.paho.mqttv5.common.MqttException;
 import org.eclipse.paho.mqttv5.common.MqttMessage;
 import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 import java.util.*;
 
-@Component
+@Configuration
 public class MqttConfiguration {
     private final Properties env;
     private final String broker;
     private final String uniqueClientIdentifier;
     @Getter
     private final MqttClient client;
+    @Getter
+    private final MqttMessageCallback mqttMessageCallback;
 
-    public MqttConfiguration() throws Exception {
+    public MqttConfiguration(Environment environment, MqttMessageCallback mqttMessageCallback) throws Exception {
+        this.mqttMessageCallback = mqttMessageCallback;
         this.env = new Properties();
         env.load(MqttConfiguration.class.getClassLoader().getResourceAsStream("application.properties"));
-        this.broker = String.format("tcp://%s:%s", env.getProperty("mqtt.host"), env.getProperty("mqtt.port"));
-        this.uniqueClientIdentifier = env.getProperty("mqtt.client_id");;
+        this.broker = String.format("tcp://%s:%s", environment.getProperty("mqtt.host"), environment.getProperty("mqtt.port"));
+        this.uniqueClientIdentifier = UUID.randomUUID().toString();
+        System.out.println("SIMULATOR: " + this.uniqueClientIdentifier);
         this.client = this.mqttClient();
+        int i = 0;
+        while(i < 10) {
+            float randomValue = new Random().nextFloat() * (100);
+            this.client.publish("topic", new MqttMessage(Float.toString(randomValue).getBytes()));
+            Thread.sleep(1000);
+            i++;
+        }
     }
 
 

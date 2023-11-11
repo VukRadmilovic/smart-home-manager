@@ -19,3 +19,1444 @@ To fix this, use `chmod 0700 mosquitto/config/pwfile.txt`.
 1699609567: Client cf42033f-09b2-4931-aec0-d555abfaf735 closed its connection.
 1699609568: mosquitto version 2.0.18 terminating
 1699609568: Saving in-memory database to mosquitto/data//mosquitto.db.
+1699635420: mosquitto version 2.0.18 starting
+1699635420: Config loaded from /mosquitto/config/mosquitto.conf.
+1699635420: Warning: File mosquitto/config/pwfile.txt has world readable permissions. Future versions will refuse to load this file.
+To fix this, use `chmod 0700 mosquitto/config/pwfile.txt`.
+1699635420: Opening ipv4 listen socket on port 1883.
+1699635420: Opening ipv6 listen socket on port 1883.
+1699635420: mosquitto version 2.0.18 running
+1699635426: New connection from 172.22.0.5:38762 on port 1883.
+1699635426: New client connected from 172.22.0.5:38762 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635554: mosquitto version 2.0.18 terminating
+1699635554: Saving in-memory database to mosquitto/data//mosquitto.db.
+1699635580: mosquitto version 2.0.18 starting
+1699635580: Config loaded from /mosquitto/config/mosquitto.conf.
+1699635580: Warning: File mosquitto/config/pwfile.txt has world readable permissions. Future versions will refuse to load this file.
+To fix this, use `chmod 0700 mosquitto/config/pwfile.txt`.
+1699635580: Opening ipv4 listen socket on port 1883.
+1699635580: Opening ipv6 listen socket on port 1883.
+1699635580: mosquitto version 2.0.18 running
+1699635581: Expiring client cf42033f-09b2-4931-aec0-d555abfaf735 due to timeout.
+1699635589: New connection from 172.22.0.5:51554 on port 1883.
+1699635589: New connection from 172.22.0.6:35078 on port 1883.
+1699635589: New connection from 172.22.0.7:37576 on port 1883.
+1699635590: New client connected from 172.22.0.5:51554 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635590: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635590: New client connected from 172.22.0.6:35078 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635590: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635590: New client connected from 172.22.0.7:37576 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635591: New connection from 172.22.0.5:51560 on port 1883.
+1699635591: New connection from 172.22.0.6:35094 on port 1883.
+1699635591: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635591: New client connected from 172.22.0.5:51560 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635591: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635591: New client connected from 172.22.0.6:35094 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635592: New connection from 172.22.0.7:37588 on port 1883.
+1699635592: New connection from 172.22.0.5:51570 on port 1883.
+1699635592: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635592: New client connected from 172.22.0.7:37588 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635592: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635592: New client connected from 172.22.0.5:51570 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635593: New connection from 172.22.0.6:35096 on port 1883.
+1699635593: New connection from 172.22.0.7:37592 on port 1883.
+1699635594: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635594: New client connected from 172.22.0.6:35096 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635594: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635594: New client connected from 172.22.0.7:37592 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635595: New connection from 172.22.0.5:51584 on port 1883.
+1699635595: New connection from 172.22.0.6:35102 on port 1883.
+1699635595: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635595: New client connected from 172.22.0.5:51584 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635595: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635595: New client connected from 172.22.0.6:35102 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635596: New connection from 172.22.0.7:37594 on port 1883.
+1699635596: New connection from 172.22.0.5:51590 on port 1883.
+1699635596: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635596: New client connected from 172.22.0.7:37594 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635596: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635596: New client connected from 172.22.0.5:51590 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635597: New connection from 172.22.0.6:35104 on port 1883.
+1699635597: New connection from 172.22.0.7:37602 on port 1883.
+1699635597: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635597: New client connected from 172.22.0.6:35104 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635598: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635598: New client connected from 172.22.0.7:37602 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635598: New connection from 172.22.0.5:51606 on port 1883.
+1699635599: New connection from 172.22.0.6:35108 on port 1883.
+1699635599: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635599: New client connected from 172.22.0.5:51606 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635599: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635599: New client connected from 172.22.0.6:35108 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635600: New connection from 172.22.0.7:35398 on port 1883.
+1699635600: New connection from 172.22.0.5:60622 on port 1883.
+1699635600: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635600: New client connected from 172.22.0.7:35398 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635600: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635600: New client connected from 172.22.0.5:60622 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635601: New connection from 172.22.0.6:38726 on port 1883.
+1699635601: New connection from 172.22.0.7:35408 on port 1883.
+1699635601: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635601: New client connected from 172.22.0.6:38726 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635602: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635602: New client connected from 172.22.0.7:35408 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635602: New connection from 172.22.0.5:60630 on port 1883.
+1699635603: New connection from 172.22.0.6:38736 on port 1883.
+1699635603: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635603: New client connected from 172.22.0.5:60630 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635603: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635603: New client connected from 172.22.0.6:38736 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635604: New connection from 172.22.0.7:35412 on port 1883.
+1699635604: New connection from 172.22.0.5:60644 on port 1883.
+1699635604: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635604: New client connected from 172.22.0.7:35412 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635604: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635604: New client connected from 172.22.0.5:60644 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635605: New connection from 172.22.0.6:38748 on port 1883.
+1699635605: New connection from 172.22.0.7:35420 on port 1883.
+1699635605: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635605: New client connected from 172.22.0.6:38748 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635605: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635605: New client connected from 172.22.0.7:35420 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635606: New connection from 172.22.0.5:60658 on port 1883.
+1699635606: New connection from 172.22.0.6:38760 on port 1883.
+1699635607: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635607: New client connected from 172.22.0.5:60658 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635607: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635607: New client connected from 172.22.0.6:38760 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635608: New connection from 172.22.0.7:35436 on port 1883.
+1699635608: New connection from 172.22.0.5:60666 on port 1883.
+1699635608: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635608: New client connected from 172.22.0.7:35436 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635608: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635608: New client connected from 172.22.0.5:60666 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635609: New connection from 172.22.0.6:49890 on port 1883.
+1699635609: New connection from 172.22.0.7:56884 on port 1883.
+1699635609: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635609: New client connected from 172.22.0.6:49890 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635609: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635609: New client connected from 172.22.0.7:56884 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635610: New connection from 172.22.0.5:56714 on port 1883.
+1699635610: New connection from 172.22.0.6:49898 on port 1883.
+1699635610: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635610: New client connected from 172.22.0.5:56714 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635611: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635611: New client connected from 172.22.0.6:49898 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635611: New connection from 172.22.0.7:56900 on port 1883.
+1699635612: New connection from 172.22.0.5:56720 on port 1883.
+1699635612: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635612: New client connected from 172.22.0.7:56900 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635612: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635612: New client connected from 172.22.0.5:56720 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635613: New connection from 172.22.0.6:49906 on port 1883.
+1699635613: New connection from 172.22.0.7:56912 on port 1883.
+1699635613: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635613: New client connected from 172.22.0.6:49906 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635613: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635613: New client connected from 172.22.0.7:56912 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635614: New connection from 172.22.0.5:56724 on port 1883.
+1699635614: New connection from 172.22.0.6:49916 on port 1883.
+1699635614: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635614: New client connected from 172.22.0.5:56724 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635615: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635615: New client connected from 172.22.0.6:49916 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635615: New connection from 172.22.0.7:56924 on port 1883.
+1699635616: New connection from 172.22.0.5:56732 on port 1883.
+1699635616: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635616: New client connected from 172.22.0.7:56924 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635616: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635616: New client connected from 172.22.0.5:56732 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635617: New connection from 172.22.0.6:49930 on port 1883.
+1699635617: New connection from 172.22.0.7:56934 on port 1883.
+1699635617: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635617: New client connected from 172.22.0.6:49930 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635617: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635617: New client connected from 172.22.0.7:56934 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635618: New connection from 172.22.0.5:56736 on port 1883.
+1699635618: New connection from 172.22.0.6:49944 on port 1883.
+1699635618: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635618: New client connected from 172.22.0.5:56736 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635619: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635619: New client connected from 172.22.0.6:49944 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635619: New connection from 172.22.0.7:54322 on port 1883.
+1699635620: New connection from 172.22.0.5:40850 on port 1883.
+1699635620: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635620: New client connected from 172.22.0.7:54322 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635620: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635620: New client connected from 172.22.0.5:40850 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635621: New connection from 172.22.0.6:47298 on port 1883.
+1699635621: New connection from 172.22.0.7:54332 on port 1883.
+1699635621: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635621: New client connected from 172.22.0.6:47298 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635621: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635621: New client connected from 172.22.0.7:54332 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635622: New connection from 172.22.0.5:40862 on port 1883.
+1699635622: New connection from 172.22.0.6:47302 on port 1883.
+1699635622: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635622: New client connected from 172.22.0.5:40862 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635622: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635622: New client connected from 172.22.0.6:47302 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635623: New connection from 172.22.0.7:54338 on port 1883.
+1699635623: New connection from 172.22.0.5:40874 on port 1883.
+1699635624: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635624: New client connected from 172.22.0.7:54338 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635624: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635624: New client connected from 172.22.0.5:40874 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635625: New connection from 172.22.0.6:47304 on port 1883.
+1699635625: New connection from 172.22.0.7:54346 on port 1883.
+1699635625: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635625: New client connected from 172.22.0.6:47304 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635625: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635625: New client connected from 172.22.0.7:54346 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635626: New connection from 172.22.0.5:40888 on port 1883.
+1699635626: New connection from 172.22.0.6:47312 on port 1883.
+1699635626: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635626: New client connected from 172.22.0.5:40888 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635626: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635626: New client connected from 172.22.0.6:47312 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635627: New connection from 172.22.0.7:54360 on port 1883.
+1699635627: New connection from 172.22.0.5:40904 on port 1883.
+1699635627: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635627: New client connected from 172.22.0.7:54360 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635628: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635628: New client connected from 172.22.0.5:40904 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635628: New connection from 172.22.0.6:47324 on port 1883.
+1699635629: New connection from 172.22.0.7:54370 on port 1883.
+1699635629: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635629: New client connected from 172.22.0.6:47324 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635629: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635629: New client connected from 172.22.0.7:54370 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635630: New connection from 172.22.0.5:47564 on port 1883.
+1699635630: New connection from 172.22.0.6:59624 on port 1883.
+1699635630: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635630: New client connected from 172.22.0.5:47564 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635630: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635630: New client connected from 172.22.0.6:59624 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635631: New connection from 172.22.0.7:39856 on port 1883.
+1699635631: New connection from 172.22.0.5:47574 on port 1883.
+1699635631: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635631: New client connected from 172.22.0.7:39856 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635632: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635632: New client connected from 172.22.0.5:47574 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635632: New connection from 172.22.0.6:59640 on port 1883.
+1699635633: New connection from 172.22.0.7:39870 on port 1883.
+1699635633: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635633: New client connected from 172.22.0.6:59640 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635633: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635633: New client connected from 172.22.0.7:39870 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635634: New connection from 172.22.0.5:47590 on port 1883.
+1699635634: New connection from 172.22.0.6:59642 on port 1883.
+1699635634: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635634: New client connected from 172.22.0.5:47590 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635634: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635634: New client connected from 172.22.0.6:59642 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635635: New connection from 172.22.0.7:39886 on port 1883.
+1699635635: New connection from 172.22.0.5:47594 on port 1883.
+1699635635: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635635: New client connected from 172.22.0.7:39886 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635636: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635636: New client connected from 172.22.0.5:47594 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635636: New connection from 172.22.0.6:59648 on port 1883.
+1699635637: New connection from 172.22.0.7:39902 on port 1883.
+1699635637: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635637: New client connected from 172.22.0.6:59648 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635637: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635637: New client connected from 172.22.0.7:39902 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635638: New connection from 172.22.0.5:47606 on port 1883.
+1699635638: New connection from 172.22.0.6:59650 on port 1883.
+1699635638: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635638: New client connected from 172.22.0.5:47606 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635638: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635638: New client connected from 172.22.0.6:59650 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635639: New connection from 172.22.0.7:38314 on port 1883.
+1699635639: New connection from 172.22.0.5:49980 on port 1883.
+1699635639: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635639: New client connected from 172.22.0.7:38314 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635639: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635639: New client connected from 172.22.0.5:49980 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635640: New connection from 172.22.0.6:45958 on port 1883.
+1699635640: New connection from 172.22.0.7:38316 on port 1883.
+1699635641: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635641: New client connected from 172.22.0.6:45958 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635641: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635641: New client connected from 172.22.0.7:38316 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635642: New connection from 172.22.0.5:49984 on port 1883.
+1699635642: New connection from 172.22.0.6:45972 on port 1883.
+1699635642: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635642: New client connected from 172.22.0.5:49984 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635642: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635642: New client connected from 172.22.0.6:45972 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635643: New connection from 172.22.0.7:38328 on port 1883.
+1699635643: New connection from 172.22.0.5:49996 on port 1883.
+1699635643: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635643: New client connected from 172.22.0.7:38328 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635643: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635643: New client connected from 172.22.0.5:49996 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635644: New connection from 172.22.0.6:45976 on port 1883.
+1699635644: New connection from 172.22.0.7:38338 on port 1883.
+1699635644: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635644: New client connected from 172.22.0.6:45976 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635645: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635645: New client connected from 172.22.0.7:38338 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635645: New connection from 172.22.0.5:50012 on port 1883.
+1699635646: New connection from 172.22.0.6:45990 on port 1883.
+1699635646: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635646: New client connected from 172.22.0.5:50012 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635646: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635646: New client connected from 172.22.0.6:45990 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635647: New connection from 172.22.0.7:38344 on port 1883.
+1699635647: New connection from 172.22.0.5:50018 on port 1883.
+1699635647: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635647: New client connected from 172.22.0.7:38344 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635647: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635647: New client connected from 172.22.0.5:50018 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635648: New connection from 172.22.0.6:46006 on port 1883.
+1699635648: New connection from 172.22.0.7:38348 on port 1883.
+1699635648: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635648: New client connected from 172.22.0.6:46006 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635649: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635649: New client connected from 172.22.0.7:38348 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635649: New connection from 172.22.0.5:39618 on port 1883.
+1699635650: New connection from 172.22.0.6:56580 on port 1883.
+1699635650: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635650: New client connected from 172.22.0.5:39618 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635650: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635650: New client connected from 172.22.0.6:56580 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635651: New connection from 172.22.0.7:46718 on port 1883.
+1699635651: New connection from 172.22.0.5:39620 on port 1883.
+1699635651: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635651: New client connected from 172.22.0.7:46718 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635651: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635651: New client connected from 172.22.0.5:39620 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635652: New connection from 172.22.0.6:56590 on port 1883.
+1699635652: New connection from 172.22.0.7:46732 on port 1883.
+1699635652: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635652: New client connected from 172.22.0.6:56590 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635652: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635652: New client connected from 172.22.0.7:46732 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635653: New connection from 172.22.0.5:39636 on port 1883.
+1699635653: New connection from 172.22.0.6:56594 on port 1883.
+1699635654: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635654: New client connected from 172.22.0.5:39636 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635654: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635654: New client connected from 172.22.0.6:56594 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635655: New connection from 172.22.0.7:46738 on port 1883.
+1699635655: New connection from 172.22.0.5:39648 on port 1883.
+1699635655: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635655: New client connected from 172.22.0.7:46738 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635655: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635655: New client connected from 172.22.0.5:39648 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635656: New connection from 172.22.0.6:56600 on port 1883.
+1699635656: New connection from 172.22.0.7:46748 on port 1883.
+1699635656: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635656: New client connected from 172.22.0.6:56600 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635656: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635656: New client connected from 172.22.0.7:46748 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635657: New connection from 172.22.0.5:39664 on port 1883.
+1699635657: New connection from 172.22.0.6:56614 on port 1883.
+1699635658: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635658: New client connected from 172.22.0.5:39664 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635658: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635658: New client connected from 172.22.0.6:56614 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635659: New connection from 172.22.0.7:46750 on port 1883.
+1699635659: New connection from 172.22.0.5:39668 on port 1883.
+1699635659: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635659: New client connected from 172.22.0.7:46750 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635659: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635659: New client connected from 172.22.0.5:39668 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635660: New connection from 172.22.0.6:50434 on port 1883.
+1699635660: New connection from 172.22.0.7:41568 on port 1883.
+1699635660: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635660: New client connected from 172.22.0.6:50434 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635660: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635660: New client connected from 172.22.0.7:41568 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635661: New connection from 172.22.0.5:37312 on port 1883.
+1699635661: New connection from 172.22.0.6:50440 on port 1883.
+1699635661: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635661: New client connected from 172.22.0.5:37312 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635662: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635662: New client connected from 172.22.0.6:50440 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635662: New connection from 172.22.0.7:41576 on port 1883.
+1699635663: New connection from 172.22.0.5:37322 on port 1883.
+1699635663: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635663: New client connected from 172.22.0.7:41576 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635663: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635663: New client connected from 172.22.0.5:37322 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635664: New connection from 172.22.0.6:50448 on port 1883.
+1699635664: New connection from 172.22.0.7:41590 on port 1883.
+1699635664: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635664: New client connected from 172.22.0.6:50448 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635664: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635664: New client connected from 172.22.0.7:41590 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635665: New connection from 172.22.0.5:37332 on port 1883.
+1699635665: New connection from 172.22.0.6:50452 on port 1883.
+1699635665: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635665: New client connected from 172.22.0.5:37332 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635666: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635666: New client connected from 172.22.0.6:50452 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635666: New connection from 172.22.0.7:41604 on port 1883.
+1699635667: New connection from 172.22.0.5:37340 on port 1883.
+1699635667: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635667: New client connected from 172.22.0.7:41604 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635667: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635667: New client connected from 172.22.0.5:37340 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635668: New connection from 172.22.0.6:50464 on port 1883.
+1699635668: New connection from 172.22.0.7:41620 on port 1883.
+1699635668: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635668: New client connected from 172.22.0.6:50464 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635668: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635668: New client connected from 172.22.0.7:41620 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635669: New connection from 172.22.0.5:41496 on port 1883.
+1699635669: New connection from 172.22.0.6:57502 on port 1883.
+1699635669: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635669: New client connected from 172.22.0.5:41496 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635669: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635669: New client connected from 172.22.0.6:57502 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635670: New connection from 172.22.0.7:35090 on port 1883.
+1699635670: New connection from 172.22.0.5:41502 on port 1883.
+1699635671: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635671: New client connected from 172.22.0.7:35090 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635671: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635671: New client connected from 172.22.0.5:41502 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635672: New connection from 172.22.0.6:57512 on port 1883.
+1699635672: New connection from 172.22.0.7:35094 on port 1883.
+1699635672: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635672: New client connected from 172.22.0.6:57512 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635672: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635672: New client connected from 172.22.0.7:35094 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635673: New connection from 172.22.0.5:41504 on port 1883.
+1699635673: New connection from 172.22.0.6:57518 on port 1883.
+1699635673: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635673: New client connected from 172.22.0.5:41504 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635673: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635673: New client connected from 172.22.0.6:57518 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635674: New connection from 172.22.0.7:35098 on port 1883.
+1699635674: New connection from 172.22.0.5:41510 on port 1883.
+1699635674: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635674: New client connected from 172.22.0.7:35098 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635675: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635675: New client connected from 172.22.0.5:41510 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635675: New connection from 172.22.0.6:57530 on port 1883.
+1699635676: New connection from 172.22.0.7:35108 on port 1883.
+1699635676: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635676: New client connected from 172.22.0.6:57530 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635676: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635676: New client connected from 172.22.0.7:35108 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635677: New connection from 172.22.0.5:41514 on port 1883.
+1699635677: New connection from 172.22.0.6:57544 on port 1883.
+1699635677: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635677: New client connected from 172.22.0.5:41514 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635677: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635677: New client connected from 172.22.0.6:57544 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635678: New connection from 172.22.0.7:35110 on port 1883.
+1699635678: New connection from 172.22.0.5:41516 on port 1883.
+1699635678: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635678: New client connected from 172.22.0.7:35110 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635679: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635679: New client connected from 172.22.0.5:41516 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635679: New connection from 172.22.0.6:48874 on port 1883.
+1699635680: New connection from 172.22.0.7:49184 on port 1883.
+1699635680: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635680: New client connected from 172.22.0.6:48874 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635680: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635680: New client connected from 172.22.0.7:49184 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635681: New connection from 172.22.0.5:51718 on port 1883.
+1699635681: New connection from 172.22.0.6:48888 on port 1883.
+1699635681: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635681: New client connected from 172.22.0.5:51718 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635681: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635681: New client connected from 172.22.0.6:48888 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635682: New connection from 172.22.0.7:49188 on port 1883.
+1699635682: New connection from 172.22.0.5:51730 on port 1883.
+1699635682: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635682: New client connected from 172.22.0.7:49188 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635683: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635683: New client connected from 172.22.0.5:51730 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635683: New connection from 172.22.0.6:48892 on port 1883.
+1699635684: New connection from 172.22.0.7:49192 on port 1883.
+1699635684: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635684: New client connected from 172.22.0.6:48892 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635684: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635684: New client connected from 172.22.0.7:49192 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635685: New connection from 172.22.0.5:51732 on port 1883.
+1699635685: New connection from 172.22.0.6:48896 on port 1883.
+1699635685: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635685: New client connected from 172.22.0.5:51732 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635685: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635685: New client connected from 172.22.0.6:48896 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635686: New connection from 172.22.0.7:49202 on port 1883.
+1699635686: New connection from 172.22.0.5:51748 on port 1883.
+1699635686: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635686: New client connected from 172.22.0.7:49202 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635686: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635686: New client connected from 172.22.0.5:51748 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635687: New connection from 172.22.0.6:48906 on port 1883.
+1699635687: New connection from 172.22.0.7:49214 on port 1883.
+1699635688: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635688: New client connected from 172.22.0.6:48906 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635688: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635688: New client connected from 172.22.0.7:49214 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635689: New connection from 172.22.0.5:51754 on port 1883.
+1699635689: New connection from 172.22.0.6:48910 on port 1883.
+1699635689: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635689: New client connected from 172.22.0.5:51754 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635689: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635689: New client connected from 172.22.0.6:48910 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635690: New connection from 172.22.0.7:41292 on port 1883.
+1699635690: New connection from 172.22.0.5:54202 on port 1883.
+1699635690: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635690: New client connected from 172.22.0.7:41292 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635690: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635690: New client connected from 172.22.0.5:54202 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635691: New connection from 172.22.0.6:54654 on port 1883.
+1699635691: New connection from 172.22.0.7:41296 on port 1883.
+1699635691: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635691: New client connected from 172.22.0.6:54654 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635692: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635692: New client connected from 172.22.0.7:41296 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635692: New connection from 172.22.0.5:54204 on port 1883.
+1699635693: New connection from 172.22.0.6:54670 on port 1883.
+1699635693: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635693: New client connected from 172.22.0.5:54204 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635693: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635693: New client connected from 172.22.0.6:54670 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635694: New connection from 172.22.0.7:41302 on port 1883.
+1699635694: New connection from 172.22.0.5:54216 on port 1883.
+1699635694: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635694: New client connected from 172.22.0.7:41302 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635694: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635694: New client connected from 172.22.0.5:54216 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635695: New connection from 172.22.0.6:54680 on port 1883.
+1699635695: New connection from 172.22.0.7:41314 on port 1883.
+1699635695: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635695: New client connected from 172.22.0.6:54680 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635696: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635696: New client connected from 172.22.0.7:41314 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635696: New connection from 172.22.0.5:54226 on port 1883.
+1699635697: New connection from 172.22.0.6:54684 on port 1883.
+1699635697: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635697: New client connected from 172.22.0.5:54226 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635697: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635697: New client connected from 172.22.0.6:54684 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635698: New connection from 172.22.0.7:41330 on port 1883.
+1699635698: New connection from 172.22.0.5:54234 on port 1883.
+1699635698: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635698: New client connected from 172.22.0.7:41330 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635698: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635698: New client connected from 172.22.0.5:54234 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635699: New connection from 172.22.0.6:33094 on port 1883.
+1699635699: New connection from 172.22.0.7:42632 on port 1883.
+1699635699: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635699: New client connected from 172.22.0.6:33094 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635699: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635699: New client connected from 172.22.0.7:42632 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635700: New connection from 172.22.0.5:47952 on port 1883.
+1699635700: New connection from 172.22.0.6:33098 on port 1883.
+1699635701: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635701: New client connected from 172.22.0.5:47952 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635701: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635701: New client connected from 172.22.0.6:33098 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635702: New connection from 172.22.0.7:42634 on port 1883.
+1699635702: New connection from 172.22.0.5:47964 on port 1883.
+1699635702: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635702: New client connected from 172.22.0.7:42634 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635702: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635702: New client connected from 172.22.0.5:47964 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635703: New connection from 172.22.0.6:33100 on port 1883.
+1699635703: New connection from 172.22.0.7:42642 on port 1883.
+1699635703: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635703: New client connected from 172.22.0.6:33100 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635703: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635703: New client connected from 172.22.0.7:42642 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635704: New connection from 172.22.0.5:47966 on port 1883.
+1699635704: New connection from 172.22.0.6:33110 on port 1883.
+1699635705: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635705: New client connected from 172.22.0.5:47966 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635705: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635705: New client connected from 172.22.0.6:33110 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635706: New connection from 172.22.0.7:42646 on port 1883.
+1699635706: New connection from 172.22.0.5:47972 on port 1883.
+1699635706: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635706: New client connected from 172.22.0.7:42646 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635706: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635706: New client connected from 172.22.0.5:47972 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635707: New connection from 172.22.0.6:33120 on port 1883.
+1699635707: New connection from 172.22.0.7:42656 on port 1883.
+1699635707: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635707: New client connected from 172.22.0.6:33120 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635707: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635707: New client connected from 172.22.0.7:42656 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635708: New connection from 172.22.0.5:47976 on port 1883.
+1699635708: New connection from 172.22.0.6:33130 on port 1883.
+1699635708: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635708: New client connected from 172.22.0.5:47976 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635709: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635709: New client connected from 172.22.0.6:33130 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635709: New connection from 172.22.0.7:46020 on port 1883.
+1699635710: New connection from 172.22.0.5:46402 on port 1883.
+1699635710: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635710: New client connected from 172.22.0.7:46020 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635710: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635710: New client connected from 172.22.0.5:46402 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635711: Client cf42033f-09b2-4931-aec0-d555abfaf735 closed its connection.
+1699635712: mosquitto version 2.0.18 terminating
+1699635712: Saving in-memory database to mosquitto/data//mosquitto.db.
+1699635721: mosquitto version 2.0.18 starting
+1699635721: Config loaded from /mosquitto/config/mosquitto.conf.
+1699635721: Warning: File mosquitto/config/pwfile.txt has world readable permissions. Future versions will refuse to load this file.
+To fix this, use `chmod 0700 mosquitto/config/pwfile.txt`.
+1699635721: Opening ipv4 listen socket on port 1883.
+1699635721: Opening ipv6 listen socket on port 1883.
+1699635721: mosquitto version 2.0.18 running
+1699635731: New connection from 172.22.0.5:59348 on port 1883.
+1699635731: New connection from 172.22.0.6:55126 on port 1883.
+1699635731: New connection from 172.22.0.7:41654 on port 1883.
+1699635731: New client connected from 172.22.0.5:59348 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635731: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635731: New client connected from 172.22.0.6:55126 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635731: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635731: New client connected from 172.22.0.7:41654 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635732: New connection from 172.22.0.5:59352 on port 1883.
+1699635732: New connection from 172.22.0.6:55132 on port 1883.
+1699635732: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635732: New client connected from 172.22.0.5:59352 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635733: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635733: New client connected from 172.22.0.6:55132 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635733: New connection from 172.22.0.7:41660 on port 1883.
+1699635734: New connection from 172.22.0.5:59362 on port 1883.
+1699635734: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635734: New client connected from 172.22.0.7:41660 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635734: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635734: New client connected from 172.22.0.5:59362 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635735: New connection from 172.22.0.6:55146 on port 1883.
+1699635735: New connection from 172.22.0.7:41672 on port 1883.
+1699635735: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635735: New client connected from 172.22.0.6:55146 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635735: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635735: New client connected from 172.22.0.7:41672 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635736: New connection from 172.22.0.5:59364 on port 1883.
+1699635736: New connection from 172.22.0.6:55150 on port 1883.
+1699635736: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635736: New client connected from 172.22.0.5:59364 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635736: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635736: New client connected from 172.22.0.6:55150 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635737: New connection from 172.22.0.7:41688 on port 1883.
+1699635737: New connection from 172.22.0.5:59378 on port 1883.
+1699635738: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635738: New client connected from 172.22.0.7:41688 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635738: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635738: New client connected from 172.22.0.5:59378 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635739: New connection from 172.22.0.6:55156 on port 1883.
+1699635739: New connection from 172.22.0.7:41690 on port 1883.
+1699635739: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635739: New client connected from 172.22.0.6:55156 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635739: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635739: New client connected from 172.22.0.7:41690 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635740: New connection from 172.22.0.5:52820 on port 1883.
+1699635740: New connection from 172.22.0.6:39430 on port 1883.
+1699635740: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635740: New client connected from 172.22.0.5:52820 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635740: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635740: New client connected from 172.22.0.6:39430 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635741: New connection from 172.22.0.7:49166 on port 1883.
+1699635741: New connection from 172.22.0.5:52830 on port 1883.
+1699635742: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635742: New client connected from 172.22.0.7:49166 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635742: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635742: New client connected from 172.22.0.5:52830 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635743: New connection from 172.22.0.6:39432 on port 1883.
+1699635743: New connection from 172.22.0.7:49182 on port 1883.
+1699635743: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635743: New client connected from 172.22.0.6:39432 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635743: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635743: New client connected from 172.22.0.7:49182 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635744: New connection from 172.22.0.5:52842 on port 1883.
+1699635744: New connection from 172.22.0.6:39438 on port 1883.
+1699635744: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635744: New client connected from 172.22.0.5:52842 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635744: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635744: New client connected from 172.22.0.6:39438 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635745: New connection from 172.22.0.7:49192 on port 1883.
+1699635745: New connection from 172.22.0.5:52846 on port 1883.
+1699635746: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635746: New client connected from 172.22.0.7:49192 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635746: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635746: New client connected from 172.22.0.5:52846 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635747: New connection from 172.22.0.6:39442 on port 1883.
+1699635747: New connection from 172.22.0.7:49200 on port 1883.
+1699635747: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635747: New client connected from 172.22.0.6:39442 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635747: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635747: New client connected from 172.22.0.7:49200 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635748: New connection from 172.22.0.5:52848 on port 1883.
+1699635748: New connection from 172.22.0.6:39448 on port 1883.
+1699635748: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635748: New client connected from 172.22.0.5:52848 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635748: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635748: New client connected from 172.22.0.6:39448 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635749: New connection from 172.22.0.7:53538 on port 1883.
+1699635749: New connection from 172.22.0.5:38432 on port 1883.
+1699635749: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635749: New client connected from 172.22.0.7:53538 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635749: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635749: New client connected from 172.22.0.5:38432 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635750: New connection from 172.22.0.6:58058 on port 1883.
+1699635750: New connection from 172.22.0.7:53554 on port 1883.
+1699635751: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635751: New client connected from 172.22.0.6:58058 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635751: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635751: New client connected from 172.22.0.7:53554 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635752: New connection from 172.22.0.5:38446 on port 1883.
+1699635752: New connection from 172.22.0.6:58070 on port 1883.
+1699635752: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635752: New client connected from 172.22.0.5:38446 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635752: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635752: New client connected from 172.22.0.6:58070 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635753: New connection from 172.22.0.7:53566 on port 1883.
+1699635753: New connection from 172.22.0.5:38450 on port 1883.
+1699635753: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635753: New client connected from 172.22.0.7:53566 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635753: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635753: New client connected from 172.22.0.5:38450 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635754: New connection from 172.22.0.6:58076 on port 1883.
+1699635754: New connection from 172.22.0.7:53572 on port 1883.
+1699635755: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635755: New client connected from 172.22.0.6:58076 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635755: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635755: New client connected from 172.22.0.7:53572 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635756: New connection from 172.22.0.5:38462 on port 1883.
+1699635756: New connection from 172.22.0.6:58082 on port 1883.
+1699635756: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635756: New client connected from 172.22.0.5:38462 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635756: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635756: New client connected from 172.22.0.6:58082 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635757: New connection from 172.22.0.7:53580 on port 1883.
+1699635757: New connection from 172.22.0.5:38470 on port 1883.
+1699635757: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635757: New client connected from 172.22.0.7:53580 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635757: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635757: New client connected from 172.22.0.5:38470 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635758: New connection from 172.22.0.6:58084 on port 1883.
+1699635758: New connection from 172.22.0.7:53584 on port 1883.
+1699635759: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635759: New client connected from 172.22.0.6:58084 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635759: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635759: New client connected from 172.22.0.7:53584 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635760: New connection from 172.22.0.5:36996 on port 1883.
+1699635760: New connection from 172.22.0.6:38550 on port 1883.
+1699635760: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635760: New client connected from 172.22.0.5:36996 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635760: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635760: New client connected from 172.22.0.6:38550 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635761: New connection from 172.22.0.7:41608 on port 1883.
+1699635761: New connection from 172.22.0.5:37000 on port 1883.
+1699635761: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635761: New client connected from 172.22.0.7:41608 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635761: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635761: New client connected from 172.22.0.5:37000 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635762: New connection from 172.22.0.6:38558 on port 1883.
+1699635762: New connection from 172.22.0.7:41622 on port 1883.
+1699635763: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635763: New client connected from 172.22.0.6:38558 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635763: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635763: New client connected from 172.22.0.7:41622 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635764: New connection from 172.22.0.5:37016 on port 1883.
+1699635764: New connection from 172.22.0.6:38572 on port 1883.
+1699635764: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635764: New client connected from 172.22.0.5:37016 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635764: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635764: New client connected from 172.22.0.6:38572 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635765: New connection from 172.22.0.7:41624 on port 1883.
+1699635765: New connection from 172.22.0.5:37024 on port 1883.
+1699635765: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635765: New client connected from 172.22.0.7:41624 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635765: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635765: New client connected from 172.22.0.5:37024 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635766: New connection from 172.22.0.6:38576 on port 1883.
+1699635766: New connection from 172.22.0.7:41628 on port 1883.
+1699635766: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635766: New client connected from 172.22.0.6:38576 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635766: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635766: New client connected from 172.22.0.7:41628 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635767: New connection from 172.22.0.5:37026 on port 1883.
+1699635767: New connection from 172.22.0.6:38578 on port 1883.
+1699635768: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635768: New client connected from 172.22.0.5:37026 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635768: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635768: New client connected from 172.22.0.6:38578 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635769: New connection from 172.22.0.7:41642 on port 1883.
+1699635769: New connection from 172.22.0.5:43820 on port 1883.
+1699635769: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635769: New client connected from 172.22.0.7:41642 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635769: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635769: New client connected from 172.22.0.5:43820 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635770: New connection from 172.22.0.6:47296 on port 1883.
+1699635770: New connection from 172.22.0.7:53288 on port 1883.
+1699635770: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635770: New client connected from 172.22.0.6:47296 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635770: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635770: New client connected from 172.22.0.7:53288 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635771: New connection from 172.22.0.5:43824 on port 1883.
+1699635771: New connection from 172.22.0.6:47306 on port 1883.
+1699635772: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635772: New client connected from 172.22.0.5:43824 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635772: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635772: New client connected from 172.22.0.6:47306 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635773: New connection from 172.22.0.7:53298 on port 1883.
+1699635773: New connection from 172.22.0.5:43834 on port 1883.
+1699635773: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635773: New client connected from 172.22.0.7:53298 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635773: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635773: New client connected from 172.22.0.5:43834 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635774: New connection from 172.22.0.6:47310 on port 1883.
+1699635774: New connection from 172.22.0.7:53314 on port 1883.
+1699635774: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635774: New client connected from 172.22.0.6:47310 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635774: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635774: New client connected from 172.22.0.7:53314 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635775: New connection from 172.22.0.5:43840 on port 1883.
+1699635775: New connection from 172.22.0.6:47312 on port 1883.
+1699635776: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635776: New client connected from 172.22.0.5:43840 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635776: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635776: New client connected from 172.22.0.6:47312 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635777: New connection from 172.22.0.7:53318 on port 1883.
+1699635777: New connection from 172.22.0.5:43848 on port 1883.
+1699635777: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635777: New client connected from 172.22.0.7:53318 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635777: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635777: New client connected from 172.22.0.5:43848 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635778: New connection from 172.22.0.6:47328 on port 1883.
+1699635778: New connection from 172.22.0.7:53332 on port 1883.
+1699635778: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635778: New client connected from 172.22.0.6:47328 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635778: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635778: New client connected from 172.22.0.7:53332 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635779: New connection from 172.22.0.5:57452 on port 1883.
+1699635779: New connection from 172.22.0.6:38516 on port 1883.
+1699635779: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635779: New client connected from 172.22.0.5:57452 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635780: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635780: New client connected from 172.22.0.6:38516 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635780: New connection from 172.22.0.7:56966 on port 1883.
+1699635781: New connection from 172.22.0.5:57468 on port 1883.
+1699635781: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635781: New client connected from 172.22.0.7:56966 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635781: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635781: New client connected from 172.22.0.5:57468 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635782: New connection from 172.22.0.6:38526 on port 1883.
+1699635782: New connection from 172.22.0.7:56974 on port 1883.
+1699635782: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635782: New client connected from 172.22.0.6:38526 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635782: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635782: New client connected from 172.22.0.7:56974 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635783: New connection from 172.22.0.5:57470 on port 1883.
+1699635783: New connection from 172.22.0.6:38532 on port 1883.
+1699635783: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635783: New client connected from 172.22.0.5:57470 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635783: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635783: New client connected from 172.22.0.6:38532 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635784: New connection from 172.22.0.7:56980 on port 1883.
+1699635784: New connection from 172.22.0.5:57484 on port 1883.
+1699635785: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635785: New client connected from 172.22.0.7:56980 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635785: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635785: New client connected from 172.22.0.5:57484 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635786: New connection from 172.22.0.6:38536 on port 1883.
+1699635786: New connection from 172.22.0.7:56988 on port 1883.
+1699635786: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635786: New client connected from 172.22.0.6:38536 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635786: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635786: New client connected from 172.22.0.7:56988 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635787: New connection from 172.22.0.5:57500 on port 1883.
+1699635787: New connection from 172.22.0.6:38538 on port 1883.
+1699635787: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635787: New client connected from 172.22.0.5:57500 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635787: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635787: New client connected from 172.22.0.6:38538 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635788: New connection from 172.22.0.7:56996 on port 1883.
+1699635788: New connection from 172.22.0.5:57506 on port 1883.
+1699635789: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635789: New client connected from 172.22.0.7:56996 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635789: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635789: New client connected from 172.22.0.5:57506 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635790: New connection from 172.22.0.6:58136 on port 1883.
+1699635790: New connection from 172.22.0.7:42250 on port 1883.
+1699635790: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635790: New client connected from 172.22.0.6:58136 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635790: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635790: New client connected from 172.22.0.7:42250 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635791: New connection from 172.22.0.5:53862 on port 1883.
+1699635791: New connection from 172.22.0.6:58144 on port 1883.
+1699635791: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635791: New client connected from 172.22.0.5:53862 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635791: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635791: New client connected from 172.22.0.6:58144 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635792: New connection from 172.22.0.7:42266 on port 1883.
+1699635792: New connection from 172.22.0.5:53868 on port 1883.
+1699635793: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635793: New client connected from 172.22.0.7:42266 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635793: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635793: New client connected from 172.22.0.5:53868 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635794: New connection from 172.22.0.6:58154 on port 1883.
+1699635794: New connection from 172.22.0.7:42268 on port 1883.
+1699635794: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635794: New client connected from 172.22.0.6:58154 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635794: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635794: New client connected from 172.22.0.7:42268 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635795: New connection from 172.22.0.5:53876 on port 1883.
+1699635795: New connection from 172.22.0.6:58158 on port 1883.
+1699635795: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635795: New client connected from 172.22.0.5:53876 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635795: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635795: New client connected from 172.22.0.6:58158 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635796: New connection from 172.22.0.7:42274 on port 1883.
+1699635796: New connection from 172.22.0.5:53884 on port 1883.
+1699635796: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635796: New client connected from 172.22.0.7:42274 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635797: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635797: New client connected from 172.22.0.5:53884 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635797: New connection from 172.22.0.6:58174 on port 1883.
+1699635798: New connection from 172.22.0.7:42284 on port 1883.
+1699635798: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635798: New client connected from 172.22.0.6:58174 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635798: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635798: New client connected from 172.22.0.7:42284 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635799: New connection from 172.22.0.5:39208 on port 1883.
+1699635799: New connection from 172.22.0.6:39784 on port 1883.
+1699635799: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635799: New client connected from 172.22.0.5:39208 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635799: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635799: New client connected from 172.22.0.6:39784 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635800: New connection from 172.22.0.7:52886 on port 1883.
+1699635800: New connection from 172.22.0.5:39214 on port 1883.
+1699635800: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635800: New client connected from 172.22.0.7:52886 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635800: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635800: New client connected from 172.22.0.5:39214 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635801: New connection from 172.22.0.6:39794 on port 1883.
+1699635801: New connection from 172.22.0.7:52890 on port 1883.
+1699635802: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635802: New client connected from 172.22.0.6:39794 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635802: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635802: New client connected from 172.22.0.7:52890 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635803: New connection from 172.22.0.5:39228 on port 1883.
+1699635803: New connection from 172.22.0.6:39798 on port 1883.
+1699635803: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635803: New client connected from 172.22.0.5:39228 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635803: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635803: New client connected from 172.22.0.6:39798 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635804: New connection from 172.22.0.7:52902 on port 1883.
+1699635804: New connection from 172.22.0.5:39244 on port 1883.
+1699635804: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635804: New client connected from 172.22.0.7:52902 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635804: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635804: New client connected from 172.22.0.5:39244 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635805: New connection from 172.22.0.6:39808 on port 1883.
+1699635805: New connection from 172.22.0.7:52908 on port 1883.
+1699635806: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635806: New client connected from 172.22.0.6:39808 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635806: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635806: New client connected from 172.22.0.7:52908 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635807: New connection from 172.22.0.5:39250 on port 1883.
+1699635807: New connection from 172.22.0.6:39816 on port 1883.
+1699635807: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635807: New client connected from 172.22.0.5:39250 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635807: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635807: New client connected from 172.22.0.6:39816 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635808: New connection from 172.22.0.7:52912 on port 1883.
+1699635808: New connection from 172.22.0.5:39266 on port 1883.
+1699635808: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635808: New client connected from 172.22.0.7:52912 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635808: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635808: New client connected from 172.22.0.5:39266 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635809: New connection from 172.22.0.6:46570 on port 1883.
+1699635809: New connection from 172.22.0.7:60270 on port 1883.
+1699635810: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635810: New client connected from 172.22.0.6:46570 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635810: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635810: New client connected from 172.22.0.7:60270 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635811: New connection from 172.22.0.5:33510 on port 1883.
+1699635811: New connection from 172.22.0.6:46582 on port 1883.
+1699635811: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635811: New client connected from 172.22.0.5:33510 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635811: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635811: New client connected from 172.22.0.6:46582 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635812: New connection from 172.22.0.7:60278 on port 1883.
+1699635812: New connection from 172.22.0.5:33514 on port 1883.
+1699635812: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635812: New client connected from 172.22.0.7:60278 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635812: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635812: New client connected from 172.22.0.5:33514 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635813: New connection from 172.22.0.6:46584 on port 1883.
+1699635813: New connection from 172.22.0.7:60282 on port 1883.
+1699635813: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635813: New client connected from 172.22.0.6:46584 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635813: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635813: New client connected from 172.22.0.7:60282 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635814: New connection from 172.22.0.5:33524 on port 1883.
+1699635814: New connection from 172.22.0.6:46594 on port 1883.
+1699635815: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635815: New client connected from 172.22.0.5:33524 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635815: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635815: New client connected from 172.22.0.6:46594 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635816: New connection from 172.22.0.7:60284 on port 1883.
+1699635816: New connection from 172.22.0.5:33528 on port 1883.
+1699635816: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635816: New client connected from 172.22.0.7:60284 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635816: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635816: New client connected from 172.22.0.5:33528 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635817: New connection from 172.22.0.6:46604 on port 1883.
+1699635817: New connection from 172.22.0.7:60300 on port 1883.
+1699635817: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635817: New client connected from 172.22.0.6:46604 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635817: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635817: New client connected from 172.22.0.7:60300 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635818: New connection from 172.22.0.5:33534 on port 1883.
+1699635818: New connection from 172.22.0.6:46606 on port 1883.
+1699635819: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635819: New client connected from 172.22.0.5:33534 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635819: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635819: New client connected from 172.22.0.6:46606 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635820: New connection from 172.22.0.7:42352 on port 1883.
+1699635820: New connection from 172.22.0.5:33528 on port 1883.
+1699635820: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635820: New client connected from 172.22.0.7:42352 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635820: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635820: New client connected from 172.22.0.5:33528 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635821: New connection from 172.22.0.6:58744 on port 1883.
+1699635821: New connection from 172.22.0.7:42362 on port 1883.
+1699635821: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635821: New client connected from 172.22.0.6:58744 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635821: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635821: New client connected from 172.22.0.7:42362 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635822: New connection from 172.22.0.5:33530 on port 1883.
+1699635822: New connection from 172.22.0.6:58760 on port 1883.
+1699635823: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635823: New client connected from 172.22.0.5:33530 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635823: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635823: New client connected from 172.22.0.6:58760 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635824: New connection from 172.22.0.7:42366 on port 1883.
+1699635824: New connection from 172.22.0.5:33538 on port 1883.
+1699635824: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635824: New client connected from 172.22.0.7:42366 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635824: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635824: New client connected from 172.22.0.5:33538 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635825: New connection from 172.22.0.6:58768 on port 1883.
+1699635825: New connection from 172.22.0.7:42382 on port 1883.
+1699635825: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635825: New client connected from 172.22.0.6:58768 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635825: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635825: New client connected from 172.22.0.7:42382 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635826: New connection from 172.22.0.5:33552 on port 1883.
+1699635826: New connection from 172.22.0.6:58782 on port 1883.
+1699635826: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635826: New client connected from 172.22.0.5:33552 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635827: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635827: New client connected from 172.22.0.6:58782 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635827: New connection from 172.22.0.7:42396 on port 1883.
+1699635828: New connection from 172.22.0.5:33566 on port 1883.
+1699635828: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635828: New client connected from 172.22.0.7:42396 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635828: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635828: New client connected from 172.22.0.5:33566 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635829: New connection from 172.22.0.6:52608 on port 1883.
+1699635829: New connection from 172.22.0.7:56652 on port 1883.
+1699635829: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635829: New client connected from 172.22.0.6:52608 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635829: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635829: New client connected from 172.22.0.7:56652 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635830: New connection from 172.22.0.5:44696 on port 1883.
+1699635830: New connection from 172.22.0.6:52624 on port 1883.
+1699635830: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635830: New client connected from 172.22.0.5:44696 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635830: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635830: New client connected from 172.22.0.6:52624 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635831: New connection from 172.22.0.7:56656 on port 1883.
+1699635831: New connection from 172.22.0.5:44710 on port 1883.
+1699635832: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635832: New client connected from 172.22.0.7:56656 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635832: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635832: New client connected from 172.22.0.5:44710 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635833: New connection from 172.22.0.6:52636 on port 1883.
+1699635833: New connection from 172.22.0.7:56670 on port 1883.
+1699635833: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635833: New client connected from 172.22.0.6:52636 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635833: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635833: New client connected from 172.22.0.7:56670 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635834: New connection from 172.22.0.5:44720 on port 1883.
+1699635834: New connection from 172.22.0.6:52650 on port 1883.
+1699635834: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635834: New client connected from 172.22.0.5:44720 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635834: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635834: New client connected from 172.22.0.6:52650 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635835: New connection from 172.22.0.7:56682 on port 1883.
+1699635835: New connection from 172.22.0.5:44730 on port 1883.
+1699635836: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635836: New client connected from 172.22.0.7:56682 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635836: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635836: New client connected from 172.22.0.5:44730 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635837: New connection from 172.22.0.6:52652 on port 1883.
+1699635837: New connection from 172.22.0.7:56698 on port 1883.
+1699635837: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635837: New client connected from 172.22.0.6:52652 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635837: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635837: New client connected from 172.22.0.7:56698 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635838: New connection from 172.22.0.5:44738 on port 1883.
+1699635838: New connection from 172.22.0.6:52654 on port 1883.
+1699635838: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635838: New client connected from 172.22.0.5:44738 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635838: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635838: New client connected from 172.22.0.6:52654 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635839: New connection from 172.22.0.7:39058 on port 1883.
+1699635839: New connection from 172.22.0.5:49328 on port 1883.
+1699635840: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635840: New client connected from 172.22.0.7:39058 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635840: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635840: New client connected from 172.22.0.5:49328 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635841: New connection from 172.22.0.6:47078 on port 1883.
+1699635841: New connection from 172.22.0.7:39064 on port 1883.
+1699635841: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635841: New client connected from 172.22.0.6:47078 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635841: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635841: New client connected from 172.22.0.7:39064 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635842: New connection from 172.22.0.5:49342 on port 1883.
+1699635842: New connection from 172.22.0.6:47086 on port 1883.
+1699635842: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635842: New client connected from 172.22.0.5:49342 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635842: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635842: New client connected from 172.22.0.6:47086 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635843: New connection from 172.22.0.7:39074 on port 1883.
+1699635843: New connection from 172.22.0.5:49358 on port 1883.
+1699635843: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635843: New client connected from 172.22.0.7:39074 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635844: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635844: New client connected from 172.22.0.5:49358 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635844: New connection from 172.22.0.6:47102 on port 1883.
+1699635845: New connection from 172.22.0.7:39080 on port 1883.
+1699635845: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635845: New client connected from 172.22.0.6:47102 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635845: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635845: New client connected from 172.22.0.7:39080 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635846: New connection from 172.22.0.5:49364 on port 1883.
+1699635846: New connection from 172.22.0.6:47110 on port 1883.
+1699635846: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635846: New client connected from 172.22.0.5:49364 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635846: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635846: New client connected from 172.22.0.6:47110 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635847: New connection from 172.22.0.7:39090 on port 1883.
+1699635847: New connection from 172.22.0.5:49380 on port 1883.
+1699635847: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635847: New client connected from 172.22.0.7:39090 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635847: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635847: New client connected from 172.22.0.5:49380 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635848: New connection from 172.22.0.6:47112 on port 1883.
+1699635848: New connection from 172.22.0.7:39102 on port 1883.
+1699635849: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635849: New client connected from 172.22.0.6:47112 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635849: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635849: New client connected from 172.22.0.7:39102 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635850: New connection from 172.22.0.5:59726 on port 1883.
+1699635850: New connection from 172.22.0.6:48942 on port 1883.
+1699635850: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635850: New client connected from 172.22.0.5:59726 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635850: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635850: New client connected from 172.22.0.6:48942 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635851: New connection from 172.22.0.7:33250 on port 1883.
+1699635851: New connection from 172.22.0.5:59732 on port 1883.
+1699635851: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635851: New client connected from 172.22.0.7:33250 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635851: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635851: New client connected from 172.22.0.5:59732 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635852: New connection from 172.22.0.6:48956 on port 1883.
+1699635852: New connection from 172.22.0.7:33262 on port 1883.
+1699635853: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635853: New client connected from 172.22.0.6:48956 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635853: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635853: New client connected from 172.22.0.7:33262 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635854: New connection from 172.22.0.5:59738 on port 1883.
+1699635854: New connection from 172.22.0.6:48960 on port 1883.
+1699635854: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635854: New client connected from 172.22.0.5:59738 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635854: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635854: New client connected from 172.22.0.6:48960 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635855: New connection from 172.22.0.7:33272 on port 1883.
+1699635855: New connection from 172.22.0.5:59740 on port 1883.
+1699635855: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635855: New client connected from 172.22.0.7:33272 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635855: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635855: New client connected from 172.22.0.5:59740 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635856: New connection from 172.22.0.6:48968 on port 1883.
+1699635856: New connection from 172.22.0.7:33274 on port 1883.
+1699635857: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635857: New client connected from 172.22.0.6:48968 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635857: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635857: New client connected from 172.22.0.7:33274 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635858: New connection from 172.22.0.5:59742 on port 1883.
+1699635858: New connection from 172.22.0.6:48978 on port 1883.
+1699635858: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635858: New client connected from 172.22.0.5:59742 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635858: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635858: New client connected from 172.22.0.6:48978 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635859: New connection from 172.22.0.7:45220 on port 1883.
+1699635859: New connection from 172.22.0.5:46220 on port 1883.
+1699635859: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635859: New client connected from 172.22.0.7:45220 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635859: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635859: New client connected from 172.22.0.5:46220 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635860: New connection from 172.22.0.6:56912 on port 1883.
+1699635860: New connection from 172.22.0.7:45228 on port 1883.
+1699635860: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635860: New client connected from 172.22.0.6:56912 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635860: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635860: New client connected from 172.22.0.7:45228 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635861: New connection from 172.22.0.5:46226 on port 1883.
+1699635861: New connection from 172.22.0.6:56926 on port 1883.
+1699635862: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635862: New client connected from 172.22.0.5:46226 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635862: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635862: New client connected from 172.22.0.6:56926 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635863: New connection from 172.22.0.7:45230 on port 1883.
+1699635863: New connection from 172.22.0.5:46236 on port 1883.
+1699635863: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635863: New client connected from 172.22.0.7:45230 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635863: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635863: New client connected from 172.22.0.5:46236 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635864: New connection from 172.22.0.6:56942 on port 1883.
+1699635864: New connection from 172.22.0.7:45240 on port 1883.
+1699635864: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635864: New client connected from 172.22.0.6:56942 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635864: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635864: New client connected from 172.22.0.7:45240 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635865: New connection from 172.22.0.5:46250 on port 1883.
+1699635865: New connection from 172.22.0.6:56948 on port 1883.
+1699635866: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635866: New client connected from 172.22.0.5:46250 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635866: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635866: New client connected from 172.22.0.6:56948 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635867: New connection from 172.22.0.7:45242 on port 1883.
+1699635867: New connection from 172.22.0.5:46262 on port 1883.
+1699635867: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635867: New client connected from 172.22.0.7:45242 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635867: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635867: New client connected from 172.22.0.5:46262 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635868: New connection from 172.22.0.6:56964 on port 1883.
+1699635868: New connection from 172.22.0.7:45244 on port 1883.
+1699635868: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635868: New client connected from 172.22.0.6:56964 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635868: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635868: New client connected from 172.22.0.7:45244 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635869: New connection from 172.22.0.5:40570 on port 1883.
+1699635869: New connection from 172.22.0.6:43426 on port 1883.
+1699635870: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635870: New client connected from 172.22.0.5:40570 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635870: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635870: New client connected from 172.22.0.6:43426 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635871: New connection from 172.22.0.7:58214 on port 1883.
+1699635871: New connection from 172.22.0.5:40578 on port 1883.
+1699635871: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635871: New client connected from 172.22.0.7:58214 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635871: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635871: New client connected from 172.22.0.5:40578 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635872: New connection from 172.22.0.6:43430 on port 1883.
+1699635872: New connection from 172.22.0.7:58230 on port 1883.
+1699635872: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635872: New client connected from 172.22.0.6:43430 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635872: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635872: New client connected from 172.22.0.7:58230 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635873: New connection from 172.22.0.5:40580 on port 1883.
+1699635873: New connection from 172.22.0.6:43442 on port 1883.
+1699635873: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635873: New client connected from 172.22.0.5:40580 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635874: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635874: New client connected from 172.22.0.6:43442 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635874: New connection from 172.22.0.7:58240 on port 1883.
+1699635875: New connection from 172.22.0.5:40596 on port 1883.
+1699635875: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635875: New client connected from 172.22.0.7:58240 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635875: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635875: New client connected from 172.22.0.5:40596 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635876: New connection from 172.22.0.6:43454 on port 1883.
+1699635876: New connection from 172.22.0.7:58256 on port 1883.
+1699635876: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635876: New client connected from 172.22.0.6:43454 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635876: Client cf42033f-09b2-4931-aec0-d555abfaf735 already connected, closing old connection.
+1699635876: New client connected from 172.22.0.7:58256 as cf42033f-09b2-4931-aec0-d555abfaf735 (p5, c0, k60, u'client').
+1699635877: Client cf42033f-09b2-4931-aec0-d555abfaf735 closed its connection.
+1699635878: mosquitto version 2.0.18 terminating
+1699635878: Saving in-memory database to mosquitto/data//mosquitto.db.
+1699636016: mosquitto version 2.0.18 starting
+1699636016: Config loaded from /mosquitto/config/mosquitto.conf.
+1699636016: Warning: File mosquitto/config/pwfile.txt has world readable permissions. Future versions will refuse to load this file.
+To fix this, use `chmod 0700 mosquitto/config/pwfile.txt`.
+1699636016: Opening ipv4 listen socket on port 1883.
+1699636016: Opening ipv6 listen socket on port 1883.
+1699636016: mosquitto version 2.0.18 running
+1699636028: New connection from 172.22.0.6:39484 on port 1883.
+1699636028: New connection from 172.22.0.5:51358 on port 1883.
+1699636028: New connection from 172.22.0.7:33166 on port 1883.
+1699636029: New client connected from 172.22.0.6:39484 as 55221a23-bbed-4222-843b-be7c48132259 (p5, c0, k60, u'client').
+1699636029: New client connected from 172.22.0.5:51358 as 24ec349b-4506-496e-8914-ed9178a97025 (p5, c0, k60, u'client').
+1699636029: New client connected from 172.22.0.7:33166 as aa594152-1235-4b2d-80b3-1bf4fb92afc3 (p5, c0, k60, u'client').
+1699637195: Client 55221a23-bbed-4222-843b-be7c48132259 closed its connection.
+1699637195: Client 24ec349b-4506-496e-8914-ed9178a97025 closed its connection.
+1699637195: Client aa594152-1235-4b2d-80b3-1bf4fb92afc3 closed its connection.
+1699637196: mosquitto version 2.0.18 terminating
+1699637196: Saving in-memory database to mosquitto/data//mosquitto.db.
+1699637226: mosquitto version 2.0.18 starting
+1699637226: Config loaded from /mosquitto/config/mosquitto.conf.
+1699637226: Warning: File mosquitto/config/pwfile.txt has world readable permissions. Future versions will refuse to load this file.
+To fix this, use `chmod 0700 mosquitto/config/pwfile.txt`.
+1699637226: Opening ipv4 listen socket on port 1883.
+1699637226: Opening ipv6 listen socket on port 1883.
+1699637226: mosquitto version 2.0.18 running
+1699637233: New connection from 172.22.0.5:50488 on port 1883.
+1699637234: New client connected from 172.22.0.5:50488 as a55d0fe7-2cee-49ac-8064-e2361bf81810 (p5, c0, k60, u'client').
+1699637237: New connection from 172.22.0.6:50874 on port 1883.
+1699637238: New connection from 172.22.0.8:49716 on port 1883.
+1699637238: New client connected from 172.22.0.6:50874 as 2ba689cf-0927-49c8-bea3-c7e8eac426cc (p5, c0, k60, u'client').
+1699637238: New connection from 172.22.0.7:51698 on port 1883.
+1699637238: New client connected from 172.22.0.8:49716 as 9f30c798-37c7-4921-b1b4-efe5fa8f3282 (p5, c0, k60, u'client').
+1699637238: New client connected from 172.22.0.7:51698 as 8f346b9d-a7c2-4e5e-b3d5-30941f76cdd1 (p5, c0, k60, u'client').
+1699637478: Client a55d0fe7-2cee-49ac-8064-e2361bf81810 closed its connection.
+1699637479: Client 2ba689cf-0927-49c8-bea3-c7e8eac426cc closed its connection.
+1699637479: Client 8f346b9d-a7c2-4e5e-b3d5-30941f76cdd1 closed its connection.
+1699637479: Client 9f30c798-37c7-4921-b1b4-efe5fa8f3282 closed its connection.
+1699637480: mosquitto version 2.0.18 terminating
+1699637480: Saving in-memory database to mosquitto/data//mosquitto.db.
+1699637486: mosquitto version 2.0.18 starting
+1699637486: Config loaded from /mosquitto/config/mosquitto.conf.
+1699637486: Warning: File mosquitto/config/pwfile.txt has world readable permissions. Future versions will refuse to load this file.
+To fix this, use `chmod 0700 mosquitto/config/pwfile.txt`.
+1699637486: Opening ipv4 listen socket on port 1883.
+1699637486: Opening ipv6 listen socket on port 1883.
+1699637486: mosquitto version 2.0.18 running
+1699637496: New connection from 172.22.0.6:59092 on port 1883.
+1699637496: New client connected from 172.22.0.6:59092 as e18bab38-41c0-4a08-92f5-307dade7cfa8 (p5, c0, k60, u'client').
+1699637497: New connection from 172.22.0.7:43038 on port 1883.
+1699637497: New connection from 172.22.0.8:39842 on port 1883.
+1699637497: New client connected from 172.22.0.7:43038 as 39f4e6df-5b2f-4d0e-8695-0c2ee4bf4db8 (p5, c0, k60, u'client').
+1699637497: New client connected from 172.22.0.8:39842 as a4ef5a25-c678-4ff7-a3ad-32bc155b7850 (p5, c0, k60, u'client').
+1699637533: Client 39f4e6df-5b2f-4d0e-8695-0c2ee4bf4db8 closed its connection.
+1699637533: Client a4ef5a25-c678-4ff7-a3ad-32bc155b7850 closed its connection.
+1699637533: Client e18bab38-41c0-4a08-92f5-307dade7cfa8 closed its connection.
+1699637534: mosquitto version 2.0.18 terminating
+1699637534: Saving in-memory database to mosquitto/data//mosquitto.db.
+1699637950: mosquitto version 2.0.18 starting
+1699637950: Config loaded from /mosquitto/config/mosquitto.conf.
+1699637950: Warning: File mosquitto/config/pwfile.txt has world readable permissions. Future versions will refuse to load this file.
+To fix this, use `chmod 0700 mosquitto/config/pwfile.txt`.
+1699637950: Opening ipv4 listen socket on port 1883.
+1699637950: Opening ipv6 listen socket on port 1883.
+1699637950: mosquitto version 2.0.18 running
+1699637957: New connection from 172.22.0.8:49802 on port 1883.
+1699637957: New client connected from 172.22.0.8:49802 as 83c88021-bdbd-4d74-b3a7-cb3918d198bb (p5, c0, k60, u'client').
+1699637961: New connection from 172.22.0.5:35914 on port 1883.
+1699637961: New connection from 172.22.0.6:46638 on port 1883.
+1699637961: New client connected from 172.22.0.5:35914 as ce102e7f-a9c3-4be0-9259-b0f3649d6611 (p5, c0, k60, u'client').
+1699637961: New connection from 172.22.0.7:56820 on port 1883.
+1699637961: New client connected from 172.22.0.6:46638 as c10726a8-4eca-4215-832b-6736a59aed2d (p5, c0, k60, u'client').
+1699637961: New client connected from 172.22.0.7:56820 as 5a7eab1d-b9be-425f-b462-88b5175bcbe9 (p5, c0, k60, u'client').
+1699638018: Client 83c88021-bdbd-4d74-b3a7-cb3918d198bb closed its connection.
+1699638019: Client 5a7eab1d-b9be-425f-b462-88b5175bcbe9 closed its connection.
+1699638019: Client ce102e7f-a9c3-4be0-9259-b0f3649d6611 closed its connection.
+1699638019: Client c10726a8-4eca-4215-832b-6736a59aed2d closed its connection.
+1699638021: mosquitto version 2.0.18 terminating
+1699638021: Saving in-memory database to mosquitto/data//mosquitto.db.
+1699640032: mosquitto version 2.0.18 starting
+1699640032: Config loaded from /mosquitto/config/mosquitto.conf.
+1699640032: Opening ipv4 listen socket on port 1883.
+1699640032: Opening ipv6 listen socket on port 1883.
+1699640032: mosquitto version 2.0.18 running
+1699640033: New connection from 172.22.0.1:57766 on port 1883.
+1699640033: New client connected from 172.22.0.1:57766 as 3e757d4f-8a8c-4857-925d-3c6ae0e7b403 (p5, c0, k60, u'client').
+1699640039: New connection from 172.22.0.8:59012 on port 1883.
+1699640039: New client connected from 172.22.0.8:59012 as b80efee2-7131-426f-8d15-b40ed0704f7a (p5, c0, k60, u'client').
+1699640042: New connection from 172.22.0.6:34130 on port 1883.
+1699640042: New connection from 172.22.0.5:33462 on port 1883.
+1699640042: New connection from 172.22.0.7:43826 on port 1883.
+1699640042: New client connected from 172.22.0.6:34130 as 02f61d13-c5df-4d1e-a18a-677bc1405a2c (p5, c0, k60, u'client').
+1699640042: New client connected from 172.22.0.5:33462 as be4d1df7-658d-4bd4-a125-79ffe0df3313 (p5, c0, k60, u'client').
+1699640042: New client connected from 172.22.0.7:43826 as 50b3f736-3c1e-4cfa-998a-427281daf486 (p5, c0, k60, u'client').
+1699640091: Client 3e757d4f-8a8c-4857-925d-3c6ae0e7b403 closed its connection.
+1699640111: New connection from 172.22.0.1:32980 on port 1883.
+1699640111: New client connected from 172.22.0.1:32980 as 5e95a268-c977-4593-829c-0860277c3380 (p5, c0, k60, u'client').
+1699640119: New connection from 172.22.0.1:32982 on port 1883.
+1699640119: New client connected from 172.22.0.1:32982 as 9ce8be44-1a6a-458c-8722-8107074ae478 (p5, c0, k60, u'client').
+1699640121: Client 9ce8be44-1a6a-458c-8722-8107074ae478 closed its connection.
+1699640133: Client 5e95a268-c977-4593-829c-0860277c3380 closed its connection.
+1699640223: Client b80efee2-7131-426f-8d15-b40ed0704f7a closed its connection.
+1699640224: Client 50b3f736-3c1e-4cfa-998a-427281daf486 closed its connection.
+1699640224: Client 02f61d13-c5df-4d1e-a18a-677bc1405a2c closed its connection.
+1699640224: Client be4d1df7-658d-4bd4-a125-79ffe0df3313 closed its connection.
+1699640225: mosquitto version 2.0.18 terminating
+1699640225: Saving in-memory database to mosquitto/data//mosquitto.db.
+1699641824: mosquitto version 2.0.18 starting
+1699641824: Config loaded from /mosquitto/config/mosquitto.conf.
+1699641824: Opening ipv4 listen socket on port 1883.
+1699641824: Opening ipv6 listen socket on port 1883.
+1699641824: mosquitto version 2.0.18 running
+1699641832: New connection from 172.22.0.8:58428 on port 1883.
+1699641832: New client connected from 172.22.0.8:58428 as cf509c32-f733-469e-a32b-490c753c55c6 (p5, c0, k60, u'client').
+1699641835: New connection from 172.22.0.5:44194 on port 1883.
+1699641835: New connection from 172.22.0.6:52502 on port 1883.
+1699641835: New client connected from 172.22.0.5:44194 as 7b59659d-1a38-46ab-845b-c6a6a892d010 (p5, c0, k60, u'client').
+1699641835: New connection from 172.22.0.7:47202 on port 1883.
+1699641835: New client connected from 172.22.0.6:52502 as 6efdef6d-3e79-465a-b49c-1a2237498759 (p5, c0, k60, u'client').
+1699641836: New client connected from 172.22.0.7:47202 as 05586189-b4d8-4cba-bc4e-833918c27577 (p5, c0, k60, u'client').
+1699641896: Client cf509c32-f733-469e-a32b-490c753c55c6 closed its connection.
+1699641896: Client 6efdef6d-3e79-465a-b49c-1a2237498759 closed its connection.
+1699641897: Client 05586189-b4d8-4cba-bc4e-833918c27577 closed its connection.
+1699641897: Client 7b59659d-1a38-46ab-845b-c6a6a892d010 closed its connection.
+1699641897: mosquitto version 2.0.18 terminating
+1699641897: Saving in-memory database to mosquitto/data//mosquitto.db.
+1699641999: mosquitto version 2.0.18 starting
+1699641999: Config loaded from /mosquitto/config/mosquitto.conf.
+1699641999: Opening ipv4 listen socket on port 1883.
+1699641999: Opening ipv6 listen socket on port 1883.
+1699641999: mosquitto version 2.0.18 running
+1699642007: New connection from 172.22.0.8:35418 on port 1883.
+1699642007: New client connected from 172.22.0.8:35418 as 6e7a64e9-4bd0-497c-948d-37587ba43f1b (p5, c0, k60, u'client').
+1699642010: New connection from 172.22.0.6:54632 on port 1883.
+1699642010: New connection from 172.22.0.5:53426 on port 1883.
+1699642011: New client connected from 172.22.0.6:54632 as aa87a011-5747-467d-805d-902b183e1d0c (p5, c0, k60, u'client').
+1699642011: New client connected from 172.22.0.5:53426 as 7aa901ed-e4a4-48a4-bb5a-7007d206ccf7 (p5, c0, k60, u'client').
+1699642011: New connection from 172.22.0.7:32850 on port 1883.
+1699642011: New client connected from 172.22.0.7:32850 as 4bb09691-566e-447e-ba96-0537460ac5f2 (p5, c0, k60, u'client').
+1699642090: Client 6e7a64e9-4bd0-497c-948d-37587ba43f1b closed its connection.
+1699642091: Client 7aa901ed-e4a4-48a4-bb5a-7007d206ccf7 closed its connection.
+1699642091: Client 4bb09691-566e-447e-ba96-0537460ac5f2 closed its connection.
+1699642091: Client aa87a011-5747-467d-805d-902b183e1d0c closed its connection.
+1699642092: mosquitto version 2.0.18 terminating
+1699642092: Saving in-memory database to mosquitto/data//mosquitto.db.
+1699642139: mosquitto version 2.0.18 starting
+1699642139: Config loaded from /mosquitto/config/mosquitto.conf.
+1699642139: Opening ipv4 listen socket on port 1883.
+1699642139: Opening ipv6 listen socket on port 1883.
+1699642139: mosquitto version 2.0.18 running
+1699642147: New connection from 172.22.0.8:34758 on port 1883.
+1699642147: New client connected from 172.22.0.8:34758 as 253d7bed-95ca-4a61-b035-2266ff480bc1 (p5, c0, k60, u'client').
+1699642150: New connection from 172.22.0.7:33176 on port 1883.
+1699642150: New connection from 172.22.0.6:48252 on port 1883.
+1699642150: New connection from 172.22.0.5:43276 on port 1883.
+1699642151: New client connected from 172.22.0.7:33176 as 523f052a-89de-4589-94e9-944c8db5315b (p5, c0, k60, u'client').
+1699642151: New client connected from 172.22.0.6:48252 as 1277d617-b84f-4f72-920c-a9b9e61cdab5 (p5, c0, k60, u'client').
+1699642151: New client connected from 172.22.0.5:43276 as 3eb95bb8-74ac-46da-a649-8d4acf309727 (p5, c0, k60, u'client').
+1699696802: Client 523f052a-89de-4589-94e9-944c8db5315b closed its connection.
+1699696802: Client 1277d617-b84f-4f72-920c-a9b9e61cdab5 closed its connection.
+1699696802: Client 3eb95bb8-74ac-46da-a649-8d4acf309727 closed its connection.
+1699696803: Client 253d7bed-95ca-4a61-b035-2266ff480bc1 closed its connection.
+1699696812: New connection from 172.22.0.8:56950 on port 1883.
+1699696813: New client connected from 172.22.0.8:56950 as b77339e7-f7db-4458-a819-bab5aa8b482c (p5, c0, k60, u'client').
+1699696816: New connection from 172.22.0.5:53554 on port 1883.
+1699696816: New connection from 172.22.0.7:41304 on port 1883.
+1699696816: New client connected from 172.22.0.5:53554 as cb1074fb-68b1-4a58-8305-a3072035f9b9 (p5, c0, k60, u'client').
+1699696816: New connection from 172.22.0.6:43958 on port 1883.
+1699696816: New client connected from 172.22.0.7:41304 as 3bffaf77-2ac1-480f-8aeb-43f2369a842a (p5, c0, k60, u'client').
+1699696817: New client connected from 172.22.0.6:43958 as 2bbd352f-67a0-4338-9745-ea16dae21043 (p5, c0, k60, u'client').
+1699696988: Client b77339e7-f7db-4458-a819-bab5aa8b482c closed its connection.
+1699696989: Client 2bbd352f-67a0-4338-9745-ea16dae21043 closed its connection.
+1699696989: Client cb1074fb-68b1-4a58-8305-a3072035f9b9 closed its connection.
+1699696989: Client 3bffaf77-2ac1-480f-8aeb-43f2369a842a closed its connection.
+1699696990: mosquitto version 2.0.18 terminating
+1699696990: Saving in-memory database to mosquitto/data//mosquitto.db.
