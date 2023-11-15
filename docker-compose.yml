@@ -43,7 +43,7 @@ services:
   spring-boot-app-1:
     image: ftn/smart-home:latest
     ports:
-      - "1111:8080"
+      - "1111:1111"
     depends_on:
       - mosquitto
       - postgres
@@ -54,11 +54,12 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/postgres
       MQTT_HOST: mosquitto
       INFLUXDB_HOST: influxdb
+      SERVER_PORT: 1111
 
   spring-boot-app-2:
     image: ftn/smart-home:latest
     ports:
-      - "2222:8080"
+      - "2222:2222"
     depends_on:
       - mosquitto
       - postgres
@@ -69,11 +70,12 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/postgres
       MQTT_HOST: mosquitto
       INFLUXDB_HOST: influxdb
+      SERVER_PORT: 2222
 
   spring-boot-app-3:
     image: ftn/smart-home:latest
     ports:
-      - "3333:8080"
+      - "3333:3333"
     depends_on:
       - mosquitto
       - postgres
@@ -84,11 +86,12 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/postgres
       MQTT_HOST: mosquitto
       INFLUXDB_HOST: influxdb
+      SERVER_PORT: 3333
       
   spring-boot-simulator:
     image: ftn/smart-home-simulator:latest
     ports:
-      - "9999:8080"
+      - "9999:9999"
     depends_on:
       - mosquitto
       - postgres

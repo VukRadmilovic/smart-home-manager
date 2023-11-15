@@ -1,15 +1,15 @@
-package com.ftn.uns.ac.rs.smarthomesimulator.config;
+package com.ftn.uns.ac.rs.smarthome.config;
 
 import lombok.Getter;
 import org.eclipse.paho.mqttv5.client.*;
 import org.eclipse.paho.mqttv5.client.persist.MemoryPersistence;
 import org.eclipse.paho.mqttv5.common.MqttException;
-import org.eclipse.paho.mqttv5.common.MqttMessage;
-import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
-import java.util.*;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.UUID;
 
 @Configuration
 public class MqttConfiguration {
@@ -18,7 +18,6 @@ public class MqttConfiguration {
     private final String uniqueClientIdentifier;
     @Getter
     private final MqttClient client;
-    @Getter
     private final MqttMessageCallback mqttMessageCallback;
 
     public MqttConfiguration(Environment environment, MqttMessageCallback mqttMessageCallback) throws Exception {
@@ -30,10 +29,9 @@ public class MqttConfiguration {
         this.client = this.mqttClient();
     }
 
-
     private MqttClient mqttClient() throws MqttException {
         MqttClient client = new MqttClient(this.broker, this.uniqueClientIdentifier, new MemoryPersistence());
-        client.setCallback(new MessageCallback());
+        client.setCallback(mqttMessageCallback);
         MqttConnectionOptions options = new MqttConnectionOptions();
         options.setCleanStart(false);
         options.setAutomaticReconnect(true);
@@ -43,35 +41,4 @@ public class MqttConfiguration {
         return client;
     }
 
-    public static class MessageCallback implements MqttCallback {
-        @Override
-        public void disconnected(MqttDisconnectResponse mqttDisconnectResponse) {
-            System.out.println("Disconnected");
-        }
-
-        @Override
-        public void mqttErrorOccurred(MqttException e) {
-            System.out.println("MQTT error occurred.");
-        }
-
-        @Override public void messageArrived(String topic, MqttMessage mqttMessage) {
-            String message = new String(mqttMessage.getPayload());
-            System.out.println("Message arrived: " + message);
-        }
-
-        @Override
-        public void deliveryComplete(IMqttToken iMqttToken) {
-            System.out.println("Delivery complete, message ID: " + iMqttToken.getMessageId());
-        }
-
-        @Override
-        public void connectComplete(boolean b, String s) {
-            System.out.println("Connect complete, status:" + b + " " + s);
-        }
-
-        @Override
-        public void authPacketArrived(int i, MqttProperties mqttProperties) {
-            System.out.println("Auth packet arrived , status:" +  i + " " + mqttProperties.getAuthenticationMethod());
-        }
-    }
 }

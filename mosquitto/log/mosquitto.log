@@ -1460,3 +1460,60 @@ To fix this, use `chmod 0700 mosquitto/config/pwfile.txt`.
 1699696989: Client 3bffaf77-2ac1-480f-8aeb-43f2369a842a closed its connection.
 1699696990: mosquitto version 2.0.18 terminating
 1699696990: Saving in-memory database to mosquitto/data//mosquitto.db.
+1699980768: mosquitto version 2.0.18 starting
+1699980768: Config loaded from /mosquitto/config/mosquitto.conf.
+1699980768: Opening ipv4 listen socket on port 1883.
+1699980768: Opening ipv6 listen socket on port 1883.
+1699980768: mosquitto version 2.0.18 running
+1699980777: New connection from 172.22.0.8:43912 on port 1883.
+1699980777: New client connected from 172.22.0.8:43912 as 850e47d7-89e5-4a05-957e-88ce43024a6a (p5, c0, k60, u'client').
+1699980780: New connection from 172.22.0.6:45796 on port 1883.
+1699980780: New connection from 172.22.0.5:35042 on port 1883.
+1699980781: New connection from 172.22.0.7:36548 on port 1883.
+1699980781: New client connected from 172.22.0.6:45796 as 07c6e4c5-0832-409a-80a1-70734fc85a7d (p5, c0, k60, u'client').
+1699980781: New client connected from 172.22.0.5:35042 as 2ce174a7-8ddb-4d87-90c2-119645d3be08 (p5, c0, k60, u'client').
+1699980781: New client connected from 172.22.0.7:36548 as 06e04507-b3d0-45b2-ae0b-c1723161775d (p5, c0, k60, u'client').
+1699980974: Client 850e47d7-89e5-4a05-957e-88ce43024a6a closed its connection.
+1699980974: Client 07c6e4c5-0832-409a-80a1-70734fc85a7d closed its connection.
+1699980975: Client 06e04507-b3d0-45b2-ae0b-c1723161775d closed its connection.
+1699980975: Client 2ce174a7-8ddb-4d87-90c2-119645d3be08 closed its connection.
+1699980976: mosquitto version 2.0.18 terminating
+1699980976: Saving in-memory database to mosquitto/data//mosquitto.db.
+1699981034: mosquitto version 2.0.18 starting
+1699981034: Config loaded from /mosquitto/config/mosquitto.conf.
+1699981034: Opening ipv4 listen socket on port 1883.
+1699981034: Opening ipv6 listen socket on port 1883.
+1699981034: mosquitto version 2.0.18 running
+1699981041: New connection from 172.22.0.8:57032 on port 1883.
+1699981041: New client connected from 172.22.0.8:57032 as c93f7fa1-8dea-4225-95eb-23246a3823c6 (p5, c0, k60, u'client').
+1699981044: New connection from 172.22.0.5:40898 on port 1883.
+1699981044: New connection from 172.22.0.6:54530 on port 1883.
+1699981044: New client connected from 172.22.0.5:40898 as 2eb017ab-ebcf-4925-a85c-6c387e58ef8f (p5, c0, k60, u'client').
+1699981044: New connection from 172.22.0.7:42976 on port 1883.
+1699981044: New client connected from 172.22.0.6:54530 as b44ac642-d4d9-4022-8ff2-85c995fb5eec (p5, c0, k60, u'client').
+1699981044: New client connected from 172.22.0.7:42976 as cc409029-40ee-4f2f-a020-0a9aef46c875 (p5, c0, k60, u'client').
+1699981166: Client c93f7fa1-8dea-4225-95eb-23246a3823c6 closed its connection.
+1699981167: Client b44ac642-d4d9-4022-8ff2-85c995fb5eec closed its connection.
+1699981167: Client cc409029-40ee-4f2f-a020-0a9aef46c875 closed its connection.
+1699981167: Client 2eb017ab-ebcf-4925-a85c-6c387e58ef8f closed its connection.
+1699981168: mosquitto version 2.0.18 terminating
+1699981168: Saving in-memory database to mosquitto/data//mosquitto.db.
+1699981175: mosquitto version 2.0.18 starting
+1699981175: Config loaded from /mosquitto/config/mosquitto.conf.
+1699981175: Opening ipv4 listen socket on port 1883.
+1699981175: Opening ipv6 listen socket on port 1883.
+1699981175: mosquitto version 2.0.18 running
+1699981181: New connection from 172.22.0.8:47636 on port 1883.
+1699981182: New client connected from 172.22.0.8:47636 as f7a02531-54d4-4fc8-9537-19039629041e (p5, c0, k60, u'client').
+1699981184: New connection from 172.22.0.6:42490 on port 1883.
+1699981184: New connection from 172.22.0.7:38038 on port 1883.
+1699981185: New connection from 172.22.0.5:38020 on port 1883.
+1699981185: New client connected from 172.22.0.6:42490 as 9d22ffe5-a66e-4d91-86c0-a4f6fd9dbca9 (p5, c0, k60, u'client').
+1699981185: New client connected from 172.22.0.7:38038 as 2ce21bc0-efcc-4399-94c1-aaaba7b24de9 (p5, c0, k60, u'client').
+1699981185: New client connected from 172.22.0.5:38020 as fb15bae7-a6f0-4dd5-bd2b-3ce9fcb3a184 (p5, c0, k60, u'client').
+1699981255: Client f7a02531-54d4-4fc8-9537-19039629041e closed its connection.
+1699981256: Client fb15bae7-a6f0-4dd5-bd2b-3ce9fcb3a184 closed its connection.
+1699981256: Client 9d22ffe5-a66e-4d91-86c0-a4f6fd9dbca9 closed its connection.
+1699981256: Client 2ce21bc0-efcc-4399-94c1-aaaba7b24de9 closed its connection.
+1699981257: mosquitto version 2.0.18 terminating
+1699981257: Saving in-memory database to mosquitto/data//mosquitto.db.
