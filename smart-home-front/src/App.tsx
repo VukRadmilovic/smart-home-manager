@@ -1,35 +1,113 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import {UserService} from "./services/UserService";
+import {createTheme, ThemeProvider} from "@mui/material";
+import {BrowserRouter, Route, Routes} from "react-router-dom";
+import {Login} from "./components/Login/Login";
 
 function App() {
-  const [count, setCount] = useState(0)
+    const userServiceSingleton = new UserService();
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    const newColorScheme = createTheme({
+        palette: {
+            primary: {
+                main: '#00ADB5'
+            },
+            secondary: {
+                main: '#FF5722'
+            }
+        },
+        components: {
+            MuiButton: {
+                styleOverrides: {
+                    root: {
+                        color:'white',
+                        fontWeight:'400',
+                        borderRadius:'0.6em'
+                    }
+                }
+            },
+            MuiFab: {
+                styleOverrides: {
+                    root: {
+                        color:'white'
+                    }
+                }
+            },
+            MuiInputBase: {
+                styleOverrides: {
+                    root: {
+                        borderRadius:'1em !important'
+                    }
+                }
+            },
+            MuiImageListItem: {
+                styleOverrides: {
+                    root: {
+                        fontWeight:'300'
+                    }
+                }
+            },
+            MuiStepIcon: {
+                styleOverrides: {
+                    text: {
+                        fill:'white'
+                    }
+                }
+            },
+            MuiStepLabel: {
+                styleOverrides: {
+                    root: {
+                        fontWeight:'300',
+                    },
+
+                }
+            },
+            MuiDialog: {
+                styleOverrides: {
+                    paper: {
+                        borderRadius:'1em'
+                    }
+                }
+            },
+            MuiDialogActions: {
+                styleOverrides: {
+                    root: {
+                        paddingRight:'1.5em',
+                        paddingBottom:'1em'
+                    }
+                }
+            },
+
+            MuiDrawer: {
+                styleOverrides: {
+                    root: {
+                        "& .Mui-selected": {
+                            backgroundColor: 'rgba(0,173, 181,0.2)',
+                            width:'95%',
+                            borderTopRightRadius:'1.5em',
+                            borderBottomRightRadius:'1.5em',
+                        },
+                        "& .Mui-selected:hover": {
+                            backgroundColor: 'rgba(0,173, 181,0.4)'
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    return (
+        <>
+            <ThemeProvider theme={newColorScheme}>
+                <BrowserRouter>
+                    <Routes>
+                        <Route path="/" element={<Login userService={userServiceSingleton}/>}/>
+                    </Routes>
+                </BrowserRouter>
+            </ThemeProvider>
+        </>
+    )
+
 }
 
 export default App
