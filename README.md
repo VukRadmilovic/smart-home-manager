@@ -36,3 +36,4 @@ Redosled kojim treba komponente startovati je:
 5. Docker-izovane verzije glavnog backend-a
 6. nginx
 
+Potrebno je i instalirati i pokrenuti i MinIO (https://min.io/docs/minio/windows/index.html za windows). Posle instalacije, pokrece se minio server i loguje se na konzolu preko browsera kao u uputstvu. Zatim se kreira bucket po nazivu images.
