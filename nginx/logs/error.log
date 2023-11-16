@@ -17,3 +17,5 @@
 2023/11/05 20:51:41 [notice] 29644#25768: signal process started
 2023/11/05 20:52:32 [notice] 18664#28560: signal process started
 2023/11/16 18:08:24 [error] 20560#1616: *1 client intended to send too large body: 25912963 bytes, client: 127.0.0.1, server: localhost, request: "POST /api/user/register HTTP/1.1", host: "localhost:80"
+2023/11/16 19:01:12 [error] 28060#19816: *32 client intended to send too large body: 25912975 bytes, client: 127.0.0.1, server: localhost, request: "POST /api/user/register HTTP/1.1", host: "localhost:80"
+2023/11/16 19:07:43 [error] 30188#22512: *1 client intended to send too large body: 25912975 bytes, client: 127.0.0.1, server: localhost, request: "POST /api/user/register HTTP/1.1", host: "localhost:80"
