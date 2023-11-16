@@ -4,6 +4,7 @@ import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -18,9 +19,9 @@ import java.util.List;
 
 @RestControllerAdvice
 public class ValidationErrorsHandler {
-    @ExceptionHandler({MethodArgumentNotValidException.class})
+    @ExceptionHandler({BindException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    protected ResponseEntity<String> handleConstraintViolationException(MethodArgumentNotValidException e) {
+    protected ResponseEntity<String> handleViolationException(BindException e) {
         List<ObjectError> errorList = e.getBindingResult().getAllErrors();
         StringBuilder sb = new StringBuilder();
 
@@ -32,8 +33,7 @@ public class ValidationErrorsHandler {
         }
         return new ResponseEntity<>(sb.toString(), HttpStatus.BAD_REQUEST);
     }
-
-
+    
     @ExceptionHandler({MissingServletRequestPartException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     protected ResponseEntity<String> handleMissingServletRequestPartException(MissingServletRequestPartException e) {

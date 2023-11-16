@@ -16,7 +16,6 @@ types {
     text/x-component                                 htc;
 
     image/avif                                       avif;
-    image/png                                        png;
     image/svg+xml                                    svg svgz;
     image/tiff                                       tif tiff;
     image/vnd.wap.wbmp                               wbmp;
