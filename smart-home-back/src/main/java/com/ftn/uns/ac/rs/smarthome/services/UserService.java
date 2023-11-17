@@ -2,7 +2,9 @@ package com.ftn.uns.ac.rs.smarthome.services;
 
 import com.ftn.uns.ac.rs.smarthome.models.Role;
 import com.ftn.uns.ac.rs.smarthome.models.User;
+import com.ftn.uns.ac.rs.smarthome.models.dtos.LoginDTO;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.TokenDTO;
+import com.ftn.uns.ac.rs.smarthome.models.dtos.UserInfoDTO;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.UserInfoRegister;
 import com.ftn.uns.ac.rs.smarthome.repositories.UserRepository;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IUserService;
@@ -14,9 +16,9 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.MessageSource;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -76,7 +78,7 @@ public class UserService implements IUserService {
             String randomPassword = passwordGenerator.generateSuperadminPassword();
             String hashedRandomPassword = passwordEncoder().encode(randomPassword);
             List<Role> role = List.of(roleService.getByName("ROLE_SUPERADMIN").get());
-            String profilePictureLocation = "127.0.0.1:9000/images/profilePictures/admin.jpg";
+            String profilePictureLocation = "http://127.0.0.1:9000/images/profilePictures/admin.jpg";
             User superadmin = new User(1,
                     "admin",
                     "smarthome.superadmin@no-reply.com",
@@ -99,19 +101,25 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public TokenDTO login(User userInfo) {
-        Role userRole = userInfo.getRoles().get(0);
-        if(userRole.getName().equals("ROLE_SUPERADMIN") && !userInfo.getIsConfirmed()) {
+    public TokenDTO login(LoginDTO userInfo) {
+        Optional<User> user = this.userRepository.findByUsername(userInfo.getUsername());
+        if(user.isEmpty())
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("user.notFound", null, Locale.getDefault()));
+        if(!BCrypt.checkpw(userInfo.getPassword(),user.get().getPassword()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("login.invalid", null, Locale.getDefault()));
+        Role userRole = user.get().getRoles().get(0);
+        if(userRole.getName().equals("ROLE_SUPERADMIN") && !user.get().getIsConfirmed()) {
             File pwFile = new File("src/main/resources/pwfile.txt");
             pwFile.delete();
-            userInfo.setIsConfirmed(true);
-            userRepository.save(userInfo);
+            user.get().setIsConfirmed(true);
+            userRepository.save(user.get());
         }
-        if(!userInfo.getIsConfirmed()) {
+        if(!user.get().getIsConfirmed()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("user.notActivated", null, Locale.getDefault()));
         }
         String token = tokenUtils.generateToken(userInfo.getUsername(), userRole);
-        return new TokenDTO(token);
+
+        return new TokenDTO(token,tokenUtils.getExpirationDateFromToken(token).getTime());
     }
 
     @Override
@@ -168,5 +176,17 @@ public class UserService implements IUserService {
         }
         user.get().setIsConfirmed(true);
         this.userRepository.save(user.get());
+    }
+
+    @Override
+    public UserInfoDTO getUserInfo(Integer userId) {
+        Optional<User> user = this.userRepository.findById(userId);
+        if(user.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("user.notFound", null, Locale.getDefault()));
+        }
+        return new UserInfoDTO(user.get().getUsername(),
+                user.get().getEmail(),
+                user.get().getProfilePicture(),
+                user.get().getRoles().get(0).getName());
     }
 }

@@ -3,6 +3,8 @@ import {UserService} from "./services/UserService";
 import {createTheme, ThemeProvider} from "@mui/material";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import {Login} from "./components/Login/Login";
+import {AdminMain} from "./components/AdminMain/AdminMain.tsx";
+import {UserMain} from "./components/UserMain/UserMain.tsx";
 
 function App() {
     const userServiceSingleton = new UserService();
@@ -102,6 +104,8 @@ function App() {
                 <BrowserRouter>
                     <Routes>
                         <Route path="/" element={<Login userService={userServiceSingleton}/>}/>
+                        <Route path="/adminMain" element={<AdminMain userService={userServiceSingleton}/>}/>
+                        <Route path="/userMain" element={<UserMain userService={userServiceSingleton}/>}/>
                     </Routes>
                 </BrowserRouter>
             </ThemeProvider>

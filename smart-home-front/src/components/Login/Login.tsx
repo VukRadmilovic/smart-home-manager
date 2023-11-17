@@ -6,6 +6,7 @@ import {Registration} from "../Registration/Registration";
 import {PopupMessage} from "../PopupMessage/PopupMessage";
 import {useForm} from "react-hook-form";
 import {UserService} from "../../services/UserService";
+import {RoleEnum} from "../../models/enums/RoleEnum.ts";
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -69,7 +70,13 @@ export function Login({userService} : LoginProps) {
             password: formData.password.trim()
         };
         userService.loginUser(userCredentials).then(() => {
-            navigate('/Gallery/');
+            const role = sessionStorage.getItem("role");
+            console.log(role)
+            console.log(typeof RoleEnum.ROLE_USER)
+            if(role == RoleEnum.ROLE_USER)
+                navigate('/userMain');
+            else
+                navigate("/adminMain");
         }).catch((error) => {
             setErrorMessage(error.response.data);
             setErrorPopupOpen(true);

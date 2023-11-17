@@ -5,6 +5,7 @@ import {NewUserMultipart} from "../../models/NewUserMultipart";
 import {PopupMessage} from "../PopupMessage/PopupMessage";
 import {useForm} from "react-hook-form";
 import {UserService} from "../../services/UserService";
+import {RoleEnum} from "../../models/enums/RoleEnum.ts";
 
 type RegistrationForm = {
     username: string,
@@ -63,14 +64,15 @@ export function Registration({userService} : RegistrationProps) {
             username: formData.username.trim(),
             email: formData.email.trim(),
             password: formData.password.trim(),
-            profilePicture: selectedImage
+            profilePicture: selectedImage,
+            role: RoleEnum.ROLE_USER
         };
-        userService.registerUser(newUser).then(() => {
-            setErrorMessage("User successfully registered!");
+        userService.registerUser(newUser).then((response) => {
+            setErrorMessage(response);
             setIsSuccess(true);
             setErrorPopupOpen(true);
-            window.location.reload();
         }).catch((error) => {
+            console.log(error.response.data)
             setErrorMessage(error.response.data);
             setIsSuccess(false);
             setErrorPopupOpen(true);

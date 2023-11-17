@@ -1,11 +1,11 @@
 package com.ftn.uns.ac.rs.smarthome.models.dtos;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class TokenDTO {
-    String accessToken;
-    public TokenDTO(String accessToken) {
-        this.accessToken = accessToken;
-    }
+    private String token;
+    private Long expiration;
 }

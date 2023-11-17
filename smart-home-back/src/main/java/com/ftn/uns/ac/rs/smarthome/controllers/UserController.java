@@ -3,9 +3,9 @@ package com.ftn.uns.ac.rs.smarthome.controllers;
 import com.ftn.uns.ac.rs.smarthome.models.User;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.LoginDTO;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.TokenDTO;
+import com.ftn.uns.ac.rs.smarthome.models.dtos.UserInfoDTO;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.UserInfoRegister;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IUserService;
-import com.ftn.uns.ac.rs.smarthome.utils.ImageCompressor;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,14 +20,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
-import javax.websocket.server.PathParam;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+
 import java.util.Locale;
 
-@CrossOrigin("https://localhost:4200")
+@CrossOrigin("http://localhost:5173/")
 @RestController
 @RequestMapping(value = "/api/user")
 @Validated
@@ -48,6 +44,7 @@ public class UserController {
     @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> register(@Valid @ModelAttribute UserInfoRegister userInfoRegister) {
         try{
+            System.out.println(userInfoRegister);
             this.userService.register(userInfoRegister);
             return new ResponseEntity<>(messageSource.getMessage("registration.success", null, Locale.getDefault()), HttpStatus.OK);
         }
@@ -66,17 +63,27 @@ public class UserController {
         catch(ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());
         }
+    }
 
+    @GetMapping(value = "/info")
+    public ResponseEntity<?> getUserInfo() {
+        System.out.println("tgtgtg");
+        try{
+            User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            System.out.println(user);
+            UserInfoDTO userInfo = this.userService.getUserInfo(user.getId());
+            return new ResponseEntity<>(userInfo, HttpStatus.OK);
+        }
+        catch(ResponseStatusException ex) {
+            return new ResponseEntity<>(ex.getReason(), ex.getStatus());
+        }
     }
 
     @PostMapping(value = "/login", consumes = "application/json")
     public ResponseEntity<?> login(@Valid @RequestBody LoginDTO authenticationRequest) {
         try {
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                    authenticationRequest.getUsername(), authenticationRequest.getPassword()));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            User user = (User) authentication.getPrincipal();
-            TokenDTO generatedToken = userService.login(user);
+            System.out.println(authenticationRequest);
+            TokenDTO generatedToken = userService.login(authenticationRequest);
             return new ResponseEntity<>(generatedToken, HttpStatus.OK);
         }
         catch(UsernameNotFoundException ex) {

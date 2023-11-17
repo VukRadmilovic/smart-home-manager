@@ -6,7 +6,7 @@ import {NewUserMultipart} from "../models/NewUserMultipart.ts";
 
 export class UserService {
 
-    private api_host = import.meta.env.VITE_API_HOST
+    private api_host = "http://localhost:80"
     public async loginUser(userCredentials: UserCredentials): Promise<void> {
         try {
             const response = await axios({
@@ -26,7 +26,7 @@ export class UserService {
 
 
     public getUserData() {
-        axios({
+        return axios({
             method: 'GET',
             url: `${this.api_host}/api/user/info`,
             headers: {
@@ -37,25 +37,33 @@ export class UserService {
             sessionStorage.setItem('username', userInfo.username);
             sessionStorage.setItem('email', userInfo.email);
             sessionStorage.setItem('profilePicture', userInfo.profilePicture);
+            sessionStorage.setItem('role',userInfo.role);
             return Promise.resolve();
         }).catch((err) => {
             throw err
         });
     }
 
-    public async registerUser(newUserMultipart: NewUserMultipart): Promise<void> {
-        try {
-            await axios({
-                method: 'POST',
-                url: `${this.api_host}/api/user/new`,
-                data: newUserMultipart,
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-        } catch (err) {
-            console.log(err)
-            throw err;
-        }
+    public registerUser(newUserMultipart: NewUserMultipart): Promise<string> {
+        return axios({
+            method: 'POST',
+            url: `${this.api_host}/api/user/register`,
+            data: newUserMultipart,
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            },
+        }).then((response) => response.data
+        ).catch((err) => {
+            throw err
+        });
+    }
+
+    public signOut(): void {
+        sessionStorage.removeItem('user');
+        sessionStorage.removeItem('username');
+        sessionStorage.removeItem('email');
+        sessionStorage.removeItem('profilePicture');
+        sessionStorage.removeItem("expiration");
+        sessionStorage.removeItem("role");
     }
 }

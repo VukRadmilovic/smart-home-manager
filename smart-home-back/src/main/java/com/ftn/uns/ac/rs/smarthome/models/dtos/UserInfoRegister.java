@@ -24,7 +24,7 @@ public class UserInfoRegister {
     private String email;
 
     @Length(max = 255, message = "{maxLength}")
-    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[#?!@$%^&*-])(?=\\S+$).{8,}$", message = "{passwordFormat}")
+    @Length(min = 8, message = "{minLength}")
     @NotBlank(message = "{required}")
     private String password;
 
