@@ -34,7 +34,8 @@ public class S3API {
         this.endpoint = URI.create("http://localhost:9000");
         this.getEndpoint = URI.create("http://localhost:9000");
         this.credentials = StaticCredentialsProvider.create(
-                AwsBasicCredentials.create("Qq5g7teFAXVg3nvi2JAu", "6QdmHQEA6rTsFMC3JOzV0CaukFe1XdgSmNrUTWl3"));
+                AwsBasicCredentials.create("K2b6efQVbzaleA4uGQDn",
+                        "fmSX6ynh6LvFE7xCn1UTSKnalOQycAMQwCObX67f"));
         this.serviceConfiguration = S3Configuration.builder().pathStyleAccessEnabled(true).build();
         this.s3ExecutionContext = Executors.newFixedThreadPool(10);
         this.s3AsyncClient = S3AsyncClient.builder()

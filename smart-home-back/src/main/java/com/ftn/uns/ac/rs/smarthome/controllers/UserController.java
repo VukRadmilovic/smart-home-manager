@@ -17,8 +17,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
+import javax.websocket.server.PathParam;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -44,12 +46,27 @@ public class UserController {
     }
 
     @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> register(@Valid @ModelAttribute UserInfoRegister userInfoRegister) throws IOException {
-        Path filepath = Paths.get("src/main/resources/temp", userInfoRegister.getProfilePicture().getOriginalFilename());
-        userInfoRegister.getProfilePicture().transferTo(filepath);
-        File file = new File(filepath.toString());
-        ImageCompressor.compressImage(file,0.1f);
-        return new ResponseEntity<>("OK", HttpStatus.OK);
+    public ResponseEntity<?> register(@Valid @ModelAttribute UserInfoRegister userInfoRegister) {
+        try{
+            this.userService.register(userInfoRegister);
+            return new ResponseEntity<>(messageSource.getMessage("registration.success", null, Locale.getDefault()), HttpStatus.OK);
+        }
+        catch(ResponseStatusException ex) {
+            return new ResponseEntity<>(ex.getReason(), ex.getStatus());
+        }
+
+    }
+
+    @GetMapping(value = "/activate/{userId}")
+    public ResponseEntity<?> activateAccount(@PathVariable Integer userId) {
+        try{
+            this.userService.activate(userId);
+            return new ResponseEntity<>(messageSource.getMessage("activation.success", null, Locale.getDefault()), HttpStatus.OK);
+        }
+        catch(ResponseStatusException ex) {
+            return new ResponseEntity<>(ex.getReason(), ex.getStatus());
+        }
+
     }
 
     @PostMapping(value = "/login", consumes = "application/json")
@@ -64,6 +81,9 @@ public class UserController {
         }
         catch(UsernameNotFoundException ex) {
             return new ResponseEntity<>(messageSource.getMessage("login.invalid", null, Locale.getDefault()), HttpStatus.NOT_FOUND);
+        }
+        catch(ResponseStatusException ex) {
+            return new ResponseEntity<>(ex.getReason(), ex.getStatus());
         }
     }
 }

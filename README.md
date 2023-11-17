@@ -1,7 +1,6 @@
 # Smart Home
 
 
-
 ## Pokretanje
 Potrebno je da instalirate Docker desktop, PostgreSQL bazu (poželjno sa PgAdmin-om), Mosquitto MQTT broker (https://mosquitto.org/download/), InfluxDB  i Javu 17. Podesite da vam je ta verzija Jave postavljena u JAVA_HOME environment varijablu (https://confluence.atlassian.com/doc/setting-the-java_home-variable-in-windows-8895.html). Isto tako, podesite da vam se projekat u IntelliJ-u pokreće sa tom verzijom (https://www.baeldung.com/intellij-change-java-version).
 

@@ -34,6 +34,8 @@ public class ValidationErrorsHandler {
         return new ResponseEntity<>(sb.toString(), HttpStatus.BAD_REQUEST);
     }
 
+
+
     @ExceptionHandler({MissingServletRequestPartException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     protected ResponseEntity<String> handleMissingServletRequestPartException(MissingServletRequestPartException e) {

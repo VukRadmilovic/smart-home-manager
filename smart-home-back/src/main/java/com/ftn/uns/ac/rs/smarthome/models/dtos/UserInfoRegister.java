@@ -28,5 +28,9 @@ public class UserInfoRegister {
     @NotBlank(message = "{required}")
     private String password;
 
+    @Length(max = 255, message = "{maxLength}")
+    @NotBlank(message = "{required}")
+    private String role;
+
     private MultipartFile profilePicture;
 }

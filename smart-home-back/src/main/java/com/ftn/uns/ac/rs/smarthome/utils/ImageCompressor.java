@@ -13,11 +13,12 @@ import org.apache.commons.io.FilenameUtils;
 
 
 public class ImageCompressor {
-    public static File compressImage(File image, float qualityOfOutputImage) {
+    public static File compressImage(File image, float qualityOfOutputImage, String username) {
         String tempFilePath = "src/main/resources/temp/";
         String imageFile = image.getName();
+        String extension = FilenameUtils.getExtension(imageFile);
+        String finalNamePath = tempFilePath + username + "." + extension;
         try {
-            String extension = FilenameUtils.getExtension(imageFile);
             BufferedImage originalImage = ImageIO.read(image);
 
             ImageWriteParam imageWriteParam = ImageIO.getImageWritersByFormatName(extension).next().getDefaultWriteParam();
@@ -27,17 +28,17 @@ public class ImageCompressor {
 
             Iterator<ImageWriter> imageWriters = ImageIO.getImageWritersByFormatName(extension);
             ImageWriter imageWriter = imageWriters.next();
-            File source = new File(tempFilePath + "cmp_" + imageFile);
+            File source = new File(finalNamePath);
 
             imageWriter.setOutput(ImageIO.createImageOutputStream(source));
             imageWriter.write(null, new IIOImage(originalImage, null, null), imageWriteParam);
             imageWriter.dispose();
             image.delete();
-            return new File(tempFilePath + image.getName());
+            return new File(finalNamePath);
 
         } catch (IOException e) {
             try{
-                File file = new File(tempFilePath + image.getName());
+                File file = new File(finalNamePath);
                 Files.deleteIfExists(file.toPath());
                 System.out.println(e.getMessage());
                 return  null;
