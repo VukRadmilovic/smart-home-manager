@@ -61,6 +61,7 @@ public class WebSecurityConfig {
         http.exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint);
     	http.authorizeRequests()
 				.antMatchers(HttpMethod.POST, "/api/user/register").permitAll()
+				.antMatchers(HttpMethod.POST, "/api/user/login").permitAll()
 				.anyRequest().authenticated().and()
 				.cors().and()
 				.addFilterBefore(new TokenAuthenticationFilter(tokenUtils,  userService), BasicAuthenticationFilter.class);
