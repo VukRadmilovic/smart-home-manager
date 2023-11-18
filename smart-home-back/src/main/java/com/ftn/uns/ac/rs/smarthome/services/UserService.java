@@ -161,6 +161,7 @@ public class UserService implements IUserService {
             if(!sentEmail) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("activation.notSent", null, Locale.getDefault()));
             }
+            compressed.delete();
         }
         catch(IOException ex) {
             System.out.println(ex.getMessage());
