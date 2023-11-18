@@ -58,7 +58,7 @@ public class UserController {
     public ResponseEntity<?> activateAccount(@PathVariable Integer userId) {
         try{
             this.userService.activate(userId);
-            return new ResponseEntity<>(messageSource.getMessage("activation.success", null, Locale.getDefault()), HttpStatus.OK);
+            return new ResponseEntity<>(messageSource.getMessage("activation.success", null, Locale.getDefault()), HttpStatus.USE_PROXY);
         }
         catch(ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());
@@ -70,7 +70,6 @@ public class UserController {
         System.out.println("tgtgtg");
         try{
             User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            System.out.println(user);
             UserInfoDTO userInfo = this.userService.getUserInfo(user.getId());
             return new ResponseEntity<>(userInfo, HttpStatus.OK);
         }

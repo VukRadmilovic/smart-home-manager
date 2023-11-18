@@ -19,3 +19,17 @@
 2023/11/16 18:08:24 [error] 20560#1616: *1 client intended to send too large body: 25912963 bytes, client: 127.0.0.1, server: localhost, request: "POST /api/user/register HTTP/1.1", host: "localhost:80"
 2023/11/16 19:01:12 [error] 28060#19816: *32 client intended to send too large body: 25912975 bytes, client: 127.0.0.1, server: localhost, request: "POST /api/user/register HTTP/1.1", host: "localhost:80"
 2023/11/16 19:07:43 [error] 30188#22512: *1 client intended to send too large body: 25912975 bytes, client: 127.0.0.1, server: localhost, request: "POST /api/user/register HTTP/1.1", host: "localhost:80"
+2023/11/18 16:33:03 [emerg] 22264#40712: invalid value "=" in C:\Users\Dracooya\Desktop\Fax\7. semestar\Napredno Web Programiranje\smart-home\nginx/conf/nginx.conf:45
+2023/11/18 16:33:03 [alert] 10952#14368: worker process 22264 exited with code 1
+2023/11/18 16:33:03 [alert] 10952#14368: could not respawn worker
+2023/11/18 16:33:35 [emerg] 7200#25724: invalid value "=" in C:\Users\Dracooya\Desktop\Fax\7. semestar\Napredno Web Programiranje\smart-home\nginx/conf/nginx.conf:45
+2023/11/18 16:36:44 [emerg] 37208#3748: invalid value "=" in C:\Users\Dracooya\Desktop\Fax\7. semestar\Napredno Web Programiranje\smart-home\nginx/conf/nginx.conf:45
+2023/11/18 16:37:31 [emerg] 40944#39192: invalid value "=" in C:\Users\Dracooya\Desktop\Fax\7. semestar\Napredno Web Programiranje\smart-home\nginx/conf/nginx.conf:45
+2023/11/18 16:38:12 [emerg] 40152#27572: invalid value "=" in C:\Users\Dracooya\Desktop\Fax\7. semestar\Napredno Web Programiranje\smart-home\nginx/conf/nginx.conf:45
+2023/11/18 16:39:25 [emerg] 26560#2676: invalid value "=" in C:\Users\Dracooya\Desktop\Fax\7. semestar\Napredno Web Programiranje\smart-home\nginx/conf/nginx.conf:45
+2023/11/18 16:39:58 [emerg] 14640#27512: invalid value "=" in C:\Users\Dracooya\Desktop\Fax\7. semestar\Napredno Web Programiranje\smart-home\nginx/conf/nginx.conf:45
+2023/11/18 16:40:53 [emerg] 23132#8292: invalid value "=" in C:\Users\Dracooya\Desktop\Fax\7. semestar\Napredno Web Programiranje\smart-home\nginx/conf/nginx.conf:45
+2023/11/18 16:42:26 [emerg] 40636#31484: unexpected "}" in C:\Users\Dracooya\Desktop\Fax\7. semestar\Napredno Web Programiranje\smart-home\nginx/conf/nginx.conf:63
+2023/11/18 16:44:23 [emerg] 15356#25720: directive "error_page" is not terminated by ";" in C:\Users\Dracooya\Desktop\Fax\7. semestar\Napredno Web Programiranje\smart-home\nginx/conf/nginx.conf:57
+2023/11/18 16:45:26 [emerg] 25524#38024: directive "error_page" is not terminated by ";" in C:\Users\Dracooya\Desktop\Fax\7. semestar\Napredno Web Programiranje\smart-home\nginx/conf/nginx.conf:57
+2023/11/18 16:49:10 [error] 3536#37048: *5 CreateFile() "C:\Users\Dracooya\Desktop\Fax\7. semestar\Napredno Web Programiranje\smart-home\nginx/html200" failed (2: The system cannot find the file specified), client: 127.0.0.1, server: localhost, request: "GET /api/user/activate/1 HTTP/1.1", upstream: "http://127.0.0.1:8080/api/user/activate/1", host: "127.0.0.1"
