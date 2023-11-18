@@ -22,7 +22,7 @@ public class Role implements GrantedAuthority {
     Integer id;
 
     @Getter
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     String name;
 
     @JsonIgnore
