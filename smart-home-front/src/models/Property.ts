@@ -5,4 +5,5 @@ export interface Property {
     floors: string,
     status: string,
     picture: string,
+    owner: string
 }

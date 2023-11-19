@@ -2,9 +2,11 @@ package com.ftn.uns.ac.rs.smarthome.models;
 
 import com.ftn.uns.ac.rs.smarthome.models.devices.Device;
 import lombok.*;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -21,9 +23,35 @@ public class Property {
     private Integer id;
 
     @Column(nullable = false)
-    @NotBlank(message = "Name cannot be empty")
+    private String address;
+
+    @Column(nullable = false)
+    private String size;
+    @Column(nullable = false)
+    private String floors;
+    private PropertyStatus status;
+
+    @Column(nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "property", fetch = FetchType.EAGER)
+    @Column(nullable = false)
+    private String picture;
+
+    @ManyToOne
+    private User owner;
+
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(mappedBy = "property")
     private List<Device> devices;
+
+    public Property(String address, String size, String picture, User owner, String floors){
+        this.address = address;
+        this.size = size;
+        this.status = PropertyStatus.UNAPPROVED;
+        this.picture = picture;
+        this.owner = owner;
+        this.floors = floors;
+        this.devices = new ArrayList<>();
+        this.name = "idk";
+    }
 }
