@@ -1,7 +1,8 @@
 package com.ftn.uns.ac.rs.smarthomesimulator;
 
 import com.ftn.uns.ac.rs.smarthomesimulator.models.TemperatureUnit;
-import org.springframework.stereotype.Service;
+import com.ftn.uns.ac.rs.smarthomesimulator.services.MqttService;
+import org.eclipse.paho.mqttv5.common.MqttException;
 
 import java.time.LocalDateTime;
 import java.util.concurrent.ThreadLocalRandom;
@@ -9,9 +10,14 @@ import java.util.concurrent.ThreadLocalRandom;
 public class ThermometerThread implements Runnable {
 
     private final TemperatureUnit unit;
+    private final MqttService mqttService;
+    private final Integer deviceId;
 
-    public ThermometerThread(TemperatureUnit unit) {
+    public ThermometerThread(TemperatureUnit unit,
+                             MqttService mqttService, Integer deviceId) {
         this.unit = unit;
+        this.mqttService = mqttService;
+        this.deviceId = deviceId;
     }
 
     @Override
@@ -61,16 +67,12 @@ public class ThermometerThread implements Runnable {
                     correctedTemp = currentTypicalDayNightTemps[0][1] - 5;
                 else
                     correctedTemp = currentTypicalDayNightTemps[0][0];
+
                 int temp = ThreadLocalRandom.current().nextInt(correctedTemp, correctedTemp + 5);
                 int humidity = ThreadLocalRandom.current().nextInt(currentTypicalDayNightHumidity[0] - 3,
                         currentTypicalDayNightHumidity[0] + 4);
-                if (unit == TemperatureUnit.FAHRENHEIT) {
-                    temp = (int) (temp * 1.8 + 32);
-                    System.out.println("Current temperature:" + temp + "°F");
-                } else {
-                    System.out.println("Current temperature:" + temp + "°C");
-                }
-                System.out.println("Current humidity:" + humidity + "%");
+
+                sendAndDisplayMeasurements(temp, humidity);
             } else {
                 if (now.getHour() > (
                         (currentDayStartEnd[1] + ((currentDayStartEnd[1] - currentDayStartEnd[0]) / 2)) % 24))
@@ -82,15 +84,28 @@ public class ThermometerThread implements Runnable {
                 int humidity = ThreadLocalRandom.current().nextInt(currentTypicalDayNightHumidity[1] - 3,
                         currentTypicalDayNightHumidity[1] + 4);
 
-                if (unit == TemperatureUnit.FAHRENHEIT) {
-                    temp = (int) (temp * 1.8 + 32);
-                    System.out.println("Current temperature:" + temp + "°F");
-                } else {
-                    System.out.println("Current temperature:" + temp + "°C");
-                }
-                System.out.println("Current humidity:" + humidity + "%");
+                sendAndDisplayMeasurements(temp, humidity);
             }
             Thread.sleep(2000);
+        }
+    }
+
+    private void sendAndDisplayMeasurements(int temp, int humidity) {
+        String msgHumidity = "humidity," + humidity + "%," + deviceId;
+        String msgTemp = "temperature," + temp + "C," + deviceId;
+
+        if (unit == TemperatureUnit.FAHRENHEIT) {
+            temp = (int) (temp * 1.8 + 32);
+            msgTemp = "temperature," + temp + "F," + deviceId;
+        }
+
+        System.out.println(msgTemp + "\n" + msgHumidity);
+
+        try {
+            this.mqttService.publishMeasurementMessageLite(msgTemp);
+            this.mqttService.publishMeasurementMessageLite(msgHumidity);
+        } catch (MqttException e) {
+            System.out.println("Error publishing message");
         }
     }
 
