@@ -22,12 +22,13 @@ public class MqttService {
     private int pubTopicIndex;
     private final MqttConfiguration mqttConfiguration;
 
-    public MqttService(MqttConfiguration mqttConfiguration) {
+    public MqttService(MqttConfiguration mqttConfiguration) throws MqttException {
         this.pubStatusesTopics = new ArrayList<>();
         this.pubMeasurementsTopics = new ArrayList<>();
         this.subTopics = new ArrayList<>();
         this.pubTopicIndex = 0;
         this.mqttConfiguration = mqttConfiguration;
+        this.mqttConfiguration.getClient().subscribe("commands", 2);
     }
 
     public void publishMeasurementMessageLite(String message) throws MqttException {
