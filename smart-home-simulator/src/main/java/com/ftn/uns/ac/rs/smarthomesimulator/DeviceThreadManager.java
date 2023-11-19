@@ -13,7 +13,8 @@ public class DeviceThreadManager {
 
     public void addDeviceThread(Device device) {
         if (device.getClass().equals(Thermometer.class)) {
-            addDeviceThread(device.getId(), new ThermometerThread().getNewSimulatorThread());
+            addDeviceThread(device.getId(),
+                    new ThermometerThread(((Thermometer) device).getTemperatureUnit()).getNewSimulatorThread());
         }
     }
 

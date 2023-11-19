@@ -1,11 +1,18 @@
 package com.ftn.uns.ac.rs.smarthomesimulator;
 
+import com.ftn.uns.ac.rs.smarthomesimulator.models.TemperatureUnit;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class ThermometerThread implements Runnable {
+
+    private final TemperatureUnit unit;
+
+    public ThermometerThread(TemperatureUnit unit) {
+        this.unit = unit;
+    }
 
     @Override
     public void run() {
@@ -24,13 +31,13 @@ public class ThermometerThread implements Runnable {
                 "SUM", "SUM", "FAL", "FAL", "FAL", "WIN"
         };
         //WIN,SPR,SUM,FAL
-        int[][] dayStartEnd = new int[][] {{8,17}, {7,19}, {6,20}, {7,17}};
+        int[][] dayStartEnd = new int[][]{{8, 17}, {7, 19}, {6, 20}, {7, 17}};
 
         //WIN,SPR,SUM,FAL {day,night}
-        int[][][] typicalDayNightTemps = new int[][][] {{{0,10},{-5,5}}, {{15,25},{5,15}},
-                                                        {{25,35},{15,25}}, {{15,25},{5,15}}};
+        int[][][] typicalDayNightTemps = new int[][][]{{{0, 10}, {-5, 5}}, {{15, 25}, {5, 15}},
+                {{25, 35}, {15, 25}}, {{15, 25}, {5, 15}}};
 
-        int[][] typicalDayNightHumidity = new int[][] {{40,50},{35,40},{30,35},{35,50}};
+        int[][] typicalDayNightHumidity = new int[][]{{40, 50}, {35, 40}, {30, 35}, {35, 50}};
         while (true) {
             int[] currentDayStartEnd;
             int[][] currentTypicalDayNightTemps;
@@ -48,32 +55,40 @@ public class ThermometerThread implements Runnable {
             currentTypicalDayNightTemps = typicalDayNightTemps[correctIndex];
             currentTypicalDayNightHumidity = typicalDayNightHumidity[correctIndex];
             int correctedTemp;
-            if(now.getHour() >= currentDayStartEnd[0] && now.getHour() < currentDayStartEnd[1]) {
-                if(now.getHour() > (currentDayStartEnd[1] -
+            if (now.getHour() >= currentDayStartEnd[0] && now.getHour() < currentDayStartEnd[1]) {
+                if (now.getHour() > (currentDayStartEnd[1] -
                         ((currentDayStartEnd[1] - currentDayStartEnd[0]) / 2)))
                     correctedTemp = currentTypicalDayNightTemps[0][1] - 5;
                 else
                     correctedTemp = currentTypicalDayNightTemps[0][0];
-                System.out.println("Current temperature:" +
-                        ThreadLocalRandom.current().nextInt(correctedTemp,
-                                                      correctedTemp + 5) + "°C");
-                System.out.println("Current humidity:" +
-                        ThreadLocalRandom.current().nextInt(currentTypicalDayNightHumidity[0] - 3,
-                                currentTypicalDayNightHumidity[0] + 4) + "%");
-            }
-            else {
-                if(now.getHour() > (
+                int temp = ThreadLocalRandom.current().nextInt(correctedTemp, correctedTemp + 5);
+                int humidity = ThreadLocalRandom.current().nextInt(currentTypicalDayNightHumidity[0] - 3,
+                        currentTypicalDayNightHumidity[0] + 4);
+                if (unit == TemperatureUnit.FAHRENHEIT) {
+                    temp = (int) (temp * 1.8 + 32);
+                    System.out.println("Current temperature:" + temp + "°F");
+                } else {
+                    System.out.println("Current temperature:" + temp + "°C");
+                }
+                System.out.println("Current humidity:" + humidity + "%");
+            } else {
+                if (now.getHour() > (
                         (currentDayStartEnd[1] + ((currentDayStartEnd[1] - currentDayStartEnd[0]) / 2)) % 24))
                     correctedTemp = currentTypicalDayNightTemps[1][1] - 5;
                 else
                     correctedTemp = currentTypicalDayNightTemps[1][0];
 
-                System.out.println("Current temperature:" +
-                        ThreadLocalRandom.current().nextInt(correctedTemp,
-                                correctedTemp + 5) + "°C");
-                System.out.println("Current humidity:" +
-                        ThreadLocalRandom.current().nextInt(currentTypicalDayNightHumidity[1] - 3,
-                                currentTypicalDayNightHumidity[1] + 4 ) + "%");
+                int temp = ThreadLocalRandom.current().nextInt(correctedTemp, correctedTemp + 5);
+                int humidity = ThreadLocalRandom.current().nextInt(currentTypicalDayNightHumidity[1] - 3,
+                        currentTypicalDayNightHumidity[1] + 4);
+
+                if (unit == TemperatureUnit.FAHRENHEIT) {
+                    temp = (int) (temp * 1.8 + 32);
+                    System.out.println("Current temperature:" + temp + "°F");
+                } else {
+                    System.out.println("Current temperature:" + temp + "°C");
+                }
+                System.out.println("Current humidity:" + humidity + "%");
             }
             Thread.sleep(2000);
         }
