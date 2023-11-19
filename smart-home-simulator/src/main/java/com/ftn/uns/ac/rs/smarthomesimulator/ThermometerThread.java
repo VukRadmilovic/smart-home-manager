@@ -1,12 +1,21 @@
-package com.ftn.uns.ac.rs.smarthomesimulator.services;
+package com.ftn.uns.ac.rs.smarthomesimulator;
 
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.concurrent.ThreadLocalRandom;
 
-@Service
-public class ThermometerService {
+public class ThermometerThread implements Runnable {
+
+    @Override
+    public void run() {
+        try {
+            generateValues();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            System.err.println("Simulator thread interrupted");
+        }
+    }
 
     public void generateValues() throws InterruptedException {
 
@@ -22,7 +31,7 @@ public class ThermometerService {
                                                         {{25,35},{15,25}}, {{15,25},{5,15}}};
 
         int[][] typicalDayNightHumidity = new int[][] {{40,50},{35,40},{30,35},{35,50}};
-        while(true) {
+        while (true) {
             int[] currentDayStartEnd;
             int[][] currentTypicalDayNightTemps;
             int[] currentTypicalDayNightHumidity;
@@ -67,11 +76,12 @@ public class ThermometerService {
                                 currentTypicalDayNightHumidity[1] + 4 ) + "%");
             }
             Thread.sleep(2000);
-
         }
     }
 
-    public ThermometerService() throws InterruptedException {
-        generateValues();
+    public Thread getNewSimulatorThread() {
+        Thread simulatorThread = new Thread(this);
+        simulatorThread.start();
+        return simulatorThread;
     }
 }
