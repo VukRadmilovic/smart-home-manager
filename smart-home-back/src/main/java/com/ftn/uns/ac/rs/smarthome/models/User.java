@@ -44,6 +44,15 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private List<Role> roles;
 
+    public User(String username, String email, String password, Boolean isConfirmed, String profilePicture, List<Role> roles) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.isConfirmed = isConfirmed;
+        this.profilePicture = profilePicture;
+        this.roles = roles;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

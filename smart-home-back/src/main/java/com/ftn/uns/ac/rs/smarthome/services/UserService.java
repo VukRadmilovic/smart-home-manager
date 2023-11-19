@@ -142,7 +142,7 @@ public class UserService implements IUserService {
             String bucket = "images";
             fileServerService.put(bucket, "profilePictures/" + key, compressed, type);
             String pathToImage = "http://127.0.0.1:9000/" + bucket + '/' + "profilePictures/" + key;
-            User toSave = new User(1,
+            User toSave = new User(
                     userInfo.getUsername(),
                     userInfo.getEmail(),
                     passwordEncoder().encode(userInfo.getPassword()),
