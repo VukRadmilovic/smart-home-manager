@@ -20,6 +20,7 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import './SideNav.css'
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import {UserService} from "../../services/UserService";
+import AddHomeIcon from '@mui/icons-material/AddHome';
 
 interface SideNavProps {
     userService: UserService
@@ -67,6 +68,16 @@ export function SideNav({userService, isSuperadmin, isAdmin} : SideNavProps) {
                     </Link>
                     :
                     null
+                }
+                {(isAdmin || isSuperadmin) ? null :
+                    <Link to={'/userRegisterProperty'} className={'white-text'}>
+                        <ListItem key='/userRegisterProperty' disablePadding selected={pathname.includes('RegisterProperty')}>
+                            <ListItemButton>
+                                <ListItemIcon><AddHomeIcon className={'white-text'}/></ListItemIcon>
+                                <ListItemText primary='Register Property'/>
+                            </ListItemButton>
+                        </ListItem>
+                    </Link>
                 }
 
                 <ListItem key='sign-out' disablePadding className={'align-bottom center-items width-exact'}>
