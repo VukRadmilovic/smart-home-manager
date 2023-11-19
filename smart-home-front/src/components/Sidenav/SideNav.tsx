@@ -51,6 +51,12 @@ export function SideNav({userService} : SideNavProps) {
                         <ListItemText primary='Main'/>
                     </ListItemButton>
                 </ListItem>
+                <ListItem key='/RegisterProperty' disablePadding selected={pathname.includes('/RegisterProperty')}>
+                    <ListItemButton>
+                        <ListItemIcon><CollectionsIcon className={'white-text'}/></ListItemIcon>
+                        <ListItemText primary='Register Property'/>
+                    </ListItemButton>
+                </ListItem>
 
                 <ListItem key='sign-out' disablePadding className={'align-bottom center-items width-exact'}>
                     <ListItemButton onClick={() => {
