@@ -12,6 +12,7 @@ public class ThermometerThread implements Runnable {
     private final TemperatureUnit unit;
     private final MqttService mqttService;
     private final Integer deviceId;
+    private int count = 1;
 
     public ThermometerThread(TemperatureUnit unit,
                              MqttService mqttService, Integer deviceId) {
@@ -104,6 +105,14 @@ public class ThermometerThread implements Runnable {
         try {
             this.mqttService.publishMeasurementMessageLite(msgTemp);
             this.mqttService.publishMeasurementMessageLite(msgHumidity);
+
+            if (count % 5 == 0) {
+                count = 1;
+                System.out.println("Sending status message");
+                this.mqttService.publishStatusMessageLite("status,1T," + deviceId);
+            } else {
+                count++;
+            }
         } catch (MqttException e) {
             System.out.println("Error publishing message");
         }

@@ -34,6 +34,10 @@ public class MqttService {
         this.mqttConfiguration.getClient().publish("measurements", new MqttMessage(message.getBytes()));
     }
 
+    public void publishStatusMessageLite(String message) throws MqttException {
+        this.mqttConfiguration.getClient().publish("statuses", new MqttMessage(message.getBytes()));
+    }
+
     private void addCommandsSubTopic(long uuid) throws MqttException {
         String topicName = "commands_" + uuid;
         this.subTopics.add(topicName);

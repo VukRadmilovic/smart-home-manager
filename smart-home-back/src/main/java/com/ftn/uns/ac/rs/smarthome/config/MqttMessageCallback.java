@@ -45,7 +45,6 @@ public class MqttMessageCallback implements MqttCallback {
     //TODO: Change according to the 4.6 requirement listed in the specification.
     @Override public void messageArrived(String topic, MqttMessage mqttMessage) {
         String message = new String(mqttMessage.getPayload());
-        System.out.println("Message arrived: " + message + ", ID: " + mqttMessage.getId());
         String[] data = message.split(",");
         String measurementObject = data[0];
         String valueWithUnit = data[1];
