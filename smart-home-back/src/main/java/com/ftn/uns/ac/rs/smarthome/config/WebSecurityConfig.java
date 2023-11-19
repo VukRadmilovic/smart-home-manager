@@ -61,6 +61,7 @@ public class WebSecurityConfig {
         http.exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint);
     	http.authorizeRequests()
 				.antMatchers(HttpMethod.POST, "/api/user/register").permitAll()
+				.antMatchers(HttpMethod.POST, "/api/user/registerAdmin").hasAnyRole("SUPERADMIN")
 				.antMatchers(HttpMethod.POST, "/api/user/login").permitAll()
 				.antMatchers(HttpMethod.GET, "/api/user/activate/*").permitAll()
 				.antMatchers(HttpMethod.GET, "/api/user/info").hasAnyRole("ADMIN", "SUPERADMIN","USER")

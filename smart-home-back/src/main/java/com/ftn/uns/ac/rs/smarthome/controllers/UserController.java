@@ -44,14 +44,23 @@ public class UserController {
     @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> register(@Valid @ModelAttribute UserInfoRegister userInfoRegister) {
         try{
-            System.out.println(userInfoRegister);
             this.userService.register(userInfoRegister);
             return new ResponseEntity<>(messageSource.getMessage("registration.success", null, Locale.getDefault()), HttpStatus.OK);
         }
         catch(ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());
         }
+    }
 
+    @PostMapping(value = "/registerAdmin", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> registerAdmin(@Valid @ModelAttribute UserInfoRegister userInfoRegister) {
+        try{
+            this.userService.register(userInfoRegister);
+            return new ResponseEntity<>(messageSource.getMessage("registrationAdmin.success", null, Locale.getDefault()), HttpStatus.OK);
+        }
+        catch(ResponseStatusException ex) {
+            return new ResponseEntity<>(ex.getReason(), ex.getStatus());
+        }
     }
 
     @GetMapping(value = "/activate/{userId}")
@@ -67,7 +76,6 @@ public class UserController {
 
     @GetMapping(value = "/info")
     public ResponseEntity<?> getUserInfo() {
-        System.out.println("tgtgtg");
         try{
             User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             UserInfoDTO userInfo = this.userService.getUserInfo(user.getId());
@@ -81,7 +89,6 @@ public class UserController {
     @PostMapping(value = "/login", consumes = "application/json")
     public ResponseEntity<?> login(@Valid @RequestBody LoginDTO authenticationRequest) {
         try {
-            System.out.println(authenticationRequest);
             TokenDTO generatedToken = userService.login(authenticationRequest);
             return new ResponseEntity<>(generatedToken, HttpStatus.OK);
         }

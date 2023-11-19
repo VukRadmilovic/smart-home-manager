@@ -3,6 +3,7 @@ import axios from "axios";
 import {Token} from "../models/Token.ts";
 import {UserDetails} from "../models/UserDetails.ts";
 import {NewUserMultipart} from "../models/NewUserMultipart.ts";
+import {RoleEnum} from "../models/enums/RoleEnum.ts";
 
 export class UserService {
 
@@ -17,7 +18,7 @@ export class UserService {
             const token: Token = response.data;
             sessionStorage.setItem("user", token.token);
             sessionStorage.setItem("expiration", String(token.expiration));
-            this.getUserData();
+            await this.getUserData();
         } catch (err) {
             console.log(err);
             throw err;
@@ -45,18 +46,35 @@ export class UserService {
     }
 
     public registerUser(newUserMultipart: NewUserMultipart): Promise<string> {
-        return axios({
-            method: 'POST',
-            url: `${this.api_host}/api/user/register`,
-            data: newUserMultipart,
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            },
-        }).then((response) => response.data
-        ).catch((err) => {
-            throw err
-        });
+        if(newUserMultipart.role == RoleEnum.ROLE_USER) {
+            return axios({
+                method: 'POST',
+                url: `${this.api_host}/api/user/register`,
+                data: newUserMultipart,
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
+            }).then((response) => response.data
+            ).catch((err) => {
+                throw err
+            });
+        }
+        else {
+            return axios({
+                method: 'POST',
+                url: `${this.api_host}/api/user/registerAdmin`,
+                data: newUserMultipart,
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('user')
+                },
+            }).then((response) => response.data
+            ).catch((err) => {
+                throw err
+            });
+        }
     }
+
 
     public signOut(): void {
         sessionStorage.removeItem('user');

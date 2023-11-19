@@ -16,8 +16,9 @@ type RegistrationForm = {
 
 interface RegistrationProps {
     userService: UserService
+    adminRegistration: boolean
 }
-export function Registration({userService} : RegistrationProps) {
+export function Registration({userService, adminRegistration} : RegistrationProps) {
     const [selectedImage, setSelectedImage] = useState(new File([], "init"));
     const defaultPictureUrl = "https://t3.ftcdn.net/jpg/05/11/52/90/360_F_511529094_PISGWTmlfmBu1g4nocqdVKaHBnzMDWrN.jpg"
     const [imageUrl, setImageUrl] = useState(defaultPictureUrl);
@@ -60,12 +61,13 @@ export function Registration({userService} : RegistrationProps) {
             setErrorPopupOpen(true);
             return;
         }
+        const role = adminRegistration? RoleEnum.ROLE_ADMIN : RoleEnum.ROLE_USER
         const newUser: NewUserMultipart = {
             username: formData.username.trim(),
             email: formData.email.trim(),
             password: formData.password.trim(),
             profilePicture: selectedImage,
-            role: RoleEnum.ROLE_USER
+            role: role
         };
         userService.registerUser(newUser).then((response) => {
             setErrorMessage(response);
@@ -151,7 +153,7 @@ export function Registration({userService} : RegistrationProps) {
                                 </Grid>
                             </Grid>
                         </Grid>
-                        <Grid item container xs={12} sm={12} md={5} lg={5} xl={5} justifyContent={'center'}>
+                        <Grid item container xs={12} sm={12} md={5} lg={5} xl={5} alignItems={'center'} justifyContent={'center'}>
                             <Stack alignItems={'center'} spacing={3}>
                                 <img src={imageUrl} className={'img'} alt={'Profile picture'}/>
                                 <input

@@ -5,6 +5,7 @@ import {useNavigate} from "react-router-dom";
 import {Registration} from "../Registration/Registration";
 import {PopupMessage} from "../PopupMessage/PopupMessage";
 import {useForm} from "react-hook-form";
+import './Login.css'
 import {UserService} from "../../services/UserService";
 import {RoleEnum} from "../../models/enums/RoleEnum.ts";
 
@@ -71,8 +72,6 @@ export function Login({userService} : LoginProps) {
         };
         userService.loginUser(userCredentials).then(() => {
             const role = sessionStorage.getItem("role");
-            console.log(role)
-            console.log(typeof RoleEnum.ROLE_USER)
             if(role == RoleEnum.ROLE_USER)
                 navigate('/userMain');
             else
@@ -90,7 +89,10 @@ export function Login({userService} : LoginProps) {
     };
 
     return (
-        <Grid container alignItems={'center'} justifyContent={'center'} className={'dark-background'} height={'100%'}>
+        <Grid container alignItems={'center'}
+              justifyContent={'center'}
+              className='dark-background overflow'
+              height={'100%'}>
             <Grid container item xs={12} sm={12} md={10} lg={8} xl={8}
                   height={'fit-content'}
                   minHeight={'70vh'}
@@ -155,7 +157,7 @@ export function Login({userService} : LoginProps) {
                 </Grid>
                 <Grid item justifyContent={'center'} xs={12} sm={12} md={12} lg={12} xl={12}>
                     <TabPanel value={tabValue} index={1}>
-                        <Registration userService={userService}/>
+                        <Registration userService={userService} adminRegistration={false}/>
                     </TabPanel>
                 </Grid>
                 <PopupMessage message={errorMessage} isSuccess={false} handleClose={handleErrorPopupClose} open={errorPopupOpen}/>

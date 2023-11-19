@@ -13,18 +13,21 @@ import {
     Toolbar,
     Typography
 } from "@mui/material";
-import CollectionsIcon from '@mui/icons-material/Collections';
+import HomeIcon from '@mui/icons-material/Home';
 import LogoutIcon from '@mui/icons-material/Logout';
 import MenuIcon from '@mui/icons-material/Menu';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import './SideNav.css'
-import {useLocation, useNavigate} from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import {UserService} from "../../services/UserService";
 
 interface SideNavProps {
     userService: UserService
+    isAdmin: boolean,
+    isSuperadmin: boolean
 }
 
-export function SideNav({userService} : SideNavProps) {
+export function SideNav({userService, isSuperadmin, isAdmin} : SideNavProps) {
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
@@ -45,12 +48,26 @@ export function SideNav({userService} : SideNavProps) {
             <br/>
             <br/>
             <List>
-                <ListItem key='/Main' disablePadding selected={pathname.includes('/Main')}>
-                    <ListItemButton>
-                        <ListItemIcon><CollectionsIcon className={'white-text'}/></ListItemIcon>
-                        <ListItemText primary='Main'/>
-                    </ListItemButton>
-                </ListItem>
+                <Link to={isAdmin? 'adminMain' : 'userMain' } className={'white-text'}>
+                    <ListItem key={isAdmin? 'adminMain' : 'userMain' } disablePadding selected={pathname.includes('Main')}>
+                        <ListItemButton>
+                            <ListItemIcon><HomeIcon className={'white-text'}/></ListItemIcon>
+                            <ListItemText primary={isAdmin? "Requests" : "Realty"}/>
+                        </ListItemButton>
+                    </ListItem>
+                </Link>
+                {isSuperadmin?
+                    <Link to={'/newAdmin'} className={'white-text'}>
+                        <ListItem key='/newAdmin' disablePadding selected={pathname.includes('Admin')}>
+                            <ListItemButton>
+                                <ListItemIcon><PersonAddIcon className={'white-text'}/></ListItemIcon>
+                                <ListItemText primary={'Add admin'}/>
+                            </ListItemButton>
+                        </ListItem>
+                    </Link>
+                    :
+                    null
+                }
 
                 <ListItem key='sign-out' disablePadding className={'align-bottom center-items width-exact'}>
                     <ListItemButton onClick={() => {

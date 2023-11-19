@@ -5,6 +5,7 @@ import {BrowserRouter, Route, Routes} from "react-router-dom";
 import {Login} from "./components/Login/Login";
 import {AdminMain} from "./components/AdminMain/AdminMain.tsx";
 import {UserMain} from "./components/UserMain/UserMain.tsx";
+import {NewAdmin} from "./components/NewAdmin/NewAdmin.tsx";
 
 function App() {
     const userServiceSingleton = new UserService();
@@ -106,6 +107,7 @@ function App() {
                         <Route path="/" element={<Login userService={userServiceSingleton}/>}/>
                         <Route path="/adminMain" element={<AdminMain userService={userServiceSingleton}/>}/>
                         <Route path="/userMain" element={<UserMain userService={userServiceSingleton}/>}/>
+                        <Route path="/newAdmin" element={<NewAdmin userService={userServiceSingleton}/>}/>
                     </Routes>
                 </BrowserRouter>
             </ThemeProvider>

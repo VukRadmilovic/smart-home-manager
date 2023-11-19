@@ -16,6 +16,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.MessageSource;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -140,7 +141,6 @@ public class UserService implements IUserService {
             String key = tokens[tokens.length - 1];
             String type = userInfo.getProfilePicture().getContentType();
             String bucket = "images";
-            fileServerService.put(bucket, "profilePictures/" + key, compressed, type);
             String pathToImage = "http://127.0.0.1:9000/" + bucket + '/' + "profilePictures/" + key;
             User toSave = new User(
                     userInfo.getUsername(),
@@ -150,18 +150,25 @@ public class UserService implements IUserService {
                     pathToImage,
                     List.of(role.get())
                     );
+            if(role.get().getName().equals("ROLE_ADMIN"))
+                toSave.setIsConfirmed(true);
             User saved = this.userRepository.save(toSave);
-            String mailMessage = "To activate your account, click on the following link:\n" +
-                    "http://127.0.0.1:80/api/user/activate/" + saved.getId();
-            boolean sentEmail = this.mailService.sendTextEmail(
-                    userInfo.getEmail(),
-                    "Account activation",
-                    mailMessage
-                    );
-            if(!sentEmail) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("activation.notSent", null, Locale.getDefault()));
+            if(role.get().getName().equals("ROLE_USER")) {
+                String mailMessage = "To activate your account, click on the following link:\n" +
+                        "http://127.0.0.1:80/api/user/activate/" + saved.getId();
+                boolean sentEmail = this.mailService.sendTextEmail(
+                        userInfo.getEmail(),
+                        "Account activation",
+                        mailMessage
+                );
+                if (!sentEmail) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("activation.notSent", null, Locale.getDefault()));
+                }
             }
-            compressed.delete();
+            fileServerService.put(bucket, "profilePictures/" + key, compressed, type)
+                    .thenApply(lol -> compressed.delete())
+                    .exceptionally(e -> false);
+
         }
         catch(IOException ex) {
             System.out.println(ex.getMessage());

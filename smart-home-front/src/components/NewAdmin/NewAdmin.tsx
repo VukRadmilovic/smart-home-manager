@@ -1,28 +1,29 @@
+import {UserService} from "../../services/UserService.ts";
+import {Registration} from "../Registration/Registration.tsx";
 import {CssBaseline, Grid} from "@mui/material";
 import {SideNav} from "../Sidenav/SideNav.tsx";
-import {UserService} from "../../services/UserService.ts";
-import {RoleEnum} from "../../models/enums/RoleEnum.ts";
 
-interface AdminMainProps {
-    userService: UserService,
+interface NewAdminProps {
+    userService: UserService
 }
 
-export function AdminMain({userService}: AdminMainProps) {
+export function NewAdmin({userService} : NewAdminProps) {
     return (
         <>
             <CssBaseline/>
             <Grid container className={'dark-background'} height={'100%'}  justifyContent={'flex-start'}>
                 <Grid item xs={0} sm={0} md={2} lg={2} xl={2}>
-                    <SideNav userService={userService} isAdmin={true}
-                             isSuperadmin={sessionStorage.getItem("role") == RoleEnum.ROLE_SUPERADMIN}/>
+                    <SideNav userService={userService} isAdmin={true} isSuperadmin={true}/>
                 </Grid>
-                <Grid item height={'100%'}  xl={10} lg={10} md={10} sm={12} xs={12}
+                <Grid container item height={'100%'}  xl={10} lg={10} md={10} sm={12} xs={12}
                       p={2}
                       className={'white-background'}
                       style={{borderRadius:'1.5em', overflowY:'scroll'}}
-                      alignItems={'flex-start'}
-                      ml={{xl: '20%', lg: '20%', md: '25%', sm: '0', xs: '0'}}
+                      alignItems={'center'}
                       mt={{xl: 0, lg: 0, md: 0, sm: '64px', xs: '64px'}}>
+                    <Grid item>
+                        <Registration userService={userService} adminRegistration={true}/>
+                    </Grid>
                 </Grid>
             </Grid>
         </>
