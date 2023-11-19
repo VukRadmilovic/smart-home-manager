@@ -49,8 +49,8 @@ export function SideNav({userService, isSuperadmin, isAdmin} : SideNavProps) {
             <br/>
             <br/>
             <List>
-                <Link to={isAdmin? 'adminMain' : 'userMain' } className={'white-text'}>
-                    <ListItem key={isAdmin? 'adminMain' : 'userMain' } disablePadding selected={pathname.includes('Main')}>
+                <Link to={isAdmin? '/adminMain' : '/userMain' } className={'white-text'}>
+                    <ListItem key={isAdmin? '/adminMain' : '/userMain' } disablePadding selected={pathname.includes('Main')}>
                         <ListItemButton>
                             <ListItemIcon><HomeIcon className={'white-text'}/></ListItemIcon>
                             <ListItemText primary={isAdmin? "Requests" : "Realty"}/>

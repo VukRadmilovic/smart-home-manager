@@ -78,126 +78,137 @@ export function UserRegisterProperty({userService}: UserMainProps, {propertyServ
 
     const handleChangeType = (event: SelectChangeEvent) => {
         setType(event.target.value as string);
+
     };
     return (
         <>
             <CssBaseline/>
-            <Grid container className={'dark-background'} height={'100%'}  justifyContent={'flex-start'}>
-                <Grid item xs={0} sm={0} md={2} lg={2} xl={2}>
-                    <SideNav userService={userService}/>
-                </Grid>
-                <Grid item height={'100%'}  xl={10} lg={10} md={10} sm={12} xs={12}
-                      p={2}
-                      className={'white-background'}
-                      style={{borderRadius:'1.5em', overflowY:'scroll'}}
-                      alignItems={'flex-start'}
-                      ml={{xl: '20%', lg: '20%', md: '25%', sm: '0', xs: '0'}}
-                      mt={{xl: 0, lg: 0, md: 0, sm: '64px', xs: '64px'}}>
-                    <form onSubmit={handleSubmit(onSubmit)}>
-                        <Grid container
-                              item
-                              xs={12} sm={12} md={12} lg={12} xl={12}
-                              direction={'row'}
-                              justifyContent={"center"}>
-                            <Grid item container rowSpacing={3}>
-                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                                    <Typography variant="h2" mb={5} fontWeight={400}>Register Property</Typography>
-                                </Grid>
-                                <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
-                                      justifyContent={'center'}>
-                                    <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
-                                        <TextField id="address"
-                                                   label="Address"
-                                                   fullWidth={true}
-                                                   {...register("username",
-                                                       {
-                                                           required: "Address is a required field!",
-                                                       })}
-                                                   error={!!errors.address}
-                                                   helperText={errors.address ? errors.address?.message : "Required"}
-                                                   variant="outlined"/>
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <Grid container
+                      direction={'row'}
+                      justifyContent={"center"}>
+                <Grid container className={'dark-background'} height={'100%'}  justifyContent={'flex-start'}>
+                    <Grid item xs={0} sm={0} md={2} lg={2} xl={2}>
+                        <SideNav userService={userService}/>
+                    </Grid>
+                    <Grid item height={'100%'}  xl={10} lg={10} md={10} sm={12} xs={12}
+                          p={2}
+                          className={'white-background'}
+                          style={{borderRadius:'1.5em', overflowY:'scroll'}}
+                          alignItems={'flex-start'}
+                          ml={{xl: '20%', lg: '20%', md: '25%', sm: '0', xs: '0'}}
+                          mt={{xl: 0, lg: 0, md: 0, sm: '64px', xs: '64px'}}>
+                            <Grid container
+                                  item
+                                  xs={12} sm={12} md={12} lg={12} xl={12}
+                                  direction={'row'}
+                                  justifyContent={"center"}>
+                                <Grid item container rowSpacing={2}>
+                                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                        <Typography variant="h2" mb={5} fontWeight={400}>Register Property</Typography>
                                     </Grid>
-                                </Grid>
-                                <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
-                                      justifyContent={'center'}>
-                                    <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
-                                        <FormControl fullWidth>
-                                            <InputLabel id="demo-simple-select-label">City</InputLabel>
-                                            <Select
-                                                labelId="demo-simple-select-label"
-                                                id="demo-simple-select"
-                                                value={city}
-                                                label="City"
-                                                onChange={handleChangeCity}
-                                            >
-                                                <MenuItem value={1}>Novi Sad</MenuItem>
-                                                <MenuItem value={2}>Beograd</MenuItem>
-                                                <MenuItem value={3}>Sombor</MenuItem>
-                                            </Select>
-                                        </FormControl>
+                                    <Grid item container xs={12} sm={12} md={7} lg={7} xl={7} rowSpacing={3}>
+                                    <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
+                                          justifyContent={'center'}>
+                                        <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
+                                            <TextField id="address"
+                                                       label="Address"
+                                                       fullWidth={true}
+                                                       {...register("address",
+                                                           {
+                                                               required: "Address is a required field!",
+                                                           })}
+                                                       error={!!errors.address}
+                                                       helperText={errors.address ? errors.address?.message : "Required"}
+                                                       variant="outlined"/>
+                                        </Grid>
                                     </Grid>
-                                </Grid>
-                                <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
-                                      justifyContent={'center'}>
-                                    <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
-                                        <FormControl fullWidth>
-                                            <InputLabel id="demo-simple-select-label">Property Type</InputLabel>
-                                            <Select
-                                                labelId="demo-simple-select-label"
-                                                id="demo-simple-select"
-                                                value={type}
-                                                label="Type"
-                                                onChange={handleChangeType}
-                                            >
-                                                <MenuItem value={1}>Apartmant</MenuItem>
-                                                <MenuItem value={2}>House</MenuItem>
-                                            </Select>
-                                        </FormControl>
+                                    <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
+                                          justifyContent={'center'}>
+                                        <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
+                                            <FormControl fullWidth>
+                                                <InputLabel id="demo-simple-select-label">City</InputLabel>
+                                                <Select
+                                                    labelId="demo-simple-select-label"
+                                                    id="demo-simple-select"
+                                                    value={city}
+                                                    label="City"
+                                                    onChange={handleChangeCity}
+                                                >
+                                                    <MenuItem value={1}>Novi Sad</MenuItem>
+                                                    <MenuItem value={2}>Beograd</MenuItem>
+                                                    <MenuItem value={3}>Sombor</MenuItem>
+                                                </Select>
+                                            </FormControl>
+                                        </Grid>
                                     </Grid>
-                                </Grid>
-                                <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
-                                      justifyContent={'center'}>
-                                    <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
-                                        <TextField id="size" label="Size"
-                                                   fullWidth={true}
-                                                   type="size"
-                                                   {...register("password",
-                                                       {required: "Password is a required field!"})}
-                                                   error={!!errors.city}
-                                                   helperText={errors.city? errors.city?.message : "Required"}
-                                                   variant="outlined"/>
+                                    <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
+                                          justifyContent={'center'}>
+                                        <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
+                                            <FormControl fullWidth>
+                                                <InputLabel id="demo-simple-select-label">Property Type</InputLabel>
+                                                <Select
+                                                    labelId="demo-simple-select-label"
+                                                    id="demo-simple-select"
+                                                    value={type}
+                                                    label="Type"
+                                                    onChange={handleChangeType}
+                                                >
+                                                    <MenuItem value={1}>Apartmant</MenuItem>
+                                                    <MenuItem value={2}>House</MenuItem>
+                                                </Select>
+                                            </FormControl>
+                                        </Grid>
                                     </Grid>
-                                </Grid>
-                                <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
-                                      justifyContent={'center'}>
-                                    <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
-                                        <TextField id="floors" label="Floors"
-                                                   fullWidth={true}
-                                                   type="floors"
-                                                   {...register("password",
-                                                       {required: "Password is a required field!"})}
-                                                   error={!!errors.city}
-                                                   helperText={errors.city? errors.city?.message : "Required"}
-                                                   variant="outlined"/>
+                                    <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
+                                          justifyContent={'center'}>
+                                        <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
+                                            <TextField id="size" label="Size"
+                                                       fullWidth={true}
+                                                       type="size"
+                                                       {...register("size",
+                                                           {required: "Password is a required field!"})}
+                                                       error={!!errors.city}
+                                                       helperText={errors.city? errors.city?.message : "Required"}
+                                                       variant="outlined"/>
+                                        </Grid>
                                     </Grid>
-                                </Grid>
-                                <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
-                                      justifyContent={'center'}>
-                                    <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
-                                        <Button variant="contained" color="secondary" component="span">
-                                            Upload Image
-                                        </Button>
+                                    <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
+                                          justifyContent={'center'}>
+                                        <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
+                                            <TextField id="floors" label="Floors"
+                                                       fullWidth={true}
+                                                       type="floors"
+                                                       {...register("floors",
+                                                           {required: "Password is a required field!"})}
+                                                       error={!!errors.city}
+                                                       helperText={errors.city? errors.city?.message : "Required"}
+                                                       variant="outlined"/>
+                                        </Grid>
                                     </Grid>
+                                    <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
+                                          justifyContent={'center'}>
+                                        <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
+                                            <Button variant="contained" color="secondary" component="span">
+                                                Upload Image
+                                            </Button>
+                                        </Grid>
+                                    </Grid>
+
                                 </Grid>
-                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} mt={5}>
-                                    <Button variant="contained" type="submit">Register Property</Button>
                                 </Grid>
                             </Grid>
+                        <Grid item container xs={12} sm={12} md={5} lg={5} xl={5} alignItems={'center'} justifyContent={'center'}>
+
                         </Grid>
-                    </form>
-                    <PopupMessage message={errorMessage} isSuccess={false} handleClose={handleErrorPopupClose} open={errorPopupOpen}/>
+                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12} mt={5}>
+                            <Button variant="contained" type="submit">Register Property</Button>
+                        </Grid>
+                        <PopupMessage message={errorMessage} isSuccess={false} handleClose={handleErrorPopupClose} open={errorPopupOpen}/>
+                    </Grid>
                 </Grid>
-            </Grid>
+                </Grid>
+            </form>
         </>
     );
 }
