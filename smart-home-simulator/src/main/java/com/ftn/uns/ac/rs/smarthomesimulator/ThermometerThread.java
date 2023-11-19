@@ -15,7 +15,8 @@ public class ThermometerThread implements Runnable {
     private int count = 1;
 
     public ThermometerThread(TemperatureUnit unit,
-                             MqttService mqttService, Integer deviceId) {
+                             MqttService mqttService,
+                             Integer deviceId) {
         this.unit = unit;
         this.mqttService = mqttService;
         this.deviceId = deviceId;

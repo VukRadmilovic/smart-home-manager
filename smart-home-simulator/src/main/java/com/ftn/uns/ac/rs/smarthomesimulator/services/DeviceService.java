@@ -8,6 +8,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DeviceService implements IDeviceService {
@@ -24,5 +25,10 @@ public class DeviceService implements IDeviceService {
     @Override
     public List<Device> findAll() {
         return deviceRepository.findAll();
+    }
+
+    @Override
+    public Optional<Device> findById(int id) {
+        return deviceRepository.findById(id);
     }
 }
