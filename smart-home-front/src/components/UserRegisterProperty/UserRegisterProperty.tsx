@@ -2,16 +2,17 @@ import {UserService} from "../../services/UserService.ts";
 import {
     Button,
     CssBaseline, FormControl,
-    Grid, InputLabel, MenuItem, Select, SelectChangeEvent, TextField, Typography
+    Grid, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography
 } from "@mui/material";
 import {SideNav} from "../Sidenav/SideNav.tsx";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {Property} from"../../models/Property"
 import {useNavigate} from "react-router-dom";
 import {PropertyService} from "../../services/PropertyService";
 import {PopupMessage} from "../PopupMessage/PopupMessage";
 import {PropertyType} from "../../models/enums/PropertyType";
+import {MapContainer, Marker, Popup, TileLayer} from "react-leaflet";
 
 interface UserMainProps {
     userService: UserService,
@@ -46,7 +47,18 @@ export function UserRegisterProperty({userService}: UserMainProps, {propertyServ
 
     const onSubmit = (formData: PropertyForm) => tryRegisterProperty(formData)
 
+    const [selectedImage, setSelectedImage] = useState(new File([], "init"));
+    const defaultPictureUrl = "https://t3.ftcdn.net/jpg/05/11/52/90/360_F_511529094_PISGWTmlfmBu1g4nocqdVKaHBnzMDWrN.jpg"
+    const [imageUrl, setImageUrl] = useState(defaultPictureUrl);
+    useEffect(() => {
+        if (selectedImage && selectedImage.name != 'init') {
+            setImageUrl(URL.createObjectURL(selectedImage));
+        }
+    }, [selectedImage]);
+
     function tryRegisterProperty(formData : PropertyForm) {
+
+
         const property: Property = {
             address: formData.address.trim(),
             city: formData.city.trim(),
@@ -75,7 +87,7 @@ export function UserRegisterProperty({userService}: UserMainProps, {propertyServ
     };
 
     const [type, setType] = React.useState('');
-
+    const position = [51.505, -0.09];
     const handleChangeType = (event: SelectChangeEvent) => {
         setType(event.target.value as string);
 
@@ -103,11 +115,11 @@ export function UserRegisterProperty({userService}: UserMainProps, {propertyServ
                                   xs={12} sm={12} md={12} lg={12} xl={12}
                                   direction={'row'}
                                   justifyContent={"center"}>
-                                <Grid item container rowSpacing={2}>
+                                <Grid item container rowSpacing={0}>
                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                         <Typography variant="h2" mb={5} fontWeight={400}>Register Property</Typography>
                                     </Grid>
-                                    <Grid item container xs={12} sm={12} md={7} lg={7} xl={7} rowSpacing={3}>
+                                    <Grid item container xs={12} sm={12} md={7} lg={7} xl={7} rowSpacing={2}>
                                     <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
                                           justifyContent={'center'}>
                                         <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
@@ -160,9 +172,9 @@ export function UserRegisterProperty({userService}: UserMainProps, {propertyServ
                                             </FormControl>
                                         </Grid>
                                     </Grid>
-                                    <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
-                                          justifyContent={'center'}>
-                                        <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
+                                        <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
+                                              justifyContent={'center'}>
+                                            <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
                                             <TextField id="size" label="Size"
                                                        fullWidth={true}
                                                        type="size"
@@ -172,7 +184,6 @@ export function UserRegisterProperty({userService}: UserMainProps, {propertyServ
                                                        helperText={errors.city? errors.city?.message : "Required"}
                                                        variant="outlined"/>
                                         </Grid>
-                                    </Grid>
                                     <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
                                           justifyContent={'center'}>
                                         <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
@@ -189,18 +200,42 @@ export function UserRegisterProperty({userService}: UserMainProps, {propertyServ
                                     <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
                                           justifyContent={'center'}>
                                         <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
-                                            <Button variant="contained" color="secondary" component="span">
-                                                Upload Image
-                                            </Button>
+                                            <Stack alignItems={'center'} spacing={3}>
+                                                <img src={imageUrl} className={'img'} alt={'Profile picture'}/>
+                                                <input
+                                                    accept="image/*"
+                                                    type="file"
+                                                    id="select-image"
+                                                    style={{display: "none"}}
+                                                    onChange={(e) => setSelectedImage(e.target!.files?.[0] as File)}
+                                                />
+                                                <label htmlFor="select-image">
+                                                    <Button variant="contained" color="secondary" component="span">
+                                                        Upload Image
+                                                    </Button>
+                                                </label>
+                                            </Stack>
                                         </Grid>
                                     </Grid>
 
+                                    </Grid>
                                 </Grid>
+                        <Grid item container xs={12} sm={12} md={5} lg={5} xl={5} alignItems={'center'} justifyContent={'center'}>
+                            {/*<MapContainer center={position} zoom={13} scrollWheelZoom={false}>*/}
+                            {/*    <TileLayer*/}
+                            {/*        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'*/}
+                            {/*        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"*/}
+                            {/*    />*/}
+                            {/*    <Marker position={position}>*/}
+                            {/*        <Popup>*/}
+                            {/*            A pretty CSS3 popup. <br /> Easily customizable.*/}
+                            {/*        </Popup>*/}
+                            {/*    </Marker>*/}
+                            {/*</MapContainer>*/}
                                 </Grid>
                             </Grid>
-                        <Grid item container xs={12} sm={12} md={5} lg={5} xl={5} alignItems={'center'} justifyContent={'center'}>
 
-                        </Grid>
+                            </Grid>
                         <Grid item xs={12} sm={12} md={12} lg={12} xl={12} mt={5}>
                             <Button variant="contained" type="submit">Register Property</Button>
                         </Grid>
