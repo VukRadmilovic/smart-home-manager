@@ -2,9 +2,7 @@ package com.ftn.uns.ac.rs.smarthome.models.devices;
 
 import com.ftn.uns.ac.rs.smarthome.models.PowerSource;
 import com.ftn.uns.ac.rs.smarthome.models.Property;
-import com.ftn.uns.ac.rs.smarthome.models.dtos.devices.DeviceDTO;
 import lombok.*;
-import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 
@@ -41,4 +39,10 @@ public class Device {
 
     @Column
     private Double energyConsumption;
+
+    @Column(nullable = false)
+    private boolean stillThere = false;
+
+    @Column(nullable = false)
+    private boolean online = false;
 }

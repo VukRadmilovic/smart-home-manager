@@ -22,7 +22,7 @@ public class Thermometer extends Device {
 
     public Thermometer(Property property, String name, String description,
                        PowerSource powerSource, Double energyConsumption, TemperatureUnit temperatureUnit) {
-        super(-1, property, name, description, null, powerSource, energyConsumption);
+        super(-1, property, name, description, null, powerSource, energyConsumption, false, false);
         this.temperatureUnit = temperatureUnit;
     }
 }

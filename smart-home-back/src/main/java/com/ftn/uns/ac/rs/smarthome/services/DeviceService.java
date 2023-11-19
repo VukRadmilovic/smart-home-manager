@@ -9,6 +9,8 @@ import com.ftn.uns.ac.rs.smarthome.repositories.PropertyRepository;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IDeviceService;
 import com.ftn.uns.ac.rs.smarthome.utils.ImageCompressor;
 import com.ftn.uns.ac.rs.smarthome.utils.S3API;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,11 +20,13 @@ import javax.validation.Valid;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
 @Service
 public class DeviceService implements IDeviceService {
+    private static final Logger log = LoggerFactory.getLogger(DeviceService.class);
     private final DeviceRepository deviceRepository;
     private final PropertyRepository propertyRepository;
     private final MessageSource messageSource;
@@ -62,5 +66,26 @@ public class DeviceService implements IDeviceService {
         String pathToImage = "http://127.0.0.1:9000/" + bucket + '/' + "devices/" + key;
         savedThermometer.setImage(pathToImage);
         deviceRepository.save(savedThermometer);
+    }
+
+    @Override
+    public List<Device> findAll() {
+        return deviceRepository.findAll();
+    }
+
+    @Override
+    public void update(Device device) {
+        deviceRepository.save(device);
+    }
+
+    @Override
+    public void setDeviceStillThere(int id) {
+        Optional<Device> device = deviceRepository.findById(id);
+        if (device.isEmpty()) {
+            log.error("Device with id {} not found", id);
+            return;
+        }
+        device.get().setStillThere(true);
+        deviceRepository.save(device.get());
     }
 }

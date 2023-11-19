@@ -1,6 +1,7 @@
 package com.ftn.uns.ac.rs.smarthome.config;
 
 import com.ftn.uns.ac.rs.smarthome.services.InfluxService;
+import com.ftn.uns.ac.rs.smarthome.services.interfaces.IDeviceService;
 import org.eclipse.paho.mqttv5.client.IMqttToken;
 import org.eclipse.paho.mqttv5.client.MqttCallback;
 import org.eclipse.paho.mqttv5.client.MqttDisconnectResponse;
@@ -17,9 +18,12 @@ import java.util.Map;
 public class MqttMessageCallback implements MqttCallback {
 
     private final InfluxService influxService;
+    private final IDeviceService deviceService;
 
-    public MqttMessageCallback(InfluxService influxService) {
+    public MqttMessageCallback(InfluxService influxService,
+                               IDeviceService deviceService) {
         this.influxService = influxService;
+        this.deviceService = deviceService;
     }
 
     @Override
@@ -54,6 +58,12 @@ public class MqttMessageCallback implements MqttCallback {
         influxService.save(measurementObject, value, new Date(),
                 Map.of("deviceId", deviceId, "unit", String.valueOf(unit)));
         System.out.println("Message arrived: " + message + ", ID: " + mqttMessage.getId());
+
+        if (measurementObject.equals("status")) {
+            if (value == 1) {
+                deviceService.setDeviceStillThere(Integer.parseInt(deviceId));
+            }
+        }
     }
 
     @Override

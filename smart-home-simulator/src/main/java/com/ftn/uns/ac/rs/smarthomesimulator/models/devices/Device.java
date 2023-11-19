@@ -39,4 +39,10 @@ public class Device {
 
     @Column
     private Double energyConsumption;
+
+    @Column(nullable = false)
+    private boolean stillThere;
+
+    @Column(nullable = false)
+    private boolean online;
 }
