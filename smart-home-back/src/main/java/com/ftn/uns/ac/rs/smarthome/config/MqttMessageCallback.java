@@ -9,6 +9,9 @@ import org.eclipse.paho.mqttv5.common.MqttMessage;
 import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+import java.util.Map;
+
 
 @Service
 public class MqttMessageCallback implements MqttCallback {
@@ -43,7 +46,15 @@ public class MqttMessageCallback implements MqttCallback {
     @Override public void messageArrived(String topic, MqttMessage mqttMessage) {
         String message = new String(mqttMessage.getPayload());
         System.out.println("Message arrived: " + message + ", ID: " + mqttMessage.getId());
-
+        String[] data = message.split(",");
+        String measurementObject = data[0];
+        String valueWithUnit = data[1];
+        float value = Float.parseFloat(valueWithUnit.substring(0, valueWithUnit.length() - 1));
+        char unit = valueWithUnit.charAt(valueWithUnit.length() - 1);
+        String deviceId = data[2];
+        influxService.save(measurementObject, value, new Date(),
+                Map.of("deviceId", deviceId, "unit", String.valueOf(unit)));
+        System.out.println("Message arrived: " + message + ", ID: " + mqttMessage.getId());
     }
 
     @Override
