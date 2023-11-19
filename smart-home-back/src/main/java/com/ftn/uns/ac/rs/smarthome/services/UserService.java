@@ -133,7 +133,7 @@ public class UserService implements IUserService {
             if(role.isEmpty()) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("role.notExisting", null, Locale.getDefault()));
             }
-            Path filepath = Paths.get("src/main/resources/temp", userInfo.getProfilePicture().getOriginalFilename());
+            Path filepath = Paths.get("../temp/", userInfo.getProfilePicture().getOriginalFilename());
             userInfo.getProfilePicture().transferTo(filepath);
             File file = new File(filepath.toString());
             File compressed = ImageCompressor.compressImage(file, 0.1f, userInfo.getUsername());
@@ -166,13 +166,17 @@ public class UserService implements IUserService {
                 }
             }
             fileServerService.put(bucket, "profilePictures/" + key, compressed, type)
-                    .thenApply(lol -> compressed.delete())
+                    .thenApply(lol ->
+                            compressed.delete())
                     .exceptionally(e -> false);
 
         }
         catch(IOException ex) {
             System.out.println(ex.getMessage());
             throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, messageSource.getMessage("compression.error", null, Locale.getDefault()));
+        }
+        catch(ResponseStatusException ex) {
+            throw ex;
         }
     }
 

@@ -9,12 +9,17 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Iterator;
+import java.util.Locale;
+import java.util.NoSuchElementException;
+
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 
 public class ImageCompressor {
     public static File compressImage(File image, float qualityOfOutputImage, String username) {
-        String tempFilePath = "src/main/resources/temp/";
+        String tempFilePath = "../temp/";
         String imageFile = image.getName();
         String extension = FilenameUtils.getExtension(imageFile);
         String finalNamePath = tempFilePath + username + "." + extension;
@@ -38,6 +43,7 @@ public class ImageCompressor {
 
         } catch (IOException e) {
             try{
+                image.delete();
                 File file = new File(finalNamePath);
                 Files.deleteIfExists(file.toPath());
                 System.out.println(e.getMessage());
@@ -46,6 +52,10 @@ public class ImageCompressor {
                 ex.printStackTrace();
                 return null;
             }
+        }
+        catch(NoSuchElementException ex) {
+            image.delete();
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Image format not supported!");
         }
     }
 }

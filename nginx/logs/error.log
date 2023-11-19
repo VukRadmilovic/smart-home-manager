@@ -37,3 +37,6 @@
 2023/11/19 10:02:32 [emerg] 18388#11244: CreateDirectory() "C:\Fakultet\VI\NVT\smart-home\nginx/temp/client_body_temp" failed (3: The system cannot find the path specified)
 2023/11/19 10:53:45 [emerg] 4804#8824: CreateDirectory() "C:\Fakultet\VI\NVT\smart-home\nginx/temp/client_body_temp" failed (3: The system cannot find the path specified)
 2023/11/19 10:55:07 [emerg] 18600#6212: CreateDirectory() "C:\Fakultet\VI\NVT\smart-home\nginx/temp/client_body_temp" failed (3: The system cannot find the path specified)
+2023/11/19 16:48:23 [error] 33736#17624: *29 client intended to send too large body: 6221476 bytes, client: 127.0.0.1, server: localhost, request: "POST /api/user/register HTTP/1.1", host: "localhost", referrer: "http://localhost:5173/"
+2023/11/19 16:55:25 [error] 33736#17624: *48 client intended to send too large body: 6221471 bytes, client: 127.0.0.1, server: localhost, request: "POST /api/user/register HTTP/1.1", host: "localhost", referrer: "http://localhost:5173/"
+2023/11/19 16:56:46 [error] 33736#17624: *50 client intended to send too large body: 6221471 bytes, client: 127.0.0.1, server: localhost, request: "POST /api/user/register HTTP/1.1", host: "localhost", referrer: "http://localhost:5173/"
