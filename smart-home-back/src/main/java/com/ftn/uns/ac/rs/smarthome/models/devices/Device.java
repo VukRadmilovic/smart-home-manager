@@ -30,7 +30,7 @@ public class Device {
     @Column
     private String description;
 
-    @Column(nullable = false)
+    @Column
     private String image;
 
     @Enumerated(EnumType.STRING)
