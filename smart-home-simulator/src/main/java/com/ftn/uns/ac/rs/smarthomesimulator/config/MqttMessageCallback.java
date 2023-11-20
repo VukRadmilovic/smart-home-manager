@@ -1,16 +1,26 @@
 package com.ftn.uns.ac.rs.smarthomesimulator.config;
 
+import com.ftn.uns.ac.rs.smarthomesimulator.DeviceThreadManager;
+import lombok.Setter;
 import org.eclipse.paho.mqttv5.client.IMqttToken;
 import org.eclipse.paho.mqttv5.client.MqttCallback;
 import org.eclipse.paho.mqttv5.client.MqttDisconnectResponse;
 import org.eclipse.paho.mqttv5.common.MqttException;
 import org.eclipse.paho.mqttv5.common.MqttMessage;
 import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 
 @Service
 public class MqttMessageCallback implements MqttCallback {
+    private DeviceThreadManager deviceThreadManager;
+
+    @Autowired
+    public MqttMessageCallback(@Lazy DeviceThreadManager deviceThreadManager) {
+        this.deviceThreadManager = deviceThreadManager;
+    }
 
     @Override
     /*
@@ -34,7 +44,9 @@ public class MqttMessageCallback implements MqttCallback {
      */
     //TODO: Change according to the 4.6 requirement listed in the specification.
     @Override public void messageArrived(String topic, MqttMessage mqttMessage) {
-        System.out.println("Message received. ID:" + mqttMessage.getId() + ", Message: " + mqttMessage);
+        String message = new String(mqttMessage.getPayload());
+        deviceThreadManager.reloadDeviceThread(Integer.parseInt(message));
+        System.out.println("Message received. ID:" + mqttMessage.getId() + ", Message: " + message);
     }
 
     @Override

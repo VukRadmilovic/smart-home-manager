@@ -14,7 +14,7 @@ public class StatusCheckerTask {
     private static final Logger log = LoggerFactory.getLogger(StatusCheckerTask.class);
     private final IDeviceService deviceService;
     private static final int FIXED_RATE = 30000;
-    public static final int INITIAL_DELAY = 2000;
+    public static final int INITIAL_DELAY = 4000;
 
     public StatusCheckerTask(IDeviceService deviceService) {
         this.deviceService = deviceService;
