@@ -46,7 +46,7 @@ public class PropertyService implements IPropertyService {
             if (this.propertyRepository.findByAddress(propertyDTO.getAddress()).isPresent()) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("address.alreadyUsed", null, Locale.getDefault()));
             }
-            Optional<User> owner = this.userRepository.findByUsername(propertyDTO.getUsername());
+            Optional<User> owner = this.userRepository.findByUsername(propertyDTO.getOwner());
             if(owner.isEmpty()){
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("user.notExisting", null, Locale.getDefault()));
             }
@@ -54,16 +54,16 @@ public class PropertyService implements IPropertyService {
             if(town.isEmpty()){
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("town.notExisting", null, Locale.getDefault()));
             }
-            Path filepath = Paths.get("../temp/", propertyDTO.getPicture().getOriginalFilename());
-            propertyDTO.getPicture().transferTo(filepath);
-            File file = new File(filepath.toString());
-            File compressed = ImageCompressor.compressImage(file, 0.1f, propertyDTO.getUsername());
-            String[] tokens = compressed.getName().split("/");
-            String key = tokens[tokens.length - 1];
-            String type = propertyDTO.getPicture().getContentType();
-            String bucket = "images";
-            String pathToImage = "http://127.0.0.1:9000/" + bucket + '/' + "profilePictures/" + key;
-
+//            Path filepath = Paths.get("../temp/", propertyDTO.getPicture().getOriginalFilename());
+//            propertyDTO.getPicture().transferTo(filepath);
+//            File file = new File(filepath.toString());
+//            File compressed = ImageCompressor.compressImage(file, 0.1f, propertyDTO.getOwner());
+//            String[] tokens = compressed.getName().split("/");
+//            String key = tokens[tokens.length - 1];
+//            String type = propertyDTO.getPicture().getContentType();
+//            String bucket = "images";
+//            String pathToImage = "http://127.0.0.1:9000/" + bucket + '/' + "profilePictures/" + key;
+            String pathToImage = "";
             Property propertyToSave = new Property(propertyDTO.getAddress(),
                     propertyDTO.getSize(),
                     pathToImage,
@@ -72,9 +72,9 @@ public class PropertyService implements IPropertyService {
                     propertyDTO.getPropertyType());
             this.propertyRepository.save(propertyToSave);
         }catch(ResponseStatusException ex) {
-            throw ex;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+            throw ex;}
+//         catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 }

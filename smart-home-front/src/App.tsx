@@ -7,10 +7,12 @@ import {AdminMain} from "./components/AdminMain/AdminMain.tsx";
 import {UserMain} from "./components/UserMain/UserMain.tsx";
 import {NewAdmin} from "./components/NewAdmin/NewAdmin.tsx";
 import {UserRegisterProperty} from "./components/UserRegisterProperty/UserRegisterProperty";
+import {PropertyService} from "./services/PropertyService";
 
 
 function App() {
     const userServiceSingleton = new UserService();
+    const propertyServiceSingleton = new PropertyService();
 
     const newColorScheme = createTheme({
         palette: {
@@ -110,7 +112,7 @@ function App() {
                         <Route path="/adminMain" element={<AdminMain userService={userServiceSingleton}/>}/>
                         <Route path="/userMain" element={<UserMain userService={userServiceSingleton}/>}/>
                         <Route path="/newAdmin" element={<NewAdmin userService={userServiceSingleton}/>}/>
-                        <Route path="/userRegisterProperty" element={<UserRegisterProperty userService={userServiceSingleton}/>}/>
+                        <Route path="/userRegisterProperty" element={<UserRegisterProperty userService={userServiceSingleton} propertyService={propertyServiceSingleton}/>}/>
                     </Routes>
                 </BrowserRouter>
             </ThemeProvider>

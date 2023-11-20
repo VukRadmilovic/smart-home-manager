@@ -14,5 +14,5 @@ public class PropertyDTO {
     private String status;
     private String propertyType;
     private MultipartFile picture;
-    private String Username;
+    private String owner;
 }

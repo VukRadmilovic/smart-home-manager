@@ -20,11 +20,12 @@ type PropertyForm = {
     floors: string,
 }
 
-interface UserMainProps {
+interface PropertyProps {
     userService: UserService,
+    propertyService: PropertyService
 }
 
-export function UserRegisterProperty({userService}: UserMainProps, {propertyService}: PropertyService) {
+export function UserRegisterProperty({userService, propertyService} : PropertyProps) {
     const [selectedImage, setSelectedImage] = useState(new File([], "init"));
     const defaultPictureUrl = "https://t3.ftcdn.net/jpg/05/11/52/90/360_F_511529094_PISGWTmlfmBu1g4nocqdVKaHBnzMDWrN.jpg"
     const [imageUrl, setImageUrl] = useState(defaultPictureUrl);
@@ -74,11 +75,12 @@ export function UserRegisterProperty({userService}: UserMainProps, {propertyServ
             city: cityValue,
             size: formData.size.trim(),
             floors: formData.floors.trim(),
-            picture: selectedImage,
+            // picture: selectedImage,
             owner: sessionStorage.getItem("username"),
             propertyType: type
         };
         console.log(newProperty)
+        console.log(propertyService)
         propertyService.registerProperty(newProperty).then((response) => {
             setErrorMessage(response);
             setIsSuccess(true);

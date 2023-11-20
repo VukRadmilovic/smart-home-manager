@@ -4,6 +4,6 @@ export interface Property {
     city: string,
     size: string,
     floors: string,
-    picture: File,
+    // picture: File,
     owner: string
 }
