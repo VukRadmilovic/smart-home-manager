@@ -68,7 +68,8 @@ public class PropertyService implements IPropertyService {
                     propertyDTO.getSize(),
                     pathToImage,
                     owner.get(),
-                    propertyDTO.getFloors());
+                    propertyDTO.getFloors(),
+                    propertyDTO.getPropertyType());
             this.propertyRepository.save(propertyToSave);
         }catch(ResponseStatusException ex) {
             throw ex;

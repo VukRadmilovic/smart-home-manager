@@ -1,9 +1,9 @@
 export interface Property {
     address: string,
+    propertyType: string,
     city: string,
     size: string,
     floors: string,
-    status: string,
-    picture: string,
+    picture: File,
     owner: string
 }

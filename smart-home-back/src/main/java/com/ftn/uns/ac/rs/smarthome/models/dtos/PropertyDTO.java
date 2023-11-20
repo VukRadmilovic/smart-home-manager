@@ -12,6 +12,7 @@ public class PropertyDTO {
     private String size;
     private String floors;
     private String status;
+    private String propertyType;
     private MultipartFile picture;
     private String Username;
 }

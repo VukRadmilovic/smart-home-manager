@@ -36,6 +36,8 @@ public class Property {
 
     @Column(nullable = false)
     private String picture;
+    @Column(nullable = false)
+    private PropertyType propertyType;
 
     @ManyToOne
     private User owner;
@@ -44,7 +46,7 @@ public class Property {
     @OneToMany(mappedBy = "property")
     private List<Device> devices;
 
-    public Property(String address, String size, String picture, User owner, String floors){
+    public Property(String address, String size, String picture, User owner, String floors, String propertyType){
         this.address = address;
         this.size = size;
         this.status = PropertyStatus.UNAPPROVED;
@@ -52,6 +54,10 @@ public class Property {
         this.owner = owner;
         this.floors = floors;
         this.devices = new ArrayList<>();
+        if(propertyType == "HOUSE")
+            this.propertyType = PropertyType.HOUSE;
+        else
+            this.propertyType = PropertyType.APARTMENT;
         this.name = "idk";
     }
 }

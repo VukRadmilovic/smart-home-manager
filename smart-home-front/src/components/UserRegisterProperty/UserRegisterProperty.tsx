@@ -8,86 +8,102 @@ import {SideNav} from "../Sidenav/SideNav.tsx";
 import React, {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {Property} from"../../models/Property"
-import {useNavigate} from "react-router-dom";
 import {PropertyService} from "../../services/PropertyService";
 import {PopupMessage} from "../PopupMessage/PopupMessage";
 import {PropertyType} from "../../models/enums/PropertyType";
-import {MapContainer, Marker, Popup, TileLayer} from "react-leaflet";
+
+type PropertyForm = {
+    address: string,
+    city: string,
+    propertyType: PropertyType,
+    size: string,
+    floors: string,
+}
 
 interface UserMainProps {
     userService: UserService,
 }
 
-interface PropertyForm {
-    type: PropertyType,
-    address: string,
-    city: string,
-    size: string,
-    floors: string,
-    status: string,
-    picture: string,
-}
-
 export function UserRegisterProperty({userService}: UserMainProps, {propertyService}: PropertyService) {
-    const navigate = useNavigate();
-    const [errorMessage, setErrorMessage] = React.useState<string>("");
-    const [errorPopupOpen, setErrorPopupOpen] = React.useState<boolean>(false);
+    const [selectedImage, setSelectedImage] = useState(new File([], "init"));
+    const defaultPictureUrl = "https://t3.ftcdn.net/jpg/05/11/52/90/360_F_511529094_PISGWTmlfmBu1g4nocqdVKaHBnzMDWrN.jpg"
+    const [imageUrl, setImageUrl] = useState(defaultPictureUrl);
+    const [errorMessage, setErrorMessage] = React.useState('');
+    const [errorPopupOpen, setErrorPopupOpen] = React.useState(false);
+    const [isSuccess, setIsSuccess] = React.useState(true);
+
     const {register, handleSubmit, formState: {errors}} = useForm<PropertyForm>({
         defaultValues: {
-            type: PropertyType.PROPERTY_APARTMENT,
             address: "",
-            city: "",
+            city: "Novi Sad",
+            propertyType: "House",
             size: "",
-            floors: "",
-            status: "",
-            picture: "",
+            floors: ""
         },
         mode: "onChange"
     });
 
-    const onSubmit = (formData: PropertyForm) => tryRegisterProperty(formData)
-
-    const [selectedImage, setSelectedImage] = useState(new File([], "init"));
-    const defaultPictureUrl = "https://t3.ftcdn.net/jpg/05/11/52/90/360_F_511529094_PISGWTmlfmBu1g4nocqdVKaHBnzMDWrN.jpg"
-    const [imageUrl, setImageUrl] = useState(defaultPictureUrl);
+    const onSubmit = (formData : PropertyForm) => registerProperty(formData)
     useEffect(() => {
         if (selectedImage && selectedImage.name != 'init') {
             setImageUrl(URL.createObjectURL(selectedImage));
         }
     }, [selectedImage]);
 
-    function tryRegisterProperty(formData : PropertyForm) {
-
-
-        const property: Property = {
+    function registerProperty(formData : PropertyForm) {
+        if (imageUrl == defaultPictureUrl) {
+            setErrorMessage("Please select the profile picture!");
+            setIsSuccess(false);
+            setErrorPopupOpen(true);
+            return;
+        }
+        if (selectedImage.size > 25000000) {
+            setErrorMessage("File too large!");
+            setIsSuccess(false);
+            setErrorPopupOpen(true);
+            return;
+        }
+        if (!selectedImage.type.includes("image")) {
+            setErrorMessage("File is not an image!");
+            setIsSuccess(false);
+            setErrorPopupOpen(true);
+            return;
+        }
+        const newProperty: Property = {
             address: formData.address.trim(),
-            city: formData.city.trim(),
+            city: cityValue,
             size: formData.size.trim(),
             floors: formData.floors.trim(),
-            status: formData.status.trim(),
-            picture: formData.picture.trim()
+            picture: selectedImage,
+            owner: sessionStorage.getItem("username"),
+            propertyType: type
         };
-        propertyService.registerProperty(property).then(() => {
-            navigate('/userMain');
+        console.log(newProperty)
+        propertyService.registerProperty(newProperty).then((response) => {
+            setErrorMessage(response);
+            setIsSuccess(true);
+            setErrorPopupOpen(true);
         }).catch((error) => {
+            console.log(error.response.data)
             setErrorMessage(error.response.data);
+            setIsSuccess(false);
             setErrorPopupOpen(true);
         });
-
     }
 
     const handleErrorPopupClose = (reason?: string) => {
         if (reason === 'clickaway') return;
         setErrorPopupOpen(false);
     };
-    const [city, setCity] = React.useState('');
 
+    // const position = [51.505, -0.09];
+
+    const [cityValue, setCity] = React.useState('');
     const handleChangeCity = (event: SelectChangeEvent) => {
         setCity(event.target.value as string);
     };
 
     const [type, setType] = React.useState('');
-    const position = [51.505, -0.09];
     const handleChangeType = (event: SelectChangeEvent) => {
         setType(event.target.value as string);
 
@@ -143,13 +159,13 @@ export function UserRegisterProperty({userService}: UserMainProps, {propertyServ
                                                 <Select
                                                     labelId="demo-simple-select-label"
                                                     id="demo-simple-select"
-                                                    value={city}
+                                                    value={cityValue}
                                                     label="City"
                                                     onChange={handleChangeCity}
                                                 >
-                                                    <MenuItem value={1}>Novi Sad</MenuItem>
-                                                    <MenuItem value={2}>Beograd</MenuItem>
-                                                    <MenuItem value={3}>Sombor</MenuItem>
+                                                    <MenuItem value={"Novi Sad"}>Novi Sad</MenuItem>
+                                                    <MenuItem value={"Beograd"}>Beograd</MenuItem>
+                                                    <MenuItem value={"Sombor"}>Sombor</MenuItem>
                                                 </Select>
                                             </FormControl>
                                         </Grid>
@@ -166,8 +182,8 @@ export function UserRegisterProperty({userService}: UserMainProps, {propertyServ
                                                     label="Type"
                                                     onChange={handleChangeType}
                                                 >
-                                                    <MenuItem value={1}>Apartmant</MenuItem>
-                                                    <MenuItem value={2}>House</MenuItem>
+                                                    <MenuItem value={"APARTMANT"}>Apartmant</MenuItem>
+                                                    <MenuItem value={"HOUSE"}>House</MenuItem>
                                                 </Select>
                                             </FormControl>
                                         </Grid>
@@ -239,9 +255,9 @@ export function UserRegisterProperty({userService}: UserMainProps, {propertyServ
                         <Grid item xs={12} sm={12} md={12} lg={12} xl={12} mt={5}>
                             <Button variant="contained" type="submit">Register Property</Button>
                         </Grid>
-                        <PopupMessage message={errorMessage} isSuccess={false} handleClose={handleErrorPopupClose} open={errorPopupOpen}/>
                     </Grid>
                 </Grid>
+                    <PopupMessage message={errorMessage} isSuccess={isSuccess} handleClose={handleErrorPopupClose} open={errorPopupOpen}/>
                 </Grid>
             </form>
         </>

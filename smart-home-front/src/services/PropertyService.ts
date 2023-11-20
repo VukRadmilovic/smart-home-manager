@@ -8,7 +8,7 @@ export class PropertyService {
         try {
             const response = await axios({
                 method: 'POST',
-                url: `${this.api_host}/api/user/registerProperty`,
+                url: `${this.api_host}/api/property/registerProperty`,
                 data: property
             });
             const token: Token = response.data;

@@ -64,6 +64,7 @@ public class WebSecurityConfig {
 				.antMatchers(HttpMethod.POST, "/api/user/registerAdmin").hasAnyRole("SUPERADMIN")
 				.antMatchers(HttpMethod.POST, "/api/user/login").permitAll()
 				.antMatchers(HttpMethod.GET, "/api/user/activate/*").permitAll()
+				.antMatchers(HttpMethod.POST, "/api/property/registerProperty").hasAnyRole("USER")
 				.antMatchers(HttpMethod.GET, "/api/user/info").hasAnyRole("ADMIN", "SUPERADMIN","USER")
 				.anyRequest().authenticated().and()
 				.cors().and()
