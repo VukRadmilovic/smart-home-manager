@@ -15,6 +15,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Locale;
 
 @CrossOrigin("http://localhost:5173/")
@@ -42,6 +46,15 @@ public class PropertyController {
         try{
             this.propertyService.registerProperty(propertyDTO);
             return new ResponseEntity<>(messageSource.getMessage("registration.success", null, Locale.getDefault()), HttpStatus.OK);
+        }
+        catch(ResponseStatusException ex) {
+            return new ResponseEntity<>(ex.getReason(), ex.getStatus());
+        }
+    }
+    @GetMapping(value = "/getProperty/{username}")
+    public ResponseEntity<?> getProperty(@PathVariable String username){
+        try{
+            return new ResponseEntity<>(this.propertyService.getProperty(username), HttpStatus.OK);
         }
         catch(ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());

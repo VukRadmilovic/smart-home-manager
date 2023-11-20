@@ -53,7 +53,7 @@ export function UserRegisterProperty({userService, propertyService} : PropertyPr
 
     function registerProperty(formData : PropertyForm) {
         if (imageUrl == defaultPictureUrl) {
-            setErrorMessage("Please select the profile picture!");
+            setErrorMessage("Please select the property picture!");
             setIsSuccess(false);
             setErrorPopupOpen(true);
             return;
@@ -75,7 +75,7 @@ export function UserRegisterProperty({userService, propertyService} : PropertyPr
             city: cityValue,
             size: formData.size.trim(),
             floors: formData.floors.trim(),
-            // picture: selectedImage,
+            picture: selectedImage,
             owner: sessionStorage.getItem("username"),
             propertyType: type
         };

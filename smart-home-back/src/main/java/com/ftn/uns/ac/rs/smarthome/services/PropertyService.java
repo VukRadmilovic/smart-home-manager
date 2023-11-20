@@ -8,18 +8,15 @@ import com.ftn.uns.ac.rs.smarthome.repositories.TownRepository;
 import com.ftn.uns.ac.rs.smarthome.repositories.UserRepository;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IPropertyService;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IUserService;
-import com.ftn.uns.ac.rs.smarthome.utils.ImageCompressor;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import com.ftn.uns.ac.rs.smarthome.models.User;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -30,28 +27,30 @@ public class PropertyService implements IPropertyService {
     private final PropertyRepository propertyRepository;
     private final UserRepository userRepository;
     private final TownRepository townRepository;
-    public  PropertyService(MessageSource messageSource,
-                            PropertyRepository propertyRepository,
-                            IUserService userService,
-                            UserRepository userRepository,
-                            TownRepository townRepository){
+
+    public PropertyService(MessageSource messageSource,
+                           PropertyRepository propertyRepository,
+                           IUserService userService,
+                           UserRepository userRepository,
+                           TownRepository townRepository) {
         this.messageSource = messageSource;
         this.propertyRepository = propertyRepository;
         this.userService = userService;
         this.userRepository = userRepository;
         this.townRepository = townRepository;
     }
-    public void registerProperty(PropertyDTO propertyDTO){
+
+    public void registerProperty(PropertyDTO propertyDTO) {
         try {
             if (this.propertyRepository.findByAddress(propertyDTO.getAddress()).isPresent()) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("address.alreadyUsed", null, Locale.getDefault()));
             }
             Optional<User> owner = this.userRepository.findByUsername(propertyDTO.getOwner());
-            if(owner.isEmpty()){
+            if (owner.isEmpty()) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("user.notExisting", null, Locale.getDefault()));
             }
             Optional<Town> town = townRepository.findByName(propertyDTO.getCity());
-            if(town.isEmpty()){
+            if (town.isEmpty()) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("town.notExisting", null, Locale.getDefault()));
             }
 //            Path filepath = Paths.get("../temp/", propertyDTO.getPicture().getOriginalFilename());
@@ -71,10 +70,30 @@ public class PropertyService implements IPropertyService {
                     propertyDTO.getFloors(),
                     propertyDTO.getPropertyType());
             this.propertyRepository.save(propertyToSave);
-        }catch(ResponseStatusException ex) {
-            throw ex;}
+        } catch (ResponseStatusException ex) {
+            throw ex;
+        }
 //         catch (IOException e) {
 //            throw new RuntimeException(e);
 //        }
+    }
+
+    @Override
+    public List<PropertyDTO> getProperty(String username) {
+        Optional<User> owner = userRepository.findByUsername(username);
+        if (owner.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("user.notExisting", null, Locale.getDefault()));
+        }
+        List<Property> properties = propertyRepository.findAllByOwner(owner.get());
+        List<PropertyDTO> propertyDTOS = new ArrayList<>();
+        List<Town> towns = townRepository.findAll();
+        for (Property property : properties) {
+            for (Town town : towns) {
+                if (town.getProperties().contains(property)) {
+                    propertyDTOS.add(new PropertyDTO(property.getAddress(), town.getName(), property.getSize(), property.getFloors(), property.getStatus(), property.getPropertyType(), property.getOwner().getUsername()));
+                }
+            }
+        }
+        return propertyDTOS;
     }
 }
