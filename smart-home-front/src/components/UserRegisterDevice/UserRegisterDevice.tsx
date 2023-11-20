@@ -78,7 +78,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                 },
             });
 
-            alert('Successful!')
+            alert('Successful!');
         } catch (error) {
             console.log(error);
             setErrorMessage(error.response.data);
