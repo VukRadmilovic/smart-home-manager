@@ -8,4 +8,10 @@ public interface IPropertyService {
     void registerProperty(PropertyDTO propertyDTO);
 
     List<PropertyDTO> getProperty(String username);
+
+    Object getAllProperty();
+
+    void approveProperty(String address);
+
+    void denyProperty(String address);
 }

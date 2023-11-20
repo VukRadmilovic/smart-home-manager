@@ -45,7 +45,7 @@ public class PropertyController {
     public ResponseEntity<?> register(@Valid @ModelAttribute PropertyDTO propertyDTO) {
         try{
             this.propertyService.registerProperty(propertyDTO);
-            return new ResponseEntity<>(messageSource.getMessage("registration.success", null, Locale.getDefault()), HttpStatus.OK);
+            return new ResponseEntity<>(messageSource.getMessage("registrationProperty.success", null, Locale.getDefault()), HttpStatus.OK);
         }
         catch(ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());
@@ -55,6 +55,36 @@ public class PropertyController {
     public ResponseEntity<?> getProperty(@PathVariable String username){
         try{
             return new ResponseEntity<>(this.propertyService.getProperty(username), HttpStatus.OK);
+        }
+        catch(ResponseStatusException ex) {
+            return new ResponseEntity<>(ex.getReason(), ex.getStatus());
+        }
+    }
+    @GetMapping(value = "/getAllProperty")
+    public ResponseEntity<?> getAllProperty(){
+        try{
+            return new ResponseEntity<>(this.propertyService.getAllProperty(), HttpStatus.OK);
+        }
+        catch(ResponseStatusException ex) {
+            return new ResponseEntity<>(ex.getReason(), ex.getStatus());
+        }
+    }
+
+    @PutMapping(value = "/approve/{address}")
+    public ResponseEntity<?> approveProperty(@PathVariable String address){
+        try{
+            this.propertyService.approveProperty(address);
+            return new ResponseEntity<>(messageSource.getMessage("propertyApproved.success", null, Locale.getDefault()), HttpStatus.OK);
+        }
+        catch(ResponseStatusException ex) {
+            return new ResponseEntity<>(ex.getReason(), ex.getStatus());
+        }
+    }
+    @PutMapping(value = "/deny/{address}")
+    public ResponseEntity<?> denyProperty(@PathVariable String address){
+        try{
+            this.propertyService.denyProperty(address);
+            return new ResponseEntity<>(messageSource.getMessage("propertyDeny.success", null, Locale.getDefault()), HttpStatus.OK);
         }
         catch(ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());

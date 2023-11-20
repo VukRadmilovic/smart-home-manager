@@ -1,6 +1,7 @@
 package com.ftn.uns.ac.rs.smarthome.services;
 
 import com.ftn.uns.ac.rs.smarthome.models.Property;
+import com.ftn.uns.ac.rs.smarthome.models.PropertyStatus;
 import com.ftn.uns.ac.rs.smarthome.models.Town;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.PropertyDTO;
 import com.ftn.uns.ac.rs.smarthome.repositories.PropertyRepository;
@@ -70,6 +71,10 @@ public class PropertyService implements IPropertyService {
                     propertyDTO.getFloors(),
                     propertyDTO.getPropertyType());
             this.propertyRepository.save(propertyToSave);
+            List<Property> list = town.get().getProperties();
+            list.add(propertyToSave);
+            town.get().setProperties(list);
+            this.townRepository.save(town.get());
         } catch (ResponseStatusException ex) {
             throw ex;
         }
@@ -95,5 +100,38 @@ public class PropertyService implements IPropertyService {
             }
         }
         return propertyDTOS;
+    }
+
+    @Override
+    public Object getAllProperty() {
+        List<Property> properties = propertyRepository.findAllByStatus(PropertyStatus.UNAPPROVED);
+        List<PropertyDTO> propertyDTOS = new ArrayList<>();
+        List<Town> towns = townRepository.findAll();
+        for (Property property : properties) {
+            for (Town town : towns) {
+                if (town.getProperties().contains(property)) {
+                    propertyDTOS.add(new PropertyDTO(property.getAddress(), town.getName(), property.getSize(), property.getFloors(), property.getStatus(), property.getPropertyType(), property.getOwner().getUsername()));
+                }
+            }
+        }
+        return propertyDTOS;
+    }
+
+    @Override
+    public void approveProperty(String address) {
+        Optional<Property> property = propertyRepository.findByAddress(address);
+        if(property.isPresent()){
+            property.get().setStatus(PropertyStatus.APPROVED);
+            propertyRepository.save(property.get());
+        }
+    }
+
+    @Override
+    public void denyProperty(String address) {
+        Optional<Property> property = propertyRepository.findByAddress(address);
+        if(property.isPresent()){
+            property.get().setStatus(PropertyStatus.DENIED);
+            propertyRepository.save(property.get());
+        }
     }
 }

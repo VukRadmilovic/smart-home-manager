@@ -11,30 +11,34 @@ import {
     TableRow
 } from "@mui/material";
 import {SideNav} from "../Sidenav/SideNav.tsx";
+import {PropertyService} from "../../services/PropertyService";
 
-interface UserMainProps {
+interface PropertyProps {
     userService: UserService,
+    propertyService: PropertyService
 }
 
 function createData(
     address: string,
-    city: number,
-    size: number,
-    floors: number,
-    status: number,
+    city: string,
+    size: string,
+    floors: string,
+    status: string,
 ) {
     return { address, city, size, floors, status };
 }
 
 const rows = [
-    createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-    createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-    createData('Eclair', 262, 16.0, 24, 6.0),
-    createData('Cupcake', 305, 3.7, 67, 4.3),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
 ];
 
-export function UserMain({userService}: UserMainProps) {
+export function UserMain({userService, propertyService} : PropertyProps) {
+    const properties = propertyService.getProperty().then()
+    properties.then(value => {
+        value.forEach(function (value){
+            console.log(value.address)
+            rows.push(createData(value.address, value.floors, value.size, value.city, "Unapproved"))
+        });
+    })
     return (
         <>
             <CssBaseline/>
@@ -53,26 +57,26 @@ export function UserMain({userService}: UserMainProps) {
                         <Table sx={{ minWidth: 650 }} aria-label="simple table">
                             <TableHead>
                                 <TableRow>
-                                    <TableCell align="center">Adresa</TableCell>
-                                    <TableCell align="center">Grad</TableCell>
-                                    <TableCell align="right">Kvadratura</TableCell>
-                                    <TableCell align="right">Broj spratova</TableCell>
-                                    <TableCell align="right">Status</TableCell>
+                                    <TableCell align="center">Address</TableCell>
+                                    <TableCell align="center">Town</TableCell>
+                                    <TableCell align="center">Size</TableCell>
+                                    <TableCell align="center">Floors</TableCell>
+                                    <TableCell align="center">Status</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {rows.map((row) => (
+                                {
+                                    rows.map((row) => (
                                     <TableRow
                                         key={row.address}
-                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                    >
+                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                         <TableCell component="th" scope="row">
                                             {row.address}
                                         </TableCell>
-                                        <TableCell align="right">{row.city}</TableCell>
-                                        <TableCell align="right">{row.size}</TableCell>
-                                        <TableCell align="right">{row.floors}</TableCell>
-                                        <TableCell align="right">{row.status}</TableCell>
+                                        <TableCell align="center">{row.city}</TableCell>
+                                        <TableCell align="center">{row.size}</TableCell>
+                                        <TableCell align="center">{row.floors}</TableCell>
+                                        <TableCell align="center">{row.status}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
