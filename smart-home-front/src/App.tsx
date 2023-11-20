@@ -109,8 +109,8 @@ function App() {
                 <BrowserRouter>
                     <Routes>
                         <Route path="/" element={<Login userService={userServiceSingleton}/>}/>
-                        <Route path="/adminMain" element={<AdminMain userService={userServiceSingleton}/>}/>
-                        <Route path="/userMain" element={<UserMain userService={userServiceSingleton}/>}/>
+                        <Route path="/adminMain" element={<AdminMain userService={userServiceSingleton} propertyService={propertyServiceSingleton}/>}/>
+                        <Route path="/userMain" element={<UserMain userService={userServiceSingleton} propertyService={propertyServiceSingleton}/>}/>
                         <Route path="/newAdmin" element={<NewAdmin userService={userServiceSingleton}/>}/>
                         <Route path="/userRegisterProperty" element={<UserRegisterProperty userService={userServiceSingleton} propertyService={propertyServiceSingleton}/>}/>
                     </Routes>

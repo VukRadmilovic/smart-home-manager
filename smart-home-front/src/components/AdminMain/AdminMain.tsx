@@ -14,28 +14,35 @@ import {SideNav} from "../Sidenav/SideNav.tsx";
 import {UserService} from "../../services/UserService.ts";
 import {RoleEnum} from "../../models/enums/RoleEnum.ts";
 import React from "react";
+import {PropertyService} from "../../services/PropertyService";
 
 interface AdminMainProps {
     userService: UserService,
 }
 function createData(
     address: string,
-    city: number,
-    size: number,
-    floors: number,
-    status: number,
+    city: string,
+    size: string,
+    floors: string,
+    status: string,
 ) {
     return { address, city, size, floors, status };
 }
+interface PropertyProps {
+    userService: UserService,
+    propertyService: PropertyService
+}
 const rows = [
-    createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-    createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-    createData('Eclair', 262, 16.0, 24, 6.0),
-    createData('Cupcake', 305, 3.7, 67, 4.3),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
 ];
 
-export function AdminMain({userService}: AdminMainProps) {
+export function AdminMain({userService, propertyService} : PropertyProps) {
+    const properties = propertyService.getAllPoperty().then()
+    properties.then(value => {
+        value.forEach(function (value){
+            console.log(value.address)
+            rows.push(createData(value.address, value.floors, value.size, value.city, "Unapproved"))
+        });
+    })
     return (
         <>
             <CssBaseline/>
