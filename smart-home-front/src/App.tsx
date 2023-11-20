@@ -7,7 +7,9 @@ import {AdminMain} from "./components/AdminMain/AdminMain.tsx";
 import {UserMain} from "./components/UserMain/UserMain.tsx";
 import {NewAdmin} from "./components/NewAdmin/NewAdmin.tsx";
 import {UserRegisterProperty} from "./components/UserRegisterProperty/UserRegisterProperty";
+
 import {PropertyService} from "./services/PropertyService";
+import {UserRegisterDevice} from "./components/UserRegisterDevice/UserRegisterDevice";
 
 
 function App() {
@@ -113,6 +115,7 @@ function App() {
                         <Route path="/userMain" element={<UserMain userService={userServiceSingleton}/>}/>
                         <Route path="/newAdmin" element={<NewAdmin userService={userServiceSingleton}/>}/>
                         <Route path="/userRegisterProperty" element={<UserRegisterProperty userService={userServiceSingleton} propertyService={propertyServiceSingleton}/>}/>
+                        <Route path="/userRegisterDevice" element={<UserRegisterDevice userService={userServiceSingleton}/>}/>
                     </Routes>
                 </BrowserRouter>
             </ThemeProvider>
