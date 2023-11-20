@@ -80,7 +80,7 @@ public class PropertyController {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());
         }
     }
-    @PutMapping(value = "/approve/{address}")
+    @PutMapping(value = "/deny/{address}")
     public ResponseEntity<?> denyProperty(@PathVariable String address){
         try{
             this.propertyService.denyProperty(address);
