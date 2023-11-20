@@ -18,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 public class Property {
     @Id
-    @GeneratedValue(strategy = javax.persistence.GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false)
     private Integer id;
 
