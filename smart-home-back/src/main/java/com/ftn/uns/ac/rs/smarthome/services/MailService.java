@@ -31,7 +31,7 @@ public class MailService {
     public boolean sendTextEmail(String receiver, String subject, String text) throws IOException {
         Email from = new Email("varga.sv54.2020@uns.ac.rs");
         Email to = new Email(receiver);
-        Content content = new Content("text/plain", text);
+        Content content = new Content("text/html", text);
         Mail mail = new Mail(from, subject, to, content);
 
         SendGrid sg = new SendGrid(this.env.getProperty("sendgrid.api-key"));

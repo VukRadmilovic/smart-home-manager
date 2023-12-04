@@ -55,6 +55,7 @@ services:
       MQTT_HOST: mosquitto
       INFLUXDB_HOST: influxdb
       SERVER_PORT: 1111
+      TEMPFOLDER_PATH: tmp/temp
 
   spring-boot-app-2:
     image: ftn/smart-home:latest
@@ -71,6 +72,7 @@ services:
       MQTT_HOST: mosquitto
       INFLUXDB_HOST: influxdb
       SERVER_PORT: 2222
+      TEMPFOLDER_PATH: tmp/temp
 
   spring-boot-app-3:
     image: ftn/smart-home:latest
@@ -87,6 +89,7 @@ services:
       MQTT_HOST: mosquitto
       INFLUXDB_HOST: influxdb
       SERVER_PORT: 3333
+      TEMPFOLDER_PATH: tmp/temp
       
   spring-boot-simulator:
     image: ftn/smart-home-simulator:latest

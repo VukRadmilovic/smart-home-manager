@@ -1,13 +1,26 @@
 import React from 'react';
-import {Box, Button, Grid, Tab, Tabs, TextField, Typography} from "@mui/material";
+import {
+    Box,
+    Button,
+    Dialog, DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    Grid,
+    Tab,
+    Tabs,
+    TextField,
+    Typography
+} from "@mui/material";
 import {UserCredentials} from "../../models/UserCredentials";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {Registration} from "../Registration/Registration";
 import {PopupMessage} from "../PopupMessage/PopupMessage";
 import {useForm} from "react-hook-form";
 import './Login.css'
 import {UserService} from "../../services/UserService";
 import {RoleEnum} from "../../models/enums/RoleEnum.ts";
+import {PasswordResetDto} from "../../models/PasswordResetDto.ts";
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -22,6 +35,10 @@ interface LoginProps {
 interface LoginForm {
     username: string,
     password: string
+}
+
+interface PasswordResetForm {
+    email: string
 }
 
 function TabPanel(props: TabPanelProps) {
@@ -55,6 +72,7 @@ export function Login({userService} : LoginProps) {
     const [errorMessage, setErrorMessage] = React.useState<string>("");
     const [errorPopupOpen, setErrorPopupOpen] = React.useState<boolean>(false);
     const navigate = useNavigate();
+    const [isSuccess, setIsSuccess] = React.useState(true);
     const {register, handleSubmit, formState: {errors}} = useForm<LoginForm>({
         defaultValues: {
             username: "",
@@ -62,8 +80,27 @@ export function Login({userService} : LoginProps) {
         },
         mode: "onChange"
     });
+
+    const {register: passwordReset, handleSubmit: handlePasswordResetSubmit, formState: {errors: passwordResetErrors},  setValue} = useForm<PasswordResetForm>({
+        defaultValues: {
+            email: ""
+        },
+        mode: "onChange"
+    });
+
+    const [openEmailDialog, setOpenEmailDialog] = React.useState(false);
+
+    const handlePasswordResetClickOpen = () => {
+        setOpenEmailDialog(true);
+    };
+
+    const handlePasswordResetClickClose = () => {
+        setOpenEmailDialog(false);
+        setValue("email","");
+    };
     const handleTabChange = (_event: React.SyntheticEvent,newValue: number) => setTabTabValue(newValue);
     const onSubmit = (formData: LoginForm) => tryLogin(formData)
+    const onSubmitEmail = (formData: PasswordResetForm) => resetPassword(formData)
 
     function tryLogin(formData : LoginForm) {
         const userCredentials: UserCredentials = {
@@ -74,13 +111,34 @@ export function Login({userService} : LoginProps) {
             const role = sessionStorage.getItem("role");
             if(role == RoleEnum.ROLE_USER)
                 navigate('/userMain');
-            else
+            else if (role == RoleEnum.ROLE_ADMIN)
                 navigate("/adminMain");
+            else {
+                if(sessionStorage.getItem("user") == "null")
+                    navigate("/passwordReset/1")
+                else
+                    navigate("/adminMain");
+            }
         }).catch((error) => {
             setErrorMessage(error.response.data);
+            setIsSuccess(false);
             setErrorPopupOpen(true);
         });
+    }
 
+    function resetPassword(formData: PasswordResetForm) {
+        const passwordResetMail : PasswordResetDto = {
+            email: formData.email
+        }
+        userService.sendPasswordResetMail(passwordResetMail).then((response) => {
+            setErrorMessage(response);
+            setIsSuccess(true);
+            setErrorPopupOpen(true);
+        }).catch((error) => {
+            setErrorMessage(error.response.data);
+            setIsSuccess(false);
+            setErrorPopupOpen(true);
+        });
     }
 
     const handleErrorPopupClose = (reason?: string) => {
@@ -146,6 +204,9 @@ export function Login({userService} : LoginProps) {
                                                            variant="outlined"/>
                                             </Grid>
                                         </Grid>
+                                        <Grid item container xs={12} sm={12} md={12} lg={12} xl={12} justifyContent={'center'}>
+                                            <Link to={"#"} style={{fontSize:'medium'}} onClick={handlePasswordResetClickOpen}>Forgot password?</Link>
+                                        </Grid>
                                         <Grid item xs={12} sm={12} md={12} lg={12} xl={12} mt={5}>
                                             <Button variant="contained" type="submit">Login</Button>
                                         </Grid>
@@ -160,7 +221,38 @@ export function Login({userService} : LoginProps) {
                         <Registration userService={userService} adminRegistration={false}/>
                     </TabPanel>
                 </Grid>
-                <PopupMessage message={errorMessage} isSuccess={false} handleClose={handleErrorPopupClose} open={errorPopupOpen}/>
+                <PopupMessage message={errorMessage} isSuccess={isSuccess} handleClose={handleErrorPopupClose} open={errorPopupOpen}/>
+                <React.Fragment>
+                    <Dialog open={openEmailDialog} onClose={handlePasswordResetClickClose}>
+                        <DialogTitle>Password Reset</DialogTitle>
+                        <form onSubmit={handlePasswordResetSubmit(onSubmitEmail)}>
+                            <DialogContent>
+                                <DialogContentText marginBottom={'1em'}>
+                                    To receive password reset email, please enter your email address.
+                                </DialogContentText>
+                                    <TextField
+                                        autoFocus
+                                        margin="dense"
+                                        id="email"
+                                        label="Email Address"
+                                        type="email"
+                                        fullWidth
+                                        {...passwordReset("email",
+                                            {
+                                                required: "Email is a required field!",
+                                            })}
+                                        error={!!passwordResetErrors.email}
+                                        helperText={passwordResetErrors.email ? passwordResetErrors.email?.message : "Required"}
+                                        variant="outlined"
+                                    />
+                            </DialogContent>
+                            <DialogActions>
+                                <Button variant="contained" onClick={handlePasswordResetClickClose}>Cancel</Button>
+                                <Button variant="contained" type="submit">Send email</Button>
+                            </DialogActions>
+                        </form>
+                    </Dialog>
+                </React.Fragment>
             </Grid>
         </Grid>
     );

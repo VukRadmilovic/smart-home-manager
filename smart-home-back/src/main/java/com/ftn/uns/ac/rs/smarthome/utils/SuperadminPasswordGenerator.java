@@ -12,7 +12,7 @@ public class SuperadminPasswordGenerator {
         PasswordGenerator gen = new PasswordGenerator();
 
         LengthRule lengthRule = new LengthRule();
-        lengthRule.setMinimumLength(8);
+        lengthRule.setMinimumLength(32);
 
         CharacterData lowerCaseChars = EnglishCharacterData.LowerCase;
         CharacterRule lowerCaseRule = new CharacterRule(lowerCaseChars);
@@ -38,7 +38,7 @@ public class SuperadminPasswordGenerator {
 
         CharacterRule splCharRule = new CharacterRule(specialChars);
         splCharRule.setNumberOfCharacters(1);
-        return gen.generatePassword(10, splCharRule, lowerCaseRule,
+        return gen.generatePassword(32, splCharRule, lowerCaseRule,
                 upperCaseRule, digitRule);
     }
 }

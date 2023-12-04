@@ -1,5 +1,6 @@
 package com.ftn.uns.ac.rs.smarthome.services;
 
+import com.ftn.uns.ac.rs.smarthome.config.MqttConfiguration;
 import com.ftn.uns.ac.rs.smarthome.models.Property;
 import com.ftn.uns.ac.rs.smarthome.models.TemperatureUnit;
 import com.ftn.uns.ac.rs.smarthome.models.devices.Device;
@@ -20,10 +21,12 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Properties;
 
 @Service
 public class ThermometerService implements IThermometerService {
@@ -34,19 +37,23 @@ public class ThermometerService implements IThermometerService {
     private final MqttService mqttService;
     private final DeviceRepository deviceRepository;
 
+    private final Properties env;
+
     public ThermometerService(PropertyRepository propertyRepository,
                               MessageSource messageSource,
                               S3API fileServerService,
                               MqttService mqttService,
-                              DeviceRepository deviceRepository) {
+                              DeviceRepository deviceRepository) throws IOException {
         this.propertyRepository = propertyRepository;
         this.messageSource = messageSource;
         this.fileServerService = fileServerService;
         this.mqttService = mqttService;
         this.deviceRepository = deviceRepository;
+        this.env = new Properties();
+        env.load(MqttConfiguration.class.getClassLoader().getResourceAsStream("application.properties"));
     }
 
-    public void register(@Valid ThermometerDTO dto) {
+    public void register(@Valid ThermometerDTO dto) throws IOException {
         Optional<Property> property = propertyRepository.findById(dto.getPropertyId());
         if (property.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("property.notFound", null, Locale.getDefault()));
@@ -54,7 +61,8 @@ public class ThermometerService implements IThermometerService {
         Thermometer thermometer = new Thermometer(property.get(), dto.getName(), dto.getDescription(),
                 dto.getPowerSource(), dto.getEnergyConsumption(), dto.getTemperatureUnit());
         Thermometer savedThermometer = deviceRepository.save(thermometer);
-        Path filepath = Paths.get("src/main/resources/temp", dto.getImage().getOriginalFilename());
+        String path = env.getProperty("tempfolder.path");
+        Path filepath = Paths.get(path, dto.getImage().getOriginalFilename());
         try {
             dto.getImage().transferTo(filepath);
         } catch (Exception e) {
@@ -66,7 +74,9 @@ public class ThermometerService implements IThermometerService {
         String key = tokens[tokens.length - 1];
         String type = dto.getImage().getContentType();
         String bucket = "images";
-        fileServerService.put(bucket, "devices/" + key, compressed, type);
+        fileServerService.put(bucket, "devices/" + key, compressed, type).thenApply(lol ->
+                        compressed.delete())
+                .exceptionally(e -> false);
         String pathToImage = "http://127.0.0.1:9000/" + bucket + '/' + "devices/" + key;
         savedThermometer.setImage(pathToImage);
         deviceRepository.save(savedThermometer);

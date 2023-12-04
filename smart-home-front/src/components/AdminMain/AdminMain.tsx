@@ -13,7 +13,6 @@ import {
 import {SideNav} from "../Sidenav/SideNav.tsx";
 import {UserService} from "../../services/UserService.ts";
 import {RoleEnum} from "../../models/enums/RoleEnum.ts";
-import React from "react";
 import {PropertyService} from "../../services/PropertyService";
 
 interface AdminMainProps {

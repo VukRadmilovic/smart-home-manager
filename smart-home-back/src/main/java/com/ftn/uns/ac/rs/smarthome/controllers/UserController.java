@@ -1,18 +1,13 @@
 package com.ftn.uns.ac.rs.smarthome.controllers;
 
 import com.ftn.uns.ac.rs.smarthome.models.User;
-import com.ftn.uns.ac.rs.smarthome.models.dtos.LoginDTO;
-import com.ftn.uns.ac.rs.smarthome.models.dtos.TokenDTO;
-import com.ftn.uns.ac.rs.smarthome.models.dtos.UserInfoDTO;
-import com.ftn.uns.ac.rs.smarthome.models.dtos.UserInfoRegister;
+import com.ftn.uns.ac.rs.smarthome.models.dtos.*;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IUserService;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.annotation.Validated;
@@ -63,12 +58,35 @@ public class UserController {
         }
     }
 
+
     @GetMapping(value = "/activate/{userId}")
     public ResponseEntity<?> activateAccount(@PathVariable Integer userId) {
         try{
             System.out.println(userId);
             this.userService.activate(userId);
             return new ResponseEntity<>(messageSource.getMessage("activation.success", null, Locale.getDefault()), HttpStatus.USE_PROXY);
+        }
+        catch(ResponseStatusException ex) {
+            return new ResponseEntity<>(ex.getReason(), ex.getStatus());
+        }
+    }
+
+    @PostMapping(value = "/sendPasswordResetEmail")
+    public ResponseEntity<?> sendPasswordResetEmail(@Valid @RequestBody PasswordResetRequestDTO passwordReset) {
+        try{
+            this.userService.sendPasswordResetEmail(passwordReset.getEmail());
+            return new ResponseEntity<>(messageSource.getMessage("passwordResetEmail.success", null, Locale.getDefault()), HttpStatus.OK);
+        }
+        catch(ResponseStatusException ex) {
+            return new ResponseEntity<>(ex.getReason(), ex.getStatus());
+        }
+    }
+
+    @PostMapping(value = "/passwordReset")
+    public ResponseEntity<?> passwordReset(@Valid @RequestBody PasswordResetDTO passwordReset) {
+        try{
+            this.userService.resetPassword(passwordReset);
+            return new ResponseEntity<>(messageSource.getMessage("passwordReset.success", null, Locale.getDefault()), HttpStatus.OK);
         }
         catch(ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());

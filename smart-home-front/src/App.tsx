@@ -10,6 +10,7 @@ import {UserRegisterProperty} from "./components/UserRegisterProperty/UserRegist
 
 import {PropertyService} from "./services/PropertyService";
 import {UserRegisterDevice} from "./components/UserRegisterDevice/UserRegisterDevice";
+import {PasswordReset} from "./components/PasswordReset/PasswordReset.tsx";
 
 
 function App() {
@@ -116,6 +117,7 @@ function App() {
                         <Route path="/newAdmin" element={<NewAdmin userService={userServiceSingleton}/>}/>
                         <Route path="/userRegisterProperty" element={<UserRegisterProperty userService={userServiceSingleton} propertyService={propertyServiceSingleton}/>}/>
                         <Route path="/userRegisterDevice" element={<UserRegisterDevice userService={userServiceSingleton}/>}/>
+                        <Route path="/passwordReset/:id" element={<PasswordReset userService={userServiceSingleton}/>}/>
                     </Routes>
                 </BrowserRouter>
             </ThemeProvider>

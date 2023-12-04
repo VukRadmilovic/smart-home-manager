@@ -4,6 +4,8 @@ import {Token} from "../models/Token.ts";
 import {UserDetails} from "../models/UserDetails.ts";
 import {NewUserMultipart} from "../models/NewUserMultipart.ts";
 import {RoleEnum} from "../models/enums/RoleEnum.ts";
+import {PasswordResetDto} from "../models/PasswordResetDto.ts";
+import {NewPassword} from "../models/NewPassword.ts";
 
 export class UserService {
 
@@ -18,7 +20,10 @@ export class UserService {
             const token: Token = response.data;
             sessionStorage.setItem("user", token.token);
             sessionStorage.setItem("expiration", String(token.expiration));
-            await this.getUserData();
+            if(token.token != null)
+                await this.getUserData();
+            else
+                sessionStorage.setItem("role",RoleEnum.ROLE_SUPERADMIN)
         } catch (err) {
             console.log(err);
             throw err;
@@ -35,6 +40,7 @@ export class UserService {
             },
         }).then((response) => {
             const userInfo: UserDetails = response.data;
+            sessionStorage.setItem('id',String(userInfo.id));
             sessionStorage.setItem('username', userInfo.username);
             sessionStorage.setItem('email', userInfo.email);
             sessionStorage.setItem('profilePicture', userInfo.profilePicture);
@@ -75,9 +81,32 @@ export class UserService {
         }
     }
 
+    public sendPasswordResetMail(email: PasswordResetDto): Promise<string> {
+        return axios({
+            method: 'POST',
+            url: `${this.api_host}/api/user/sendPasswordResetEmail`,
+            data: email,
+        }).then((response) => response.data
+        ).catch((err) => {
+            throw err
+        });
+    }
+
+    public passwordReset(newPassword: NewPassword) : Promise<string> {
+        return axios({
+            method: 'POST',
+            url: `${this.api_host}/api/user/passwordReset`,
+            data: newPassword,
+        }).then((response) => response.data
+        ).catch((err) => {
+            throw err
+        });
+    }
+
 
     public signOut(): void {
         sessionStorage.removeItem('user');
+        sessionStorage.removeItem('id');
         sessionStorage.removeItem('username');
         sessionStorage.removeItem('email');
         sessionStorage.removeItem('profilePicture');

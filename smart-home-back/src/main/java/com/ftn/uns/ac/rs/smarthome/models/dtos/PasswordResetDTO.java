@@ -5,14 +5,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
+import javax.validation.constraints.NotBlank;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserInfoDTO {
+public class PasswordResetDTO {
 
-    private Integer id;
-    private String username;
-    private String email;
-    private String profilePicture;
-    private String role;
+    private Integer userId;
+
+    @NotBlank(message = "{required}")
+    private String password;
 }

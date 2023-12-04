@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.Locale;
 
 @CrossOrigin("http://localhost:5173/")
@@ -39,6 +40,8 @@ public class DeviceController {
             return new ResponseEntity<>(messageSource.getMessage("device.registration.success", null, Locale.getDefault()), HttpStatus.OK);
         } catch(ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

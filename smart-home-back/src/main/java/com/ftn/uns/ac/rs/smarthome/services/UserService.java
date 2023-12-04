@@ -1,11 +1,9 @@
 package com.ftn.uns.ac.rs.smarthome.services;
 
+import com.ftn.uns.ac.rs.smarthome.config.MqttConfiguration;
 import com.ftn.uns.ac.rs.smarthome.models.Role;
 import com.ftn.uns.ac.rs.smarthome.models.User;
-import com.ftn.uns.ac.rs.smarthome.models.dtos.LoginDTO;
-import com.ftn.uns.ac.rs.smarthome.models.dtos.TokenDTO;
-import com.ftn.uns.ac.rs.smarthome.models.dtos.UserInfoDTO;
-import com.ftn.uns.ac.rs.smarthome.models.dtos.UserInfoRegister;
+import com.ftn.uns.ac.rs.smarthome.models.dtos.*;
 import com.ftn.uns.ac.rs.smarthome.repositories.UserRepository;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IUserService;
 import com.ftn.uns.ac.rs.smarthome.utils.ImageCompressor;
@@ -16,7 +14,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.MessageSource;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -33,6 +31,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Properties;
 
 @Service
 public class UserService implements IUserService {
@@ -44,6 +43,7 @@ public class UserService implements IUserService {
     private final TokenUtils tokenUtils;
     private final S3API fileServerService;
     private final MailService mailService;
+    private final Properties env;
     private BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
@@ -54,7 +54,7 @@ public class UserService implements IUserService {
                        MessageSource messageSource,
                        TokenUtils tokenUtils,
                        S3API fileServerService,
-                       MailService mailService) {
+                       MailService mailService) throws IOException {
         this.userRepository = userRepository;
         this.roleService = roleService;
         this.passwordGenerator = passwordGenerator;
@@ -62,6 +62,8 @@ public class UserService implements IUserService {
         this.tokenUtils = tokenUtils;
         this.fileServerService = fileServerService;
         this.mailService = mailService;
+        this.env = new Properties();
+        env.load(MqttConfiguration.class.getClassLoader().getResourceAsStream("application.properties"));
     }
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -91,7 +93,8 @@ public class UserService implements IUserService {
             userRepository.save(superadmin);
 
             try {
-                PrintWriter writer = new PrintWriter("src/main/resources/pwfile.txt", StandardCharsets.UTF_8);
+                String path = env.getProperty("tempfolder.path");
+                PrintWriter writer = new PrintWriter(path + "/pwfile.txt", StandardCharsets.UTF_8);
                 writer.println(randomPassword);
                 writer.close();
             }
@@ -110,10 +113,7 @@ public class UserService implements IUserService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("login.invalid", null, Locale.getDefault()));
         Role userRole = user.get().getRoles().get(0);
         if(userRole.getName().equals("ROLE_SUPERADMIN") && !user.get().getIsConfirmed()) {
-            File pwFile = new File("src/main/resources/pwfile.txt");
-            pwFile.delete();
-            user.get().setIsConfirmed(true);
-            userRepository.save(user.get());
+            return new TokenDTO(null,null);
         }
         if(!user.get().getIsConfirmed()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("user.notActivated", null, Locale.getDefault()));
@@ -129,11 +129,15 @@ public class UserService implements IUserService {
             if(this.userRepository.findByUsername(userInfo.getUsername()).isPresent()) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("username.alreadyUsed", null, Locale.getDefault()));
             }
+            if(this.userRepository.findByEmail(userInfo.getEmail()).isPresent()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("email.alreadyUsed", null, Locale.getDefault()));
+            }
             Optional<Role> role = this.roleService.getByName(userInfo.getRole());
             if(role.isEmpty()) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("role.notExisting", null, Locale.getDefault()));
             }
-            Path filepath = Paths.get("../temp/", userInfo.getProfilePicture().getOriginalFilename());
+            String path = env.getProperty("tempfolder.path");
+            Path filepath = Paths.get(path, userInfo.getProfilePicture().getOriginalFilename());
             userInfo.getProfilePicture().transferTo(filepath);
             File file = new File(filepath.toString());
             File compressed = ImageCompressor.compressImage(file, 0.1f, userInfo.getUsername());
@@ -154,8 +158,28 @@ public class UserService implements IUserService {
                 toSave.setIsConfirmed(true);
             User saved = this.userRepository.save(toSave);
             if(role.get().getName().equals("ROLE_USER")) {
-                String mailMessage = "To activate your account, click on the following link:\n" +
-                        "http://127.0.0.1:80/api/user/activate/" + saved.getId();
+                String  mailMessage =
+                """
+               <html>
+                 <head>
+                   <link rel="preconnect" href="https://fonts.googleapis.com">
+                   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+                   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+                 </head>
+                 <body style="font-family: 'Roboto', sans-serif;height:100%; color:black; display:flex; justify-content: center; align-items: center; padding:1.5em 10em; background-color:#1a1a1a">
+                   <div style="width:100%; background-color:white;text-align:center;border-radius:1.2em; ">
+                     <h1>Activation</h1>
+                     <p>To activate your account, click on the button below:<p/>
+                     <br>
+                     <form action='http://127.0.0.1:80/api/user/activate/""" + saved.getId() + "'" + """
+                       >
+                       <input type="submit" style="border-radius:1.2em; cursor:pointer !important; padding:1em 2em; background-color:#00ADB5; color:white; font-size:18px; font-family: Arial, Helvetica, sans-serif; border:none;" value="Activate"/>
+                     </form>
+                     <br>
+                   </div>
+                 </body>
+               </html>
+                """;
                 boolean sentEmail = this.mailService.sendTextEmail(
                         userInfo.getEmail(),
                         "Account activation",
@@ -191,12 +215,72 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public void sendPasswordResetEmail(String email) {
+        Optional<User> user = this.userRepository.findByEmail(email);
+        if(user.isEmpty() || !user.get().getIsConfirmed()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("user.notFound", null, Locale.getDefault()));
+        }
+        String  mailMessage =
+                """
+               <html>
+                 <head>
+                   <link rel="preconnect" href="https://fonts.googleapis.com">
+                   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+                   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+                 </head>
+                 <body style="font-family: 'Roboto', sans-serif;height:100%; color:black; display:flex; justify-content: center; align-items: center; padding:1.5em 10em; background-color:#1a1a1a">
+                   <div style="width:100%; background-color:white;text-align:center;border-radius:1.2em; ">
+                     <h1>Password Reset</h1>
+                     <p>To reset your password, click on the button below:<p/>
+                     <br>
+                     <form action='http://localhost:5173/passwordReset/""" + user.get().getId() + "'" + """
+                       >
+                       <input type="submit" style="border-radius:1.2em; cursor:pointer !important; padding:1em 2em; background-color:#00ADB5; color:white; font-size:18px; font-family: Arial, Helvetica, sans-serif; border:none;" value="Password Reset"/>
+                     </form>
+                     <br>
+                   </div>
+                 </body>
+               </html>
+                """;
+        try {
+            boolean sentEmail = this.mailService.sendTextEmail(
+                    user.get().getEmail(),
+                    "Password Reset",
+                    mailMessage
+            );
+            if (!sentEmail) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("activation.notSent", null, Locale.getDefault()));
+            }
+        } catch(IOException ex) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,messageSource.getMessage("reset.notSent", null, Locale.getDefault()));
+        }
+
+    }
+
+    @Override
+    public void resetPassword(PasswordResetDTO newPassword) {
+        Optional<User> user = this.userRepository.findById(newPassword.getUserId());
+        if(user.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("user.notFound", null, Locale.getDefault()));
+        }
+        user.get().setPassword(passwordEncoder().encode(newPassword.getPassword()));
+        if(user.get().getRoles().get(0).getName().equals("ROLE_SUPERADMIN")) {
+            String path = env.getProperty("tempfolder.path");
+            File pwFile = new File(path + "/pwfile.txt");
+            pwFile.delete();
+            user.get().setIsConfirmed(true);
+        }
+        userRepository.save(user.get());
+    }
+
+    @Override
     public UserInfoDTO getUserInfo(Integer userId) {
         Optional<User> user = this.userRepository.findById(userId);
         if(user.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("user.notFound", null, Locale.getDefault()));
         }
-        return new UserInfoDTO(user.get().getUsername(),
+        return new UserInfoDTO(user.get().getId(),
+                user.get().getUsername(),
                 user.get().getEmail(),
                 user.get().getProfilePicture(),
                 user.get().getRoles().get(0).getName());
