@@ -11,11 +11,14 @@ import {UserRegisterProperty} from "./components/UserRegisterProperty/UserRegist
 import {PropertyService} from "./services/PropertyService";
 import {UserRegisterDevice} from "./components/UserRegisterDevice/UserRegisterDevice";
 import {PasswordReset} from "./components/PasswordReset/PasswordReset.tsx";
+import {UserDevices} from "./components/UserDevices/UserDevices.tsx";
+import {DeviceService} from "./services/DeviceService.ts";
 
 
 function App() {
     const userServiceSingleton = new UserService();
     const propertyServiceSingleton = new PropertyService();
+    const deviceServiceSingleton = new DeviceService();
 
     const newColorScheme = createTheme({
         palette: {
@@ -118,6 +121,7 @@ function App() {
                         <Route path="/userRegisterProperty" element={<UserRegisterProperty userService={userServiceSingleton} propertyService={propertyServiceSingleton}/>}/>
                         <Route path="/userRegisterDevice" element={<UserRegisterDevice userService={userServiceSingleton}/>}/>
                         <Route path="/passwordReset/:id" element={<PasswordReset userService={userServiceSingleton}/>}/>
+                        <Route path="/devices" element={<UserDevices userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>
                     </Routes>
                 </BrowserRouter>
             </ThemeProvider>

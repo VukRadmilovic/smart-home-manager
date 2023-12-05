@@ -1,6 +1,8 @@
 package com.ftn.uns.ac.rs.smarthome.controllers;
 
 import com.ftn.uns.ac.rs.smarthome.models.TemperatureUnit;
+import com.ftn.uns.ac.rs.smarthome.models.User;
+import com.ftn.uns.ac.rs.smarthome.models.dtos.DeviceDetailsDTO;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.devices.ThermometerDTO;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IDeviceService;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IThermometerService;
@@ -8,12 +10,14 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
 
 @CrossOrigin("http://localhost:5173/")
@@ -53,5 +57,12 @@ public class DeviceController {
         } catch(ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());
         }
+    }
+
+    @GetMapping(value = "/ownerAll")
+    public ResponseEntity<?> changeTemperatureUnit() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<DeviceDetailsDTO> devices = this.deviceService.findByOwnerId(user.getId());
+        return new ResponseEntity<>(devices, HttpStatus.OK);
     }
 }

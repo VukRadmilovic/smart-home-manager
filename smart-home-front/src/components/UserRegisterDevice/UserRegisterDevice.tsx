@@ -116,7 +116,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                 >
                     <Grid container className={'dark-background'} height={'100%'} justifyContent={'flex-start'}>
                         <Grid item xs={0} sm={0} md={2} lg={2} xl={2}>
-                            <SideNav userService={userService}/>
+                            <SideNav userService={userService} isAdmin={false} isSuperadmin={false}/>
                         </Grid>
                         <Grid
                             item

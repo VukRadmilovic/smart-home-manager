@@ -17,6 +17,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import LogoutIcon from '@mui/icons-material/Logout';
 import MenuIcon from '@mui/icons-material/Menu';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import DeviceThermostatIcon from '@mui/icons-material/DeviceThermostat';
 import './SideNav.css'
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import {UserService} from "../../services/UserService";
@@ -81,11 +82,11 @@ export function SideNav({userService, isSuperadmin, isAdmin} : SideNavProps) {
                     </Link>
                 }
                 {(isAdmin || isSuperadmin) ? null :
-                    <Link to={'/userRegisterDevice'} className={'white-text'}>
-                        <ListItem key='/userRegisterDevice' disablePadding selected={pathname.includes('RegisterDevice')}>
+                    <Link to={'/devices'} className={'white-text'}>
+                        <ListItem key='/devices' disablePadding selected={pathname.includes('devices')}>
                             <ListItemButton>
-                                <ListItemIcon><AddAlarm className={'white-text'}/></ListItemIcon>
-                                <ListItemText primary='Register Device'/>
+                                <ListItemIcon><DeviceThermostatIcon className={'white-text'}/></ListItemIcon>
+                                <ListItemText primary='Devices'/>
                             </ListItemButton>
                         </ListItem>
                     </Link>
