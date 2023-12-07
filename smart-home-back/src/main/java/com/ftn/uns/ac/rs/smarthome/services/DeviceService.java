@@ -1,25 +1,37 @@
 package com.ftn.uns.ac.rs.smarthome.services;
 
+import com.ftn.uns.ac.rs.smarthome.models.Measurement;
 import com.ftn.uns.ac.rs.smarthome.models.devices.Device;
 import com.ftn.uns.ac.rs.smarthome.models.devices.Thermometer;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.DeviceDetailsDTO;
+import com.ftn.uns.ac.rs.smarthome.models.dtos.MeasurementsRequestDTO;
 import com.ftn.uns.ac.rs.smarthome.repositories.DeviceRepository;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IDeviceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @Service
 public class DeviceService implements IDeviceService {
     private static final Logger log = LoggerFactory.getLogger(DeviceService.class);
     private final DeviceRepository deviceRepository;
+    private final InfluxService influxService;
+    private final MessageSource messageSource;
 
-    public DeviceService(DeviceRepository deviceRepository) {
+    public DeviceService(DeviceRepository deviceRepository,
+                         InfluxService influxService,
+                         MessageSource messageSource) {
         this.deviceRepository = deviceRepository;
+        this.influxService = influxService;
+        this.messageSource = messageSource;
     }
 
     @Override
@@ -63,5 +75,16 @@ public class DeviceService implements IDeviceService {
         }
         device.get().setStillThere(true);
         deviceRepository.save(device.get());
+    }
+
+    @Override
+    public List<Measurement> getPaginatedByMeasurementNameAndDeviceIdInTimeRange(MeasurementsRequestDTO requestDTO) {
+        if(requestDTO.getFrom() >= requestDTO.getTo()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("dateRange.invalid", null, Locale.getDefault()));
+        }
+        if(deviceRepository.findById(requestDTO.getDeviceId()).isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("device.notFound", null, Locale.getDefault()));
+        }
+        return influxService.findPaginatedByMeasurementNameAndDeviceIdInTimeRange(requestDTO);
     }
 }

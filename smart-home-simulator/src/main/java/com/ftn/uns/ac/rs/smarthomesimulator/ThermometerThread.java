@@ -88,7 +88,7 @@ public class ThermometerThread implements Runnable {
 
                 sendAndDisplayMeasurements(temp, humidity);
             }
-            Thread.sleep(2000);
+            Thread.sleep(5000);
         }
     }
 
