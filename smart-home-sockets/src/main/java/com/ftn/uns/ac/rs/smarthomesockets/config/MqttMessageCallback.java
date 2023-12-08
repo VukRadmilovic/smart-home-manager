@@ -13,6 +13,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Service
@@ -45,13 +47,16 @@ public class MqttMessageCallback implements MqttCallback {
      * Callback in case the app received a message from one of the topics it's subscribed to.
      * These include the "measurements" and "statuses" topics.
      */
+    //TODO Menjaj mapu tagova ako ti treba nesto
     @Override public void messageArrived(String topic, MqttMessage mqttMessage) throws JsonProcessingException {
         String message = new String(mqttMessage.getPayload());
         String[] data = message.split(",");
         String valueWithUnit = data[1];
         String deviceId = data[2];
         float value = Float.parseFloat(valueWithUnit.substring(0, valueWithUnit.length() - 1));
-        Measurement measurement = new Measurement((new Date()).getTime(),value);
+        Map<String,String> tags = new HashMap<>();
+        tags.put("unit",valueWithUnit.substring(valueWithUnit.length() - 1));
+        Measurement measurement = new Measurement(data[0],value,(new Date()).getTime(),tags );
         String toSend = jsonMapper.writeValueAsString(measurement);
         messagingTemplate.convertAndSend("/thermometer/freshest/" + deviceId, toSend);
         System.out.println("Message received. ID:" + mqttMessage.getId() + ", Message: " + message);

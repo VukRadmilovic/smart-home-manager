@@ -2,8 +2,11 @@ package com.ftn.uns.ac.rs.smarthomesimulator;
 
 import com.ftn.uns.ac.rs.smarthomesimulator.models.TemperatureUnit;
 import com.ftn.uns.ac.rs.smarthomesimulator.services.MqttService;
+import com.zaxxer.hikari.util.SuspendResumeLock;
 import org.eclipse.paho.mqttv5.common.MqttException;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -41,14 +44,15 @@ public class ThermometerThread implements Runnable {
         //WIN,SPR,SUM,FAL
         int[][] dayStartEnd = new int[][]{{8, 17}, {7, 19}, {6, 20}, {7, 17}};
 
-        //WIN,SPR,SUM,FAL {day,night}
-        int[][][] typicalDayNightTemps = new int[][][]{{{0, 10}, {-5, 5}}, {{15, 25}, {5, 15}},
-                {{25, 35}, {15, 25}}, {{15, 25}, {5, 15}}};
-
+        //WIN,SPR,SUM,FAL {day}
+        int[][] typicalDayNightTemps = new int[][]{{0, 10}, {15, 25},
+                {25, 35}, {15, 25}};
+        int interval = 5;
         int[][] typicalDayNightHumidity = new int[][]{{40, 50}, {35, 40}, {30, 35}, {35, 50}};
+        double tempValue, humValue;
         while (true) {
             int[] currentDayStartEnd;
-            int[][] currentTypicalDayNightTemps;
+            int[] currentTypicalDayNightTemps;
             int[] currentTypicalDayNightHumidity;
             int correctIndex;
             LocalDateTime now = LocalDateTime.now();
@@ -62,7 +66,39 @@ public class ThermometerThread implements Runnable {
             currentDayStartEnd = dayStartEnd[correctIndex];
             currentTypicalDayNightTemps = typicalDayNightTemps[correctIndex];
             currentTypicalDayNightHumidity = typicalDayNightHumidity[correctIndex];
-            int correctedTemp;
+
+            if(now.getHour() >= currentDayStartEnd[0] && now.getHour() < currentDayStartEnd[1]) {
+                tempValue = currentTypicalDayNightTemps[0] +
+                        (((double) Math.abs(currentTypicalDayNightTemps[0] - currentTypicalDayNightTemps[1]) /
+                                ((double) 60 / interval * 60 * Math.abs(currentDayStartEnd[1] - currentDayStartEnd[0]))) *
+                                (((now.getHour() - currentDayStartEnd[0])) * 60 * 60 + 60 * now.getMinute() + now.getSecond()) / interval);
+                humValue = currentTypicalDayNightHumidity[1] -
+                        (((double) Math.abs(currentTypicalDayNightHumidity[1] - currentTypicalDayNightHumidity[0]) /
+                                ((double) 60 / interval * 60 * Math.abs(currentDayStartEnd[1] - currentDayStartEnd[0]))) *
+                                (((now.getHour() - currentDayStartEnd[0])) * 60 * 60 + 60 * now.getMinute() + now.getSecond()) / interval);
+
+                sendAndDisplayMeasurements(tempValue, humValue);
+            }
+            else {
+                int divisor = 24 - currentDayStartEnd[1] + now.getHour();
+                int dividend = 24;
+                if(divisor > 24) {
+                    dividend = divisor;
+                    divisor = 24;
+                }
+                double offsetTemp =  (((double) Math.abs(currentTypicalDayNightTemps[0] - currentTypicalDayNightTemps[1]) /
+                        ((double) 60 / interval * 60 * Math.abs(24 - currentDayStartEnd[1] + currentDayStartEnd[0]))) *
+                        (((dividend % divisor) * 60 * 60 + now.getMinute() * 60 + now.getSecond()) / interval));
+                double offsetHum =  (((double) Math.abs(currentTypicalDayNightHumidity[1] - currentTypicalDayNightHumidity[0]) /
+                        ((double) 60 / interval * 60 * Math.abs(currentDayStartEnd[1] - currentDayStartEnd[0]))) *
+                        (((dividend % divisor) * 60 * 60 + now.getMinute() * 60 + now.getSecond()) / interval));
+                tempValue = currentTypicalDayNightTemps[1] - offsetTemp;
+                humValue = currentTypicalDayNightHumidity[0] + offsetHum;
+
+                sendAndDisplayMeasurements(tempValue, humValue);
+            }
+
+            /*int correctedTemp;
             if (now.getHour() >= currentDayStartEnd[0] && now.getHour() < currentDayStartEnd[1]) {
                 if (now.getHour() > (currentDayStartEnd[1] -
                         ((currentDayStartEnd[1] - currentDayStartEnd[0]) / 2)))
@@ -77,8 +113,9 @@ public class ThermometerThread implements Runnable {
                 sendAndDisplayMeasurements(temp, humidity);
             } else {
                 if (now.getHour() > (
-                        (currentDayStartEnd[1] + ((currentDayStartEnd[1] - currentDayStartEnd[0]) / 2)) % 24))
+                        (currentDayStartEnd[1] + ((currentDayStartEnd[1] - currentDayStartEnd[0]) / 2)) % 24)) {
                     correctedTemp = currentTypicalDayNightTemps[1][1] - 5;
+                }
                 else
                     correctedTemp = currentTypicalDayNightTemps[1][0];
 
@@ -87,18 +124,20 @@ public class ThermometerThread implements Runnable {
                         currentTypicalDayNightHumidity[1] + 4);
 
                 sendAndDisplayMeasurements(temp, humidity);
-            }
-            Thread.sleep(5000);
+            }*/
+            Thread.sleep(interval * 1000);
         }
     }
 
-    private void sendAndDisplayMeasurements(int temp, int humidity) {
-        String msgHumidity = "humidity," + humidity + "%," + deviceId;
-        String msgTemp = "temperature," + temp + "C," + deviceId;
+    private void sendAndDisplayMeasurements(double temp, double humidity) {
+        DecimalFormat df = new DecimalFormat("#.###");
+        df.setRoundingMode(RoundingMode.CEILING);
+        String msgHumidity = "humidity," + df.format(humidity) + "%," + deviceId;
+        String msgTemp = "temperature," + df.format(temp) + "C," + deviceId;
 
         if (unit == TemperatureUnit.FAHRENHEIT) {
-            temp = (int) (temp * 1.8 + 32);
-            msgTemp = "temperature," + temp + "F," + deviceId;
+            temp =  temp * 1.8 + 32;
+            msgTemp = "temperature," + df.format(temp) + "F," + deviceId;
         }
 
         System.out.println(msgTemp + "\n" + msgHumidity);

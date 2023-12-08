@@ -4,10 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Measurement {
-    private Long date;
+    private String name;
     private double value;
+    private Long timestamp;
+    private Map<String,String> tags;
 }

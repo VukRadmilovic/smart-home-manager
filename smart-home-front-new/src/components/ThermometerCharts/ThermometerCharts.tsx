@@ -9,6 +9,8 @@ import SockJS from 'sockjs-client';
 import React, {useEffect} from "react";
 import {MeasurementRequest} from "../../models/MeasurementRequest.ts";
 import {LineChart} from "@mui/x-charts";
+import {ChartData} from "../../models/ChartData.ts";
+import {DataPoint, LTTB} from 'downsample';
 
 interface ThermometerChartsProps {
     userService: UserService
@@ -18,7 +20,6 @@ interface ThermometerChartsProps {
 type ChartDataShort = {
     timestamp: Date,
     value: number,
-    unit: string
 }
 
 export function ThermometerCharts({userService, deviceService} : ThermometerChartsProps) {
@@ -30,7 +31,7 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
     const [humidityData, setHumidityData] = React.useState<ChartDataShort[]>([]);
     const deviceId = String(location.pathname.split('/').pop());
     const shouldConnect = React.useRef(true);
-    const [tempLabel, setTempLabel] = React.useState<string>("Temperature (");
+    const [tempLabel, setTempLabel] = React.useState<string>("Temperature ()");
     const connectSocket = () => {
         try {
             const webChatUrl = "http://localhost:80/realtime";
@@ -53,9 +54,43 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
         }
     };
 
+    const downsample = (data: ChartDataShort[]) => {
+        const dataPoints : DataPoint[] = [];
+        data.forEach((val) => {
+            if(val.value != null) {
+                const point: DataPoint = {
+                    x: val.timestamp,
+                    y: val.value
+                }
+                dataPoints.push(point);
+            }
+        })
+        const chartWidth = 60   ;
+        const res =  LTTB(dataPoints, chartWidth);
+        let result : ChartDataShort[] = [];
+        for (let entry of res) {
+            const data : ChartDataShort = {
+                timestamp: entry.x,
+                value: entry.y
+            }
+            result.push(data);
+        }
+       /* result.forEach((val,idx) => {
+            if(idx!= result.length - 1 && result.length >= 2 &&
+                (result[idx + 1].timestamp.getTime() - val.timestamp.getTime() > 60000)){
+                const nullVal : ChartDataShort = {
+                    timestamp: val.timestamp,
+                    value: null
+                }
+                result.splice(idx,9,nullVal);
+            }
+        })*/
+        return result
+    }
+
     const getMeasurement = (measurement: string) => {
         const now = new Date()
-        const from = now.getHours() == 0 ? 23 : new Date().setHours(now.getHours() - 3);
+        const from = now.getHours() == 0 ? 23 : new Date().setHours(now.getHours() - 1);
         const request : MeasurementRequest = {
             from: Math.floor(from / 1000),
             to: Math.floor(Date.now() / 1000),
@@ -69,21 +104,30 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
                 return;
             }
             const data : ChartDataShort[] = [];
-            response.batch.forEach((value) => {
+            response.batch.forEach((value,index) => {
                 const newVal : ChartDataShort = {
                     timestamp : new Date(value.timestamp),
                     value: value.value,
-                    unit: value.tags["unit"]
                 };
                 data.push(newVal);
-            })
+                /*if(index != response.batch.length - 1 && response.batch.length >= 2 &&
+                    (new Date(response.batch[index + 1].timestamp).getTime() - newVal.timestamp.getTime() > 60000))
+                {
+                    const nullVal: ChartDataShort = {
+                        timestamp: newVal.timestamp,
+                        value: null
+                    }
+                    data.push(nullVal)
+                }*/
 
+            })
+            const downsampled = downsample(data);
             if(measurement == "temperature") {
-               setTempData(data);
-               setTempLabel(tempLabel + data[0].unit + ")")
+               setTempData(downsampled);
+               setTempLabel("Temperature (" + response.batch[0].tags["unit"] + ")")
             }
             else {
-               setHumidityData(data);
+               setHumidityData(downsampled);
             }
         })).catch((err) => {
             console.log(err);
@@ -94,7 +138,6 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
     }
 
     useEffect(() => {
-
         if(!shouldConnect.current) return;
         connectSocket();
         getMeasurement("temperature");
@@ -102,8 +145,38 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
         shouldConnect.current = false;
     }, []);
 
-    const onMessageReceived = (payload: string) => {
-        //console.log(payload)
+    const onMessageReceived = (payload) => {
+        const val : ChartData =  JSON.parse(payload.body);
+        const newVal : ChartDataShort = {
+            timestamp : new Date(+val.timestamp),
+            value: val.value,
+        };
+        if(val.name == "temperature"){
+            setTempData((prevTempData) => {
+                if(prevTempData.length > 0 ) {
+                    if (newVal.timestamp.getTime() - prevTempData[0].timestamp.getTime() > 3900000)
+                        prevTempData.shift();
+                    /*if (newVal.timestamp.getTime() - prevTempData[prevTempData.length - 1].timestamp.getTime() > 60000)
+                    {
+                        const nullVal : ChartDataShort = {
+                            timestamp: val.timestamp,
+                            value: null
+                        }
+                        prevTempData.push(nullVal)
+                    }*/
+                }
+                return [...prevTempData, newVal];
+            });
+        }
+        else {
+            setHumidityData((prevHumData) => {
+                if(prevHumData.length > 0 ) {
+                    if (newVal.timestamp.getTime() - prevHumData[0].timestamp.getTime() > 3900000)
+                        prevHumData.shift();
+                }
+                return [...prevHumData, newVal];
+            });
+        }
     }
 
 
