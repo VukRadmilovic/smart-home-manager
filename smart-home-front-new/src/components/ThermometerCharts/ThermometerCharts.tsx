@@ -1,4 +1,13 @@
-import {CssBaseline, Grid} from "@mui/material";
+import {
+    CssBaseline,
+    FormControl,
+    FormControlLabel,
+    FormLabel,
+    Grid,
+    Radio,
+    RadioGroup,
+    Typography
+} from "@mui/material";
 import {SideNav} from "../Sidenav/SideNav.tsx";
 import {UserService} from "../../services/UserService.ts";
 import {DeviceService} from "../../services/DeviceService.ts";
@@ -11,6 +20,7 @@ import {MeasurementRequest} from "../../models/MeasurementRequest.ts";
 import {LineChart} from "@mui/x-charts";
 import {ChartData} from "../../models/ChartData.ts";
 import {DataPoint, LTTB} from 'downsample';
+import {useNavigate} from "react-router-dom";
 
 interface ThermometerChartsProps {
     userService: UserService
@@ -31,7 +41,14 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
     const [humidityData, setHumidityData] = React.useState<ChartDataShort[]>([]);
     const deviceId = String(location.pathname.split('/').pop());
     const shouldConnect = React.useRef(true);
-    const [tempLabel, setTempLabel] = React.useState<string>("Temperature ()");
+    const navigate = useNavigate();
+    const [units, setUnits] = React.useState('C');
+
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        changeUnit((event.target as HTMLInputElement).value);
+        setUnits((event.target as HTMLInputElement).value);
+    };
+
     const connectSocket = () => {
         try {
             const webChatUrl = "http://localhost:80/realtime";
@@ -54,7 +71,32 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
         }
     };
 
-    const downsample = (data: ChartDataShort[]) => {
+    const changeUnit = (unit : string) => {
+        if(units == unit) return;
+        const transformedData: ChartDataShort[] = [];
+        if(unit == "F") {
+            console.log("ye")
+            tempData.forEach((val) => {
+                const transformed : ChartDataShort = {
+                    timestamp: val.timestamp,
+                    value: (val.value * 9/5) + 32
+                }
+                transformedData.push(transformed)
+            })
+        }
+        else {
+            console.log("c")
+            tempData.forEach((val) => {
+                const transformed : ChartDataShort = {
+                    timestamp: val.timestamp,
+                    value: (val.value - 32) * 5/9
+                }
+                transformedData.push(transformed)
+            })
+        }
+        setTempData(transformedData);
+    }
+    const downsample = (data: ChartDataShort[], targetLength : number) => {
         const dataPoints : DataPoint[] = [];
         data.forEach((val) => {
             if(val.value != null) {
@@ -65,8 +107,7 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
                 dataPoints.push(point);
             }
         })
-        const chartWidth = 60   ;
-        const res =  LTTB(dataPoints, chartWidth);
+        const res =  LTTB(dataPoints, targetLength);
         let result : ChartDataShort[] = [];
         for (let entry of res) {
             const data : ChartDataShort = {
@@ -121,10 +162,12 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
                 }*/
 
             })
-            const downsampled = downsample(data);
+            let downsampled : ChartDataShort[] = data;
+            if(data.length > 60)
+                downsampled = downsample(data,60);
             if(measurement == "temperature") {
                setTempData(downsampled);
-               setTempLabel("Temperature (" + response.batch[0].tags["unit"] + ")")
+               setUnits(response.batch[0].tags["unit"])
             }
             else {
                setHumidityData(downsampled);
@@ -144,6 +187,19 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
         getMeasurement("humidity");
         shouldConnect.current = false;
     }, []);
+
+    useEffect(() => {
+        if (sessionStorage.getItem("expiration") != null) {
+            setTimeout(() => {
+                setErrorMessage("Session expired. Please log in again.");
+                setIsSuccess(false);
+                setErrorPopupOpen(true);
+                setTimeout(() => navigate("/"), 5000);
+            }, Number(sessionStorage.getItem("expiration")) - Date.now())
+        } else {
+            navigate("/")
+        }
+    });
 
     const onMessageReceived = (payload) => {
         const val : ChartData =  JSON.parse(payload.body);
@@ -216,31 +272,44 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
                         alignItems={'flex-start'}
                         ml={{xl: '20%', lg: '20%', md: '25%', sm: '0', xs: '0'}}
                         mt={{xl: 0, lg: 0, md: 0, sm: '64px', xs: '64px'}}>
-                        <Grid container item xs={12} sm={12} md={12} lg={12} xl={12}>
-                            <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}>
-                                <ResizableBox height={300} width={1100}>
-                                    <LineChart
-                                        series={[
-                                            { dataKey:'value', label: tempLabel},
-                                        ]}
-                                        xAxis={[{ scaleType:'time', dataKey:'timestamp', label: 'Time'  }]}
-                                        dataset={tempData}
-                                    />
-                                </ResizableBox>
-                            </Grid>
+                        <Grid container item xs={12} sm={12} md={12} lg={12} xl={12}
+                              alignItems={'center'}
+                              justifyContent={'center'}>
+                            <Typography variant={'h6'} mr={2}>Units</Typography>
+                            <FormControl>
+                                <RadioGroup
+                                    row
+                                    aria-labelledby="units"
+                                    defaultValue="C"
+                                    value={units}
+                                    onChange={handleChange}
+                                    name="units-group">
+                                    <FormControlLabel value="C" control={<Radio />} label="C" />
+                                    <FormControlLabel value="F" control={<Radio />} label="F" />
+                                </RadioGroup>
+                            </FormControl>
                         </Grid>
                         <Grid container item xs={12} sm={12} md={12} lg={12} xl={12}>
-                            <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}>
-                                <ResizableBox height={300} width={1100}>
-                                    <LineChart
-                                        series={[
-                                            { dataKey:'value', label: 'Humidity (%)', color:'#59a14f' },
-                                        ]}
-                                        xAxis={[{ scaleType:'time', dataKey:'timestamp', label:'Time' }]}
-                                        dataset={humidityData}
-                                    />
-                                </ResizableBox>
-                            </Grid>
+                            <ResizableBox height={300} width={1100}>
+                                <LineChart
+                                    series={[
+                                        { dataKey:'value', label: ("Temperature (" + units + ")") as string},
+                                    ]}
+                                    xAxis={[{ scaleType:'time', dataKey:'timestamp', label: 'Time'  }]}
+                                    dataset={tempData}
+                                />
+                            </ResizableBox>
+                        </Grid>
+                        <Grid container item xs={12} sm={12} md={12} lg={12} xl={12}>
+                            <ResizableBox height={300} width={1100}>
+                                <LineChart
+                                    series={[
+                                        { dataKey:'value', label: 'Humidity (%)', color:'#59a14f' },
+                                    ]}
+                                    xAxis={[{ scaleType:'time', dataKey:'timestamp', label:'Time' }]}
+                                    dataset={humidityData}
+                                />
+                            </ResizableBox>
                         </Grid>
                     </Grid>
                 </Grid>
