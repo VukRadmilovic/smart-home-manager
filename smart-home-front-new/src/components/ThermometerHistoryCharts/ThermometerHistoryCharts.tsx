@@ -122,6 +122,13 @@ export function ThermometerChartsHistory({userService, deviceService} : Thermome
             setErrorPopupOpen(true);
             return;
         }
+        if (timeSpan == "C" && to.valueOf() - from.valueOf() > 1000 * 60 * 60 * 24 * 30)
+        {
+            setErrorMessage("Date range must be less than a month!");
+            setIsSuccess(false);
+            setErrorPopupOpen(true);
+            return;
+        }
         if (timeSpan == "1") {
             fromLocal = fromLocal.getTime() - 60 * 60 * 1000;
             targetLength = 60;
