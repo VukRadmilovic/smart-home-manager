@@ -2,7 +2,7 @@ import {UserService} from "../../services/UserService.ts";
 import {
     Button,
     CssBaseline, FormControl, FormControlLabel, FormLabel,
-    Grid, Radio, RadioGroup, SelectChangeEvent, Stack, TextField, Typography
+    Grid, InputLabel, MenuItem, Radio, RadioGroup, Select, SelectChangeEvent, Stack, TextField, Typography
 } from "@mui/material";
 import {SideNav} from "../Sidenav/SideNav.tsx";
 import React, {useEffect, useState} from "react";
@@ -59,9 +59,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
     };
 
     const onSubmit = async (formData: DeviceForm) => {
-        console.log('lol?');
         try {
-            console.log(formData.measuringUnit.toUpperCase());
             const deviceFormData = new FormData();
             deviceFormData.append('name', formData.name);
             deviceFormData.append('description', formData.description);
@@ -88,7 +86,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
             setIsSuccess(true);
             setTimeout(() => {
                 navigate('/devices');
-            }, 1000);
+            }, 2000);
         } catch (error) {
             console.log(error);
             if (error.response.data.includes('image' && 'null')) {
@@ -182,24 +180,26 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                                     </Grid>
 
                                     <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
-                                          justifyContent={'center'} marginTop={"10px"}>
-                                        <FormControl component="fieldset">
-                                            <FormLabel component="legend">Device Type</FormLabel>
-                                            <RadioGroup
-                                                aria-label="deviceType"
+                                          justifyContent={'center'} marginTop={'20px'} marginBottom={'20px'}>
+                                        <FormControl variant="outlined" error={!!errors.deviceType}>
+                                            <InputLabel id="deviceType-label">Device Type</InputLabel>
+                                            <Select
+                                                labelId="deviceType-label"
+                                                id="deviceType"
+                                                label="Device Type"
                                                 defaultValue="thermometer"
-                                                {...register("deviceType", {required: true})}
-                                                error={!!errors.deviceType}
-                                                helperText={errors.deviceType ? errors.deviceType?.message : "Required"}
+                                                {...register('deviceType', { required: true })}
                                             >
-                                                <FormControlLabel value="thermometer" control={<Radio/>}
-                                                                  label="Thermometer"/>
-                                            </RadioGroup>
+                                                <MenuItem value="thermometer">Thermometer</MenuItem>
+                                            </Select>
+                                            {errors.deviceType && (
+                                                <div style={{ color: 'red', fontSize: '12px' }}>{errors.deviceType.message || 'Required'}</div>
+                                            )}
                                         </FormControl>
                                     </Grid>
 
                                     <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
-                                          justifyContent={'center'}>
+                                          justifyContent={'center'} marginBottom={'10px'}>
                                         <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
                                             <TextField
                                                 id="propertyId"
@@ -218,7 +218,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                                     </Grid>
                                     {/*name text field*/}
                                     <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
-                                          justifyContent={'center'}>
+                                          justifyContent={'center'} marginBottom={'10px'}>
                                         <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
                                             <TextField id="name"
                                                        label="Name"
@@ -234,7 +234,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                                     </Grid>
                                     {/*description text field*/}
                                     <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
-                                          justifyContent={'center'}>
+                                          justifyContent={'center'} marginBottom={'10px'}>
                                         <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
                                             <TextField id="description"
                                                        label="Description"
@@ -266,7 +266,8 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                                         </Grid>
                                     </Grid>
                                 </Grid>
-                                <Grid item container xs={12} sm={12} md={12} lg={12} xl={12} justifyContent={'center'}>
+                                <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
+                                      justifyContent={'center'}>
                                     <Grid item container xs={12} sm={12} md={8} lg={8} xl={6} style={{ display: 'flex', justifyContent: 'center' }}>
                                         <FormControl component="fieldset">
                                             <FormLabel component="legend">Energy Source</FormLabel>
