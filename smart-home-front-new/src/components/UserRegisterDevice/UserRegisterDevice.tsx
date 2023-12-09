@@ -30,6 +30,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = React.useState<string>("");
     const [errorPopupOpen, setErrorPopupOpen] = React.useState<boolean>(false);
+    const [isSuccess, setIsSuccess] = React.useState(true);
     const {register, handleSubmit, setValue, formState: {errors}} = useForm<DeviceForm>({
         defaultValues: {
             name: "",
@@ -71,6 +72,10 @@ export function UserRegisterDevice({userService}: UserMainProps) {
             deviceFormData.append('temperatureUnit', formData.measuringUnit.toUpperCase());
             deviceFormData.append('image', selectedImage);
 
+            if (selectedImage.name == 'init') {
+                deviceFormData.delete('image');
+            }
+
             await axios.post('http://localhost:80/api/devices/register', deviceFormData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -78,11 +83,21 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                 },
             });
 
-            alert('Successful!');
+            setErrorMessage('Device registered successfully!');
+            setErrorPopupOpen(true);
+            setIsSuccess(true);
+            setTimeout(() => {
+                navigate('/devices');
+            }, 1000);
         } catch (error) {
             console.log(error);
-            setErrorMessage(error.response.data);
+            if (error.response.data.includes('image' && 'null')) {
+                setErrorMessage('Please select an image!');
+            } else {
+                setErrorMessage(error.response.data);
+            }
             setErrorPopupOpen(true);
+            setIsSuccess(false);
         }
     };
 
@@ -285,10 +300,9 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                                 </Grid>
                             </Grid>
                             <Grid item xs={12} sm={12} md={12} lg={12} xl={12} mt={5}>
-                                <Button variant="contained" type="submit">Register Property</Button>
+                                <Button variant="contained" type="submit">Register device</Button>
                             </Grid>
-                            <PopupMessage message={errorMessage} isSuccess={false} handleClose={handleErrorPopupClose}
-                                          open={errorPopupOpen}/>
+                            <PopupMessage message={errorMessage} isSuccess={isSuccess} handleClose={handleErrorPopupClose} open={errorPopupOpen}/>
                         </Grid>
                     </Grid>
                 </Grid>

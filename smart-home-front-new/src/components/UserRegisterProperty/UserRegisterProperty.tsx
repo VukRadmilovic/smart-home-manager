@@ -184,7 +184,7 @@ export function UserRegisterProperty({userService, propertyService} : PropertyPr
                                                     label="Type"
                                                     onChange={handleChangeType}
                                                 >
-                                                    <MenuItem value={"APARTMANT"}>Apartmant</MenuItem>
+                                                    <MenuItem value={"APARTMENT"}>Apartment</MenuItem>
                                                     <MenuItem value={"HOUSE"}>House</MenuItem>
                                                 </Select>
                                             </FormControl>
