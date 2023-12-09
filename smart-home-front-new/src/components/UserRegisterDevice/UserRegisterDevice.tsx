@@ -17,7 +17,6 @@ interface UserMainProps {
 
 interface DeviceForm {
     name: string,
-    description: string,
     type: string,
     propertyId: number,
     energySource: string,
@@ -34,7 +33,6 @@ export function UserRegisterDevice({userService}: UserMainProps) {
     const {register, handleSubmit, setValue, formState: {errors}} = useForm<DeviceForm>({
         defaultValues: {
             name: "",
-            description: "",
             type: "thermometer",
             propertyId: 1,
             energySource: "AUTONOMOUS",
@@ -75,7 +73,6 @@ export function UserRegisterDevice({userService}: UserMainProps) {
         try {
             const deviceFormData = new FormData();
             deviceFormData.append('name', formData.name);
-            deviceFormData.append('description', formData.description);
             deviceFormData.append('type', 'thermometer');
             deviceFormData.append('propertyId', formData.propertyId.toString());
             deviceFormData.append('powerSource', formData.energySource.toUpperCase());
@@ -250,22 +247,6 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                                                            })}
                                                        error={!!errors.name}
                                                        helperText={errors.name ? errors.name?.message : "Required"}
-                                                       variant="outlined"/>
-                                        </Grid>
-                                    </Grid>
-                                    {/*description text field*/}
-                                    <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
-                                          justifyContent={'center'} marginBottom={'10px'}>
-                                        <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
-                                            <TextField id="description"
-                                                       label="Description"
-                                                       fullWidth={true}
-                                                       {...register("description",
-                                                           {
-                                                               required: "Description is a required field!",
-                                                           })}
-                                                       error={!!errors.description}
-                                                       helperText={errors.description ? errors.description?.message : "Required"}
                                                        variant="outlined"/>
                                         </Grid>
                                     </Grid>

@@ -28,9 +28,6 @@ public class Device {
     private String name;
 
     @Column
-    private String description;
-
-    @Column
     private String image;
 
     @Enumerated(EnumType.STRING)

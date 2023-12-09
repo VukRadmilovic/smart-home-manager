@@ -58,7 +58,7 @@ public class ThermometerService implements IThermometerService {
         if (property.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("property.notFound", null, Locale.getDefault()));
         }
-        Thermometer thermometer = new Thermometer(property.get(), dto.getName(), dto.getDescription(),
+        Thermometer thermometer = new Thermometer(property.get(), dto.getName(),
                 dto.getPowerSource(), dto.getEnergyConsumption(), dto.getTemperatureUnit());
         Thermometer savedThermometer;
         try {
