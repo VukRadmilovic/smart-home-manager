@@ -4,6 +4,7 @@ import com.ftn.uns.ac.rs.smarthome.models.Measurement;
 import com.ftn.uns.ac.rs.smarthome.models.devices.Device;
 import com.ftn.uns.ac.rs.smarthome.models.devices.Thermometer;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.DeviceDetailsDTO;
+import com.ftn.uns.ac.rs.smarthome.models.dtos.MeasurementsDTO;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.MeasurementsRequestDTO;
 import com.ftn.uns.ac.rs.smarthome.repositories.DeviceRepository;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IDeviceService;
@@ -78,7 +79,7 @@ public class DeviceService implements IDeviceService {
     }
 
     @Override
-    public List<Measurement> getPaginatedByMeasurementNameAndDeviceIdInTimeRange(MeasurementsRequestDTO requestDTO) {
+    public MeasurementsDTO getPaginatedByMeasurementNameAndDeviceIdInTimeRange(MeasurementsRequestDTO requestDTO) {
         if(requestDTO.getFrom() >= requestDTO.getTo()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("dateRange.invalid", null, Locale.getDefault()));
         }

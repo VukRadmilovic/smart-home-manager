@@ -73,8 +73,7 @@ public class DeviceController {
         @PutMapping(value = "/measurements")
     public ResponseEntity<?> getMeasurements(@Valid @RequestBody MeasurementsRequestDTO requestDTO) {
         try {
-            List<Measurement> measurements = this.deviceService.getPaginatedByMeasurementNameAndDeviceIdInTimeRange(requestDTO);
-            return new ResponseEntity<>(new MeasurementsDTO(measurements), HttpStatus.OK);
+            return new ResponseEntity<>(this.deviceService.getPaginatedByMeasurementNameAndDeviceIdInTimeRange(requestDTO), HttpStatus.OK);
         } catch(ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());
         }

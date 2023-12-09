@@ -97,6 +97,10 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
         navigate('/thermoCharts/' + deviceId);
     }
 
+    const navigateToHistoryCharts = (deviceId: number) => {
+        navigate('/thermoChartsHistory/' + deviceId);
+    }
+
     const getUserDevices = () => {
         deviceService.getUserDevices().then((response => {
             if (response.length == 0) {
@@ -221,7 +225,7 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
                                                     Real-Time Monitoring
                                                 </MenuItem>
                                                 }
-                                                <MenuItem onClick={handleMenuClose} disableRipple>
+                                                <MenuItem onClick={() => navigateToHistoryCharts(device.id)} disableRipple>
                                                     <TimelineIcon />
                                                         History Monitoring
                                                 </MenuItem>

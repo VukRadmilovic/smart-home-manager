@@ -1,6 +1,7 @@
 package com.ftn.uns.ac.rs.smarthome.services;
 
 import com.ftn.uns.ac.rs.smarthome.models.Measurement;
+import com.ftn.uns.ac.rs.smarthome.models.dtos.MeasurementsDTO;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.MeasurementsRequestDTO;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.QueryApi;
@@ -35,7 +36,7 @@ public class InfluxService {
         writeApi.writePoint(point);
     }
 
-    private List<Measurement> query(String fluxQuery) {
+    private MeasurementsDTO query(String fluxQuery, int maxData) {
         List<Measurement> result = new ArrayList<>();
         QueryApi queryApi = this.influxDbClient.getQueryApi();
         List<FluxTable> tables = queryApi.query(fluxQuery);
@@ -51,10 +52,16 @@ public class InfluxService {
                         optTags));
             }
         }
-        return result;
+        boolean hasMore = false;
+        if(result.size() > maxData) {
+            hasMore = true;
+            result.remove(result.size() - 1);
+        }
+        System.out.println(result);
+        return new MeasurementsDTO(result,hasMore);
     }
 
-    public List<Measurement> findPaginatedByMeasurementNameAndDeviceIdInTimeRange(MeasurementsRequestDTO requestDTO) {
+    public MeasurementsDTO findPaginatedByMeasurementNameAndDeviceIdInTimeRange(MeasurementsRequestDTO requestDTO) {
         String fluxQuery = String.format(
                 "from(bucket: \"%s\") " +
                         "  |> range(start: %d, stop: %d) " +
@@ -66,9 +73,8 @@ public class InfluxService {
                 requestDTO.getTo(),
                 requestDTO.getMeasurementName(),
                 requestDTO.getDeviceId().toString(),
-                requestDTO.getLimit(),
+                requestDTO.getLimit() + 1,
                 requestDTO.getOffset());
-        System.out.println(fluxQuery);
-        return this.query(fluxQuery);
+        return this.query(fluxQuery,requestDTO.getLimit());
     }
 }

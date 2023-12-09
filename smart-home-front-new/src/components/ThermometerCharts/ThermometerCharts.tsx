@@ -2,7 +2,6 @@ import {
     CssBaseline,
     FormControl,
     FormControlLabel,
-    FormLabel,
     Grid,
     Radio,
     RadioGroup,
@@ -12,7 +11,7 @@ import {SideNav} from "../Sidenav/SideNav.tsx";
 import {UserService} from "../../services/UserService.ts";
 import {DeviceService} from "../../services/DeviceService.ts";
 import {PopupMessage} from "../PopupMessage/PopupMessage.tsx";
-import {ResizableBox} from "./ResizableBox.tsx";
+import {ResizableBox} from "../Shared/ResizableBox.tsx";
 import Stomp from 'stompjs';
 import SockJS from 'sockjs-client';
 import React, {useEffect} from "react";
@@ -75,7 +74,6 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
         if(units == unit) return;
         const transformedData: ChartDataShort[] = [];
         if(unit == "F") {
-            console.log("ye")
             tempData.forEach((val) => {
                 const transformed : ChartDataShort = {
                     timestamp: val.timestamp,
@@ -85,7 +83,6 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
             })
         }
         else {
-            console.log("c")
             tempData.forEach((val) => {
                 const transformed : ChartDataShort = {
                     timestamp: val.timestamp,

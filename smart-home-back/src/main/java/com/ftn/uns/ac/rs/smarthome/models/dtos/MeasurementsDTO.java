@@ -13,4 +13,5 @@ import java.util.List;
 public class MeasurementsDTO {
 
     private List<Measurement> batch;
+    private boolean hasMore;
 }
