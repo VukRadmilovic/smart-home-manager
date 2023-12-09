@@ -58,6 +58,19 @@ export function UserRegisterDevice({userService}: UserMainProps) {
         setValue('measuringUnit', event.target.value);
     };
 
+    useEffect(() => {
+        if (sessionStorage.getItem("expiration") != null) {
+            setTimeout(() => {
+                setErrorMessage("Session expired. Please log in again.");
+                setIsSuccess(false);
+                setErrorPopupOpen(true);
+                setTimeout(() => navigate("/"), 5000);
+            }, Number(sessionStorage.getItem("expiration")) - Date.now())
+        } else {
+            navigate("/")
+        }
+    });
+
     const onSubmit = async (formData: DeviceForm) => {
         try {
             const deviceFormData = new FormData();
@@ -74,6 +87,14 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                 deviceFormData.delete('image');
             }
 
+            // check if energy expenditure is a number, otherwise return error
+            if (formData.energyExpenditure && isNaN(formData.energyExpenditure)) {
+                setErrorMessage('Energy expenditure must be a number!');
+                setErrorPopupOpen(true);
+                setIsSuccess(false);
+                return;
+            }
+
             await axios.post('http://localhost:80/api/devices/register', deviceFormData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -86,7 +107,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
             setIsSuccess(true);
             setTimeout(() => {
                 navigate('/devices');
-            }, 2000);
+            }, 1000);
         } catch (error) {
             console.log(error);
             if (error.response.data.includes('image' && 'null')) {
@@ -253,8 +274,8 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                                           justifyContent={'center'}>
                                         <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
                                             <TextField id="energyExpenditure"
-                                                       label="Energy Expenditure"
-                                                       type="number"
+                                                       label="Energy Expenditure (kWh)"
+                                                       type="text"
                                                        fullWidth={true}
                                                        {...register("energyExpenditure",
                                                            {

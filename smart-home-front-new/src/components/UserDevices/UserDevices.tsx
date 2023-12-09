@@ -119,7 +119,7 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
         setDevices([]);
         getUserDevices();
         shouldLoad.current = false;
-    })
+    }, [getUserDevices])
 
     useEffect(() => {
         if (sessionStorage.getItem("expiration") != null) {
@@ -194,7 +194,7 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
                                             <span style={{display: 'inline-flex'}}> <BoltIcon/>  {device.powerSource} </span>
                                         </Typography>
                                         <Typography variant="subtitle1" alignItems={'center'} color="text.secondary" component="div">
-                                            <span style={{display: 'inline-flex'}}> <Battery3BarIcon/> {device.energyConsumption} kWH </span>
+                                            <span style={{display: 'inline-flex'}}> <Battery3BarIcon/> {device.energyConsumption} kWh </span>
                                         </Typography>
                                     </CardContent>
                                     <Box sx={{ display: 'flex', justifyContent:'center', width:'100%', alignItems: 'center', pl: 1, pb: 1 }}>
