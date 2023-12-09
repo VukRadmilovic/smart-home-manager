@@ -1,8 +1,10 @@
+// noinspection TypeScriptValidateTypes
+
 import {UserService} from "../../services/UserService.ts";
 import {
     Button,
     CssBaseline, FormControl, FormControlLabel, FormLabel,
-    Grid, InputLabel, MenuItem, Radio, RadioGroup, Select, SelectChangeEvent, Stack, TextField, Typography
+    Grid, InputLabel, MenuItem, Radio, RadioGroup, Select, Stack, TextField, Typography
 } from "@mui/material";
 import {SideNav} from "../Sidenav/SideNav.tsx";
 import React, {useEffect, useState} from "react";
@@ -131,12 +133,6 @@ export function UserRegisterDevice({userService}: UserMainProps) {
         setErrorPopupOpen(false);
     };
 
-    const [type, setType] = React.useState('');
-    const position = [51.505, -0.09];
-    const handleChangeType = (event: SelectChangeEvent) => {
-        setType(event.target.value as string);
-
-    };
     return (
         <>
             <CssBaseline/>
@@ -199,20 +195,17 @@ export function UserRegisterDevice({userService}: UserMainProps) {
 
                                     <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
                                           justifyContent={'center'} marginTop={'20px'} marginBottom={'20px'}>
-                                        <FormControl variant="outlined" error={!!errors.deviceType}>
+                                        <FormControl variant="outlined">
                                             <InputLabel id="deviceType-label">Device Type</InputLabel>
                                             <Select
                                                 labelId="deviceType-label"
                                                 id="deviceType"
                                                 label="Device Type"
                                                 defaultValue="thermometer"
-                                                {...register('deviceType', { required: true })}
+                                                {...register('type', { required: true })}
                                             >
                                                 <MenuItem value="thermometer">Thermometer</MenuItem>
                                             </Select>
-                                            {errors.deviceType && (
-                                                <div style={{ color: 'red', fontSize: '12px' }}>{errors.deviceType.message || 'Required'}</div>
-                                            )}
                                         </FormControl>
                                     </Grid>
 
@@ -227,7 +220,6 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                                                 InputLabelProps={{
                                                     shrink: true,
                                                 }}
-                                                //required
                                                 {...register("propertyId",
                                                     {required: "Property ID is a required field!"})}
                                                 error={!!errors.propertyId}

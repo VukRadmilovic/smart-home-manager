@@ -79,7 +79,7 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
         },
     }));
     const [menuAnchorEl, setMenuAnchorEl] = React.useState<null | HTMLElement>(null);
-    const openMenu = Boolean(menuAnchorEl);
+    const openMenu = !!menuAnchorEl;
     const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
         setMenuAnchorEl(event.currentTarget);
     };
@@ -101,25 +101,25 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
         navigate('/thermoChartsHistory/' + deviceId);
     }
 
-    const getUserDevices = () => {
-        deviceService.getUserDevices().then((response => {
-            if (response.length == 0) {
-                return;
-            }
-            devices.push(...response);
-            setDevices(devices);
-        })).catch((err) => {
-            setErrorMessage(err.response.data);
-            setIsSuccess(false);
-            setErrorPopupOpen(true);
-        });
-    }
     useEffect(() => {
+        const getUserDevices = () => {
+            deviceService.getUserDevices().then((response => {
+                if (response.length == 0) {
+                    return;
+                }
+                devices.push(...response);
+                setDevices(devices);
+            })).catch((err) => {
+                setErrorMessage(err.response.data);
+                setIsSuccess(false);
+                setErrorPopupOpen(true);
+            });
+        }
         if (!shouldLoad.current) return;
         setDevices([]);
         getUserDevices();
         shouldLoad.current = false;
-    }, [getUserDevices])
+    }, [deviceService, devices])
 
     useEffect(() => {
         if (sessionStorage.getItem("expiration") != null) {
