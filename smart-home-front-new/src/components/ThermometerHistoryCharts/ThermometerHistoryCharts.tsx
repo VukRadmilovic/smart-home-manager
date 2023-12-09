@@ -82,7 +82,7 @@ export function ThermometerChartsHistory({userService, deviceService} : Thermome
         data.forEach((val) => {
             if(val.value != null) {
                 const point: DataPoint = {
-                    x: val.timestamp,
+                    x: new Date(val.timestamp),
                     y: val.value
                 }
                 dataPoints.push(point);

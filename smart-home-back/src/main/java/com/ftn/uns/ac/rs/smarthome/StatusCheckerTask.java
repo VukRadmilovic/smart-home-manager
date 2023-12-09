@@ -13,11 +13,14 @@ import java.util.List;
 public class StatusCheckerTask {
     private static final Logger log = LoggerFactory.getLogger(StatusCheckerTask.class);
     private final IDeviceService deviceService;
+    private final StillThereDevicesManager stillThereDevicesManager;
     private static final int FIXED_RATE = 30000;
     public static final int INITIAL_DELAY = 4000;
 
-    public StatusCheckerTask(IDeviceService deviceService) {
+    public StatusCheckerTask(IDeviceService deviceService,
+                             StillThereDevicesManager stillThereDevicesManager) {
         this.deviceService = deviceService;
+        this.stillThereDevicesManager = stillThereDevicesManager;
     }
 
     @Scheduled(initialDelay = INITIAL_DELAY, fixedRate = FIXED_RATE)
@@ -28,11 +31,13 @@ public class StatusCheckerTask {
             if (device.isStillThere()) {
                 device.setOnline(true);
                 device.setStillThere(false);
-            } else {
+                deviceService.update(device);
+            } else if (device.isOnline()) {
                 log.info("Device {} is not responding", device.getName());
                 device.setOnline(false);
+                deviceService.update(device);
             }
-            deviceService.update(device);
         }
+        stillThereDevicesManager.reset();
     }
 }

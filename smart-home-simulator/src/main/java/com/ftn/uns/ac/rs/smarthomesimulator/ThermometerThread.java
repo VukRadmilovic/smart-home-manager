@@ -146,7 +146,7 @@ public class ThermometerThread implements Runnable {
             this.mqttService.publishMeasurementMessageLite(msgTemp);
             this.mqttService.publishMeasurementMessageLite(msgHumidity);
 
-            if (count % 5 == 0) {
+            if (count % 2 == 0) {
                 count = 1;
                 System.out.println("Sending status message");
                 this.mqttService.publishStatusMessageLite("status,1T," + deviceId);
