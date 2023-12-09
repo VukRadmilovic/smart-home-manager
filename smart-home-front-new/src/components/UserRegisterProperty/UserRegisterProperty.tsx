@@ -53,7 +53,7 @@ export function UserRegisterProperty({userService, propertyService} : PropertyPr
 
     function registerProperty(formData : PropertyForm) {
         if (imageUrl == defaultPictureUrl) {
-            setErrorMessage("Please select the property picture!");
+            setErrorMessage("Please select a property picture!");
             setIsSuccess(false);
             setErrorPopupOpen(true);
             return;
