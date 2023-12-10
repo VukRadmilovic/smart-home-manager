@@ -21,6 +21,7 @@ public class AirConditioner extends Device {
 
     @Column(nullable = false)
     private Integer minTemperature;
+
     @Column(nullable = false)
     private Integer fanSpeed;
 
