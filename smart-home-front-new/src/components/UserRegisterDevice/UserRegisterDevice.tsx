@@ -78,7 +78,38 @@ export function UserRegisterDevice({userService}: UserMainProps) {
     });
 
     const onSubmit = async (formData: DeviceForm) => {
-        try {
+        async function submitACRegistration(deviceFormData: FormData) {
+            deviceFormData.append('fanSpeed', formData.fanSpeed);
+            deviceFormData.append('minTemperature', formData.minTemperature?.toString() || '');
+            deviceFormData.append('maxTemperature', formData.maxTemperature?.toString() || '');
+            deviceFormData.append('cooling', cooling);
+            deviceFormData.append('heating', heating);
+            deviceFormData.append('dry', dry);
+            deviceFormData.append('fan', fan);
+            deviceFormData.append('auto', auto);
+            deviceFormData.append('health', health);
+            deviceFormData.append('fungusPrevention', fungusPrevention);
+
+            await axios.post('http://localhost:80/api/devices/registerAC', deviceFormData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('user')
+                },
+            });
+        }
+
+        async function submitThermometerRegistration(deviceFormData: FormData) {
+            deviceFormData.append('temperatureUnit', formData.measuringUnit?.toUpperCase());
+
+            await axios.post('http://localhost:80/api/devices/registerThermo', deviceFormData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('user')
+                },
+            });
+        }
+
+        function initDeviceFormData() {
             const deviceFormData = new FormData();
             deviceFormData.append('name', formData.name);
             deviceFormData.append('propertyId', formData.propertyId.toString());
@@ -89,6 +120,11 @@ export function UserRegisterDevice({userService}: UserMainProps) {
             if (selectedImage.name == 'init') {
                 deviceFormData.delete('image');
             }
+            return deviceFormData;
+        }
+
+        try {
+            const deviceFormData = initDeviceFormData();
 
             // check if energy expenditure is a number, otherwise return error
             if (formData.energyExpenditure && isNaN(formData.energyExpenditure)) {
@@ -99,32 +135,9 @@ export function UserRegisterDevice({userService}: UserMainProps) {
             }
 
             if (deviceType == 'thermometer') {
-                deviceFormData.append('temperatureUnit', formData.measuringUnit?.toUpperCase());
-
-                await axios.post('http://localhost:80/api/devices/registerThermo', deviceFormData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                        'Authorization': 'Bearer ' + sessionStorage.getItem('user')
-                    },
-                });
+                await submitThermometerRegistration(deviceFormData);
             } else if (deviceType == 'ac') {
-                deviceFormData.append('fanSpeed', formData.fanSpeed);
-                deviceFormData.append('minTemperature', formData.minTemperature?.toString() || '');
-                deviceFormData.append('maxTemperature', formData.maxTemperature?.toString() || '');
-                deviceFormData.append('cooling', cooling);
-                deviceFormData.append('heating', heating);
-                deviceFormData.append('dry', dry);
-                deviceFormData.append('fan', fan);
-                deviceFormData.append('auto', auto);
-                deviceFormData.append('health', health);
-                deviceFormData.append('fungusPrevention', fungusPrevention);
-
-                await axios.post('http://localhost:80/api/devices/registerAC', deviceFormData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                        'Authorization': 'Bearer ' + sessionStorage.getItem('user')
-                    },
-                });
+                await submitACRegistration(deviceFormData);
             }
 
             setErrorMessage('Device registered successfully!');
@@ -201,255 +214,256 @@ export function UserRegisterDevice({userService}: UserMainProps) {
         setDeviceType(event.target.value as string);
     }
 
+    function acForm() {
+        return <div>
+            {/*fan speed text field*/}
+            <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
+                  justifyContent={'center'} marginBottom={'20px'}>
+                <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
+                    <TextField id="fanSpeed"
+                               label="Fan speed (optional)"
+                               fullWidth={true}
+                               type={"number"}
+                               {...register("fanSpeed")}
+                               variant="outlined"/>
+                </Grid>
+            </Grid>
+            <p>Temperature:</p>
+            <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
+                  justifyContent={'center'} marginBottom={'10px'}>
+                <Grid item xs={12} sm={12} md={8} lg={8} xl={6} display="flex" gap={2}>
+                    <TextField
+                        id="minTemperature"
+                        label="Minimum"
+                        type="number"
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                        {...register("minTemperature", {required: "Minimum temperature is a required field!"})}
+                        error={!!errors.minTemperature}
+                        helperText={errors.minTemperature ? errors.minTemperature?.message : "Required"}
+                        fullWidth
+                    />
+
+                    <TextField
+                        id="maxTemperature"
+                        label="Maximum"
+                        type="number"
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                        {...register("maxTemperature", {required: "Maximum temperature is a required field!"})}
+                        error={!!errors.maxTemperature}
+                        helperText={errors.maxTemperature ? errors.maxTemperature?.message : "Required"}
+                        fullWidth
+                    />
+                </Grid>
+            </Grid>
+            <FormControl component={"fieldset"} style={{'marginRight': '20px'}}>
+                <FormLabel component={"legend"}>Cooling</FormLabel>
+                <Checkbox aria-label={"cooling"} value={cooling} onChange={coolingChanged}></Checkbox>
+            </FormControl>
+            <FormControl component={"fieldset"} style={{'marginRight': '20px'}}>
+                <FormLabel component={"legend"}>Heating</FormLabel>
+                <Checkbox aria-label={"heating"} value={heating} onChange={heatingChanged}></Checkbox>
+            </FormControl>
+            <FormControl component={"fieldset"} style={{'marginRight': '20px'}}>
+                <FormLabel component={"legend"}>Dry</FormLabel>
+                <Checkbox aria-label={"dry"} value={dry} onChange={dryChanged}></Checkbox>
+            </FormControl>
+            <FormControl component={"fieldset"}>
+                <FormLabel component={"legend"}>Fan</FormLabel>
+                <Checkbox aria-label={"fan"} value={fan} onChange={fanChanged}></Checkbox>
+            </FormControl>
+            <br/>
+            <FormControl component={"fieldset"} style={{'marginRight': '20px'}}>
+                <FormLabel component={"legend"}>Auto</FormLabel>
+                <Checkbox aria-label={"auto"} value={auto} onChange={autoChanged}></Checkbox>
+            </FormControl>
+            <FormControl component={"fieldset"} style={{'marginRight': '20px'}}>
+                <FormLabel component={"legend"}>Health</FormLabel>
+                <Checkbox aria-label={"health"} value={health} onChange={healthChanged}></Checkbox>
+            </FormControl>
+            <FormControl component={"fieldset"}>
+                <FormLabel component={"legend"}>Fungus prevention</FormLabel>
+                <Checkbox aria-label={"fungusPrevention"} value={fungusPrevention}
+                          onChange={fungusPreventionChanged}></Checkbox>
+            </FormControl>
+        </div>;
+    }
+
+    function thermometerForm() {
+        return <FormControl component="fieldset">
+            <FormLabel component="legend">Measuring Unit</FormLabel>
+            <RadioGroup
+                aria-label="measuringUnit"
+                value={measuringUnit}
+                onChange={handleMeasuringUnitChange}
+                style={{flexDirection: 'row'}}
+            >
+                <FormControlLabel value="celsius" control={<Radio/>} label="Celsius"/>
+                <FormControlLabel value="fahrenheit" control={<Radio/>}
+                                  label="Fahrenheit"/>
+            </RadioGroup>
+        </FormControl>;
+    }
+
+    function genericDeviceForm() {
+        return <>
+            <Grid item container rowSpacing={0}>
+                <Grid item container xs={12} sm={12} md={12} lg={12} xl={12} alignItems={'center'}
+                      justifyContent={'center'}>
+                    <Stack alignItems={'center'} spacing={1}>
+                        <img src={imageUrl} className={'img'} alt={'Profile picture'}/>
+                        <input
+                            accept="image/*"
+                            type="file"
+                            id="select-image"
+                            style={{display: "none"}}
+                            onChange={(e) => setSelectedImage(e.target!.files?.[0] as File)}
+                        />
+                        <label htmlFor="select-image">
+                            <Button variant="contained" color="secondary" component="span">
+                                Upload Image
+                            </Button>
+                        </label>
+                    </Stack>
+                </Grid>
+
+                <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
+                      justifyContent={'center'} marginTop={'20px'} marginBottom={'20px'}>
+                    <FormControl variant="outlined">
+                        <InputLabel id="deviceType-label">Device Type</InputLabel>
+                        <Select
+                            labelId="deviceType-label"
+                            id="deviceType"
+                            label="Device Type"
+                            defaultValue="thermometer"
+                            value={deviceType}
+                            onChange={deviceTypeChanged}
+                        >
+                            <MenuItem value="thermometer">Thermometer</MenuItem>
+                            <MenuItem value="ac">Air Conditioner</MenuItem>
+                        </Select>
+                    </FormControl>
+                </Grid>
+
+                <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
+                      justifyContent={'center'} marginBottom={'10px'}>
+                    <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
+                        <TextField
+                            id="propertyId"
+                            label="Property ID"
+                            type="number"
+                            fullWidth={true}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            {...register("propertyId",
+                                {required: "Property ID is a required field!"})}
+                            error={!!errors.propertyId}
+                            helperText={errors.propertyId ? errors.propertyId?.message : "Required"}/>
+                    </Grid>
+                </Grid>
+                {/*name text field*/}
+                <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
+                      justifyContent={'center'} marginBottom={'10px'}>
+                    <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
+                        <TextField id="name"
+                                   label="Name"
+                                   fullWidth={true}
+                                   {...register("name",
+                                       {
+                                           required: "Name is a required field!",
+                                       })}
+                                   error={!!errors.name}
+                                   helperText={errors.name ? errors.name?.message : "Required"}
+                                   variant="outlined"/>
+                    </Grid>
+                </Grid>
+
+                <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
+                      justifyContent={'center'}>
+                    <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
+                        <TextField id="energyExpenditure"
+                                   label="Energy Expenditure (kWh)"
+                                   type="text"
+                                   fullWidth={true}
+                                   {...register("energyExpenditure",
+                                       {
+                                           required: "Energy expenditure is a required field!",
+                                       })}
+                                   error={!!errors.energyExpenditure}
+                                   helperText={errors.energyExpenditure ? errors.energyExpenditure?.message : "Required"}
+                                   variant="outlined"/>
+                    </Grid>
+                </Grid>
+            </Grid>
+            <Grid item container justifyContent={'center'}>
+                <Grid item container xs={12} sm={12} md={8} lg={8} xl={6}
+                      style={{display: 'flex', justifyContent: 'center'}}>
+                    <FormControl component="fieldset">
+                        <FormLabel component="legend">Energy Source</FormLabel>
+                        <RadioGroup
+                            aria-label="energySource"
+                            value={energySource}
+                            onChange={handleEnergySourceChange}
+                            style={{flexDirection: 'row'}}
+                        >
+                            <FormControlLabel value="autonomous" control={<Radio/>}
+                                              label="Autonomous"/>
+                            <FormControlLabel value="house" control={<Radio/>} label="House"/>
+                        </RadioGroup>
+                    </FormControl>
+                </Grid>
+            </Grid>
+        </>;
+    }
+
     return (
         <>
             <CssBaseline/>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <Grid container
                       direction={'row'}
-                      justifyContent={"center"}
-                >
+                      justifyContent={"center"}>
                     <Grid container className={'dark-background'} height={'100%'} justifyContent={'flex-start'}>
                         <Grid item xs={0} sm={0} md={2} lg={2} xl={2}>
                             <SideNav userService={userService} isAdmin={false} isSuperadmin={false}/>
                         </Grid>
-                        <Grid
-                            item
-                            height={'100%'}
-                            xl={10}
-                            lg={10}
-                            md={10}
-                            sm={12}
-                            xs={12}
-                            p={2}
-                            className={'white-background'}
-                            style={{
-                                borderRadius: '1.5em',
-                                overflowY: 'auto',
-                                maxHeight: '100vh',
-                            }}
-                            alignItems={'flex-start'}
-                            ml={{xl: '20%', lg: '20%', md: '25%', sm: '0', xs: '0'}}
-                            mt={{xl: 0, lg: 0, md: 0, sm: '64px', xs: '64px'}}
-                        >
+                        <Grid item height={'100%'} xl={10} lg={10} md={10} sm={12} xs={12} p={2}
+                              className={'white-background'} style={{
+                            borderRadius: '1.5em',
+                            overflowY: 'auto',
+                            maxHeight: '100vh',
+                        }}
+                              alignItems={'flex-start'}
+                              ml={{xl: '20%', lg: '20%', md: '25%', sm: '0', xs: '0'}}
+                              mt={{xl: 0, lg: 0, md: 0, sm: '64px', xs: '64px'}}>
                             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                 <Typography variant="h2" mb={5} fontWeight={400}>Register Device</Typography>
                             </Grid>
-                            <Grid container
-                                  item
-                                  xs={12} sm={12} md={12} lg={12} xl={12}
-                                  direction={'row'}
-                                  justifyContent={"center"}
-                                  marginBottom={"-2vh"}>
+                            <Grid container item xs={12} sm={12} md={12} lg={12} xl={12}
+                                  direction={'row'} justifyContent={"center"} marginBottom={"-2vh"}>
                                 <Grid container item xs={12} md={8} lg={8} xl={6}>
-                                    <Grid item xs={12} container direction={"column"} spacing={2}> {/* Left section */}
-                                        <Grid item container rowSpacing={0}>
-                                            <Grid item container xs={12} sm={12} md={12} lg={12} xl={12} alignItems={'center'}
-                                                  justifyContent={'center'}>
-                                                <Stack alignItems={'center'} spacing={1}>
-                                                    <img src={imageUrl} className={'img'} alt={'Profile picture'}/>
-                                                    <input
-                                                        accept="image/*"
-                                                        type="file"
-                                                        id="select-image"
-                                                        style={{display: "none"}}
-                                                        onChange={(e) => setSelectedImage(e.target!.files?.[0] as File)}
-                                                    />
-                                                    <label htmlFor="select-image">
-                                                        <Button variant="contained" color="secondary" component="span">
-                                                            Upload Image
-                                                        </Button>
-                                                    </label>
-                                                </Stack>
-                                            </Grid>
-
-                                            <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
-                                                  justifyContent={'center'} marginTop={'20px'} marginBottom={'20px'}>
-                                                <FormControl variant="outlined">
-                                                    <InputLabel id="deviceType-label">Device Type</InputLabel>
-                                                    <Select
-                                                        labelId="deviceType-label"
-                                                        id="deviceType"
-                                                        label="Device Type"
-                                                        defaultValue="thermometer"
-                                                        value={deviceType}
-                                                        onChange={deviceTypeChanged}
-                                                    >
-                                                        <MenuItem value="thermometer">Thermometer</MenuItem>
-                                                        <MenuItem value="ac">Air Conditioner</MenuItem>
-                                                    </Select>
-                                                </FormControl>
-                                            </Grid>
-
-                                            <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
-                                                  justifyContent={'center'} marginBottom={'10px'}>
-                                                <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
-                                                    <TextField
-                                                        id="propertyId"
-                                                        label="Property ID"
-                                                        type="number"
-                                                        fullWidth={true}
-                                                        InputLabelProps={{
-                                                            shrink: true,
-                                                        }}
-                                                        {...register("propertyId",
-                                                            {required: "Property ID is a required field!"})}
-                                                        error={!!errors.propertyId}
-                                                        helperText={errors.propertyId ? errors.propertyId?.message : "Required"}/>
-                                                </Grid>
-                                            </Grid>
-                                            {/*name text field*/}
-                                            <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
-                                                  justifyContent={'center'} marginBottom={'10px'}>
-                                                <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
-                                                    <TextField id="name"
-                                                               label="Name"
-                                                               fullWidth={true}
-                                                               {...register("name",
-                                                                   {
-                                                                       required: "Name is a required field!",
-                                                                   })}
-                                                               error={!!errors.name}
-                                                               helperText={errors.name ? errors.name?.message : "Required"}
-                                                               variant="outlined"/>
-                                                </Grid>
-                                            </Grid>
-
-                                            <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
-                                                  justifyContent={'center'}>
-                                                <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
-                                                    <TextField id="energyExpenditure"
-                                                               label="Energy Expenditure (kWh)"
-                                                               type="text"
-                                                               fullWidth={true}
-                                                               {...register("energyExpenditure",
-                                                                   {
-                                                                       required: "Energy expenditure is a required field!",
-                                                                   })}
-                                                               error={!!errors.energyExpenditure}
-                                                               helperText={errors.energyExpenditure ? errors.energyExpenditure?.message : "Required"}
-                                                               variant="outlined"/>
-                                                </Grid>
-                                            </Grid>
-                                        </Grid>
-                                        <Grid item container justifyContent={'center'}>
-                                            <Grid item container xs={12} sm={12} md={8} lg={8} xl={6}
-                                                  style={{display: 'flex', justifyContent: 'center'}}>
-                                                <FormControl component="fieldset">
-                                                    <FormLabel component="legend">Energy Source</FormLabel>
-                                                    <RadioGroup
-                                                        aria-label="energySource"
-                                                        value={energySource}
-                                                        onChange={handleEnergySourceChange}
-                                                        style={{flexDirection: 'row'}}
-                                                    >
-                                                        <FormControlLabel value="autonomous" control={<Radio/>}
-                                                                          label="Autonomous"/>
-                                                        <FormControlLabel value="house" control={<Radio/>} label="House"/>
-                                                    </RadioGroup>
-                                                </FormControl>
-                                            </Grid>
-                                        </Grid>
+                                    <Grid item xs={12} container direction={"column"} spacing={2}>
+                                        {/* Left section */}
+                                        {genericDeviceForm()}
                                     </Grid>
                                 </Grid>
                                 <Grid container item xs={12} md={4} lg={4} xl={6}>
-                                    <Grid item xs={12} container direction="column" spacing={2}> {/* Right section */}
-                                        <Grid item container xs={12} sm={12} md={12} lg={12} xl={12} justifyContent={'center'}>
+                                    <Grid item xs={12} container direction="column" spacing={2}>
+                                        {/* Right section */}
+                                        <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
+                                              justifyContent={'center'}>
                                             <Grid item container xs={12} sm={12} md={8} lg={8} xl={6}
-                                                  style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-
-                                                {deviceType === "thermometer" && (
-                                                    <FormControl component="fieldset">
-                                                        <FormLabel component="legend">Measuring Unit</FormLabel>
-                                                        <RadioGroup
-                                                            aria-label="measuringUnit"
-                                                            value={measuringUnit}
-                                                            onChange={handleMeasuringUnitChange}
-                                                            style={{flexDirection: 'row'}}
-                                                        >
-                                                            <FormControlLabel value="celsius" control={<Radio/>} label="Celsius"/>
-                                                            <FormControlLabel value="fahrenheit" control={<Radio/>}
-                                                                              label="Fahrenheit"/>
-                                                        </RadioGroup>
-                                                    </FormControl>
-                                                    )}
-
-                                                {deviceType === "ac" && (
-                                                <div>
-                                                    {/*fan speed text field*/}
-                                                    <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
-                                                          justifyContent={'center'} marginBottom={'20px'}>
-                                                        <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
-                                                            <TextField id="fanSpeed"
-                                                                       label="Fan speed (optional)"
-                                                                       fullWidth={true}
-                                                                       type={"number"}
-                                                                       {...register("fanSpeed")}
-                                                                       variant="outlined"/>
-                                                        </Grid>
-                                                    </Grid>
-                                                    <p>Temperature:</p>
-                                                    <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
-                                                          justifyContent={'center'} marginBottom={'10px'}>
-                                                        <Grid item xs={12} sm={12} md={8} lg={8} xl={6} display="flex" gap={2}>
-                                                            <TextField
-                                                                id="minTemperature"
-                                                                label="Minimum"
-                                                                type="number"
-                                                                InputLabelProps={{
-                                                                    shrink: true,
-                                                                }}
-                                                                {...register("minTemperature", {required: "Minimum temperature is a required field!"})}
-                                                                error={!!errors.minTemperature}
-                                                                helperText={errors.minTemperature ? errors.minTemperature?.message : "Required"}
-                                                                fullWidth
-                                                            />
-
-                                                            <TextField
-                                                                id="maxTemperature"
-                                                                label="Maximum"
-                                                                type="number"
-                                                                InputLabelProps={{
-                                                                    shrink: true,
-                                                                }}
-                                                                {...register("maxTemperature", {required: "Maximum temperature is a required field!"})}
-                                                                error={!!errors.maxTemperature}
-                                                                helperText={errors.maxTemperature ? errors.maxTemperature?.message : "Required"}
-                                                                fullWidth
-                                                            />
-                                                        </Grid>
-                                                    </Grid>
-                                                    <FormControl component={"fieldset"} style={{'marginRight': '20px'}}>
-                                                        <FormLabel component={"legend"}>Cooling</FormLabel>
-                                                        <Checkbox aria-label={"cooling"} value={cooling} onChange={coolingChanged}></Checkbox>
-                                                    </FormControl>
-                                                    <FormControl component={"fieldset"} style={{'marginRight': '20px'}}>
-                                                        <FormLabel component={"legend"}>Heating</FormLabel>
-                                                        <Checkbox aria-label={"heating"} value={heating} onChange={heatingChanged}></Checkbox>
-                                                    </FormControl>
-                                                    <FormControl component={"fieldset"} style={{'marginRight': '20px'}}>
-                                                        <FormLabel component={"legend"}>Dry</FormLabel>
-                                                        <Checkbox aria-label={"dry"} value={dry} onChange={dryChanged}></Checkbox>
-                                                    </FormControl>
-                                                    <FormControl component={"fieldset"}>
-                                                        <FormLabel component={"legend"}>Fan</FormLabel>
-                                                        <Checkbox aria-label={"fan"} value={fan} onChange={fanChanged}></Checkbox>
-                                                    </FormControl>
-                                                    <br/>
-                                                    <FormControl component={"fieldset"} style={{'marginRight': '20px'}}>
-                                                        <FormLabel component={"legend"}>Auto</FormLabel>
-                                                        <Checkbox aria-label={"auto"} value={auto} onChange={autoChanged}></Checkbox>
-                                                    </FormControl>
-                                                    <FormControl component={"fieldset"} style={{'marginRight': '20px'}}>
-                                                        <FormLabel component={"legend"}>Health</FormLabel>
-                                                        <Checkbox aria-label={"health"} value={health} onChange={healthChanged}></Checkbox>
-                                                    </FormControl>
-                                                    <FormControl component={"fieldset"}>
-                                                        <FormLabel component={"legend"}>Fungus prevention</FormLabel>
-                                                        <Checkbox aria-label={"fungusPrevention"} value={fungusPrevention} onChange={fungusPreventionChanged}></Checkbox>
-                                                    </FormControl>
-                                                </div>
-                                                    )}
+                                                  style={{
+                                                      display: 'flex',
+                                                      justifyContent: 'center',
+                                                      alignItems: 'center'
+                                                  }}>
+                                                {deviceType === "thermometer" && thermometerForm()}
+                                                {deviceType === "ac" && acForm()}
                                             </Grid>
                                         </Grid>
                                     </Grid>
