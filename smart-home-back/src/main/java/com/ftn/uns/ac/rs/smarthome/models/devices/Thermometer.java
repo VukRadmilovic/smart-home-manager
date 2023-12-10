@@ -20,9 +20,9 @@ public class Thermometer extends Device {
     @Enumerated(EnumType.STRING)
     private TemperatureUnit temperatureUnit;
 
-    public Thermometer(Property property, String name, String description,
+    public Thermometer(Property property, String name,
                        PowerSource powerSource, Double energyConsumption, TemperatureUnit temperatureUnit) {
-        super(-1, property, name, description, null, powerSource, energyConsumption, false, false);
+        super(-1, property, name, null, powerSource, energyConsumption, false, false);
         this.temperatureUnit = temperatureUnit;
     }
 }

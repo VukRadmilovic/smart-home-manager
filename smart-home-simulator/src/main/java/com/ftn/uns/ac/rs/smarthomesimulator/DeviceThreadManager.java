@@ -1,7 +1,10 @@
 package com.ftn.uns.ac.rs.smarthomesimulator;
 
+import com.ftn.uns.ac.rs.smarthomesimulator.models.TemperatureUnit;
+import com.ftn.uns.ac.rs.smarthomesimulator.models.devices.AirConditioner;
 import com.ftn.uns.ac.rs.smarthomesimulator.models.devices.Device;
 import com.ftn.uns.ac.rs.smarthomesimulator.models.devices.Thermometer;
+import com.ftn.uns.ac.rs.smarthomesimulator.models.devices.WashingMachine;
 import com.ftn.uns.ac.rs.smarthomesimulator.services.MqttService;
 import com.ftn.uns.ac.rs.smarthomesimulator.services.interfaces.IDeviceService;
 import org.springframework.stereotype.Component;
@@ -25,6 +28,16 @@ public class DeviceThreadManager {
         if (device.getClass().equals(Thermometer.class)) {
             addDeviceThread(device.getId(),
                     new ThermometerThread(((Thermometer) device).getTemperatureUnit(),
+                            mqttService, device.getId()).getNewSimulatorThread());
+        } else if (device.getClass().equals(AirConditioner.class)) {
+            AirConditioner ac = (AirConditioner) device;
+            addDeviceThread(device.getId(),
+                    new ThermometerThread(TemperatureUnit.CELSIUS,
+                            mqttService, device.getId()).getNewSimulatorThread());
+        } else if (device.getClass().equals(WashingMachine.class)) {
+            WashingMachine machine = (WashingMachine) device;
+            addDeviceThread(device.getId(),
+                    new ThermometerThread(TemperatureUnit.FAHRENHEIT,
                             mqttService, device.getId()).getNewSimulatorThread());
         }
     }

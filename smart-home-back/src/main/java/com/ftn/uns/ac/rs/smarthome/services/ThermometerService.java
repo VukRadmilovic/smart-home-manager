@@ -58,18 +58,36 @@ public class ThermometerService implements IThermometerService {
         if (property.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("property.notFound", null, Locale.getDefault()));
         }
-        Thermometer thermometer = new Thermometer(property.get(), dto.getName(), dto.getDescription(),
+        Thermometer thermometer = new Thermometer(property.get(), dto.getName(),
                 dto.getPowerSource(), dto.getEnergyConsumption(), dto.getTemperatureUnit());
-        Thermometer savedThermometer = deviceRepository.save(thermometer);
+        Thermometer savedThermometer;
+        try {
+            savedThermometer = deviceRepository.save(thermometer);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("device.name.unique", null, Locale.getDefault()));
+        }
+
+        log.info("Thermometer saved: {}", savedThermometer);
+        log.info("Thermometer ID: {}", savedThermometer.getId());
         String path = env.getProperty("tempfolder.path");
         Path filepath = Paths.get(path, dto.getImage().getOriginalFilename());
         try {
             dto.getImage().transferTo(filepath);
         } catch (Exception e) {
+            log.error("Error while uploading image: {}", e.getMessage());
+            deviceRepository.deleteById(savedThermometer.getId());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("image.upload.failed", null, Locale.getDefault()));
         }
         File file = new File(filepath.toString());
-        File compressed = ImageCompressor.compressImage(file, 0.1f, "d" + savedThermometer.getId());
+        File compressed;
+        try {
+            compressed = ImageCompressor.compressImage(file, 0.1f, "d" + savedThermometer.getId());
+        } catch (ResponseStatusException e) {
+            log.error("Error while compressing image: {}", e.getMessage());
+            deviceRepository.deleteById(savedThermometer.getId());
+            throw e;
+        }
+
         String[] tokens = compressed.getName().split("/");
         String key = tokens[tokens.length - 1];
         String type = dto.getImage().getContentType();

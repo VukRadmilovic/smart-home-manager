@@ -44,7 +44,7 @@ export function Registration({userService, adminRegistration} : RegistrationProp
 
     function registerUser(formData : RegistrationForm) {
         if (imageUrl == defaultPictureUrl) {
-            setErrorMessage("Please select the profile picture!");
+            setErrorMessage("Please select a profile picture!");
             setIsSuccess(false);
             setErrorPopupOpen(true);
             return;
@@ -74,8 +74,11 @@ export function Registration({userService, adminRegistration} : RegistrationProp
             setIsSuccess(true);
             setErrorPopupOpen(true);
         }).catch((error) => {
-            console.log(error.response.data)
-            setErrorMessage(error.response.data);
+            if (error.code == 'ERR_NETWORK') {
+                setErrorMessage("File too large! Please select a file smaller than 5MB!");
+            } else {
+                setErrorMessage(error.response.data);
+            }
             setIsSuccess(false);
             setErrorPopupOpen(true);
         });

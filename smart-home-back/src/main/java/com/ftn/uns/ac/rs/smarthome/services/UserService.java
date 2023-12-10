@@ -108,7 +108,7 @@ public class UserService implements IUserService {
     public TokenDTO login(LoginDTO userInfo) {
         Optional<User> user = this.userRepository.findByUsername(userInfo.getUsername());
         if(user.isEmpty())
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("user.notFound", null, Locale.getDefault()));
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, messageSource.getMessage("user.notFound", null, Locale.getDefault()));
         if(!BCrypt.checkpw(userInfo.getPassword(),user.get().getPassword()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("login.invalid", null, Locale.getDefault()));
         Role userRole = user.get().getRoles().get(0);

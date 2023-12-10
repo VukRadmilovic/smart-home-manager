@@ -5,8 +5,6 @@ import com.ftn.uns.ac.rs.smarthomesimulator.models.Property;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.concurrent.ThreadLocalRandom;
 
 @Entity
 @Table(name="DEVICES")
@@ -26,9 +24,6 @@ public class Device {
 
     @Column
     private String name;
-
-    @Column
-    private String description;
 
     @Column
     private String image;

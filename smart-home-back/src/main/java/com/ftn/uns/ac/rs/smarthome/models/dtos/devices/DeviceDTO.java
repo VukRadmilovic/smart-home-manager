@@ -20,9 +20,6 @@ public class DeviceDTO {
     @Length(max = 64)
     private String name;
 
-    @Length(max = 255)
-    private String description;
-
     @NotNull
     private MultipartFile image;
 

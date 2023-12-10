@@ -79,7 +79,7 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
         },
     }));
     const [menuAnchorEl, setMenuAnchorEl] = React.useState<null | HTMLElement>(null);
-    const openMenu = Boolean(menuAnchorEl);
+    const openMenu = !!menuAnchorEl;
     const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
         setMenuAnchorEl(event.currentTarget);
     };
@@ -101,25 +101,25 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
         navigate('/thermoChartsHistory/' + deviceId);
     }
 
-    const getUserDevices = () => {
-        deviceService.getUserDevices().then((response => {
-            if (response.length == 0) {
-                return;
-            }
-            devices.push(...response);
-            setDevices(devices);
-        })).catch((err) => {
-            setErrorMessage(err.response.data);
-            setIsSuccess(false);
-            setErrorPopupOpen(true);
-        });
-    }
     useEffect(() => {
+        const getUserDevices = () => {
+            deviceService.getUserDevices().then((response => {
+                if (response.length == 0) {
+                    return;
+                }
+                devices.push(...response);
+                setDevices(devices);
+            })).catch((err) => {
+                setErrorMessage(err.response.data);
+                setIsSuccess(false);
+                setErrorPopupOpen(true);
+            });
+        }
         if (!shouldLoad.current) return;
         setDevices([]);
         getUserDevices();
         shouldLoad.current = false;
-    })
+    }, [deviceService, devices])
 
     useEffect(() => {
         if (sessionStorage.getItem("expiration") != null) {
@@ -194,7 +194,7 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
                                             <span style={{display: 'inline-flex'}}> <BoltIcon/>  {device.powerSource} </span>
                                         </Typography>
                                         <Typography variant="subtitle1" alignItems={'center'} color="text.secondary" component="div">
-                                            <span style={{display: 'inline-flex'}}> <Battery3BarIcon/> {device.energyConsumption} kWH </span>
+                                            <span style={{display: 'inline-flex'}}> <Battery3BarIcon/> {device.energyConsumption} kWh </span>
                                         </Typography>
                                     </CardContent>
                                     <Box sx={{ display: 'flex', justifyContent:'center', width:'100%', alignItems: 'center', pl: 1, pb: 1 }}>

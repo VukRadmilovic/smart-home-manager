@@ -120,7 +120,12 @@ export function Login({userService} : LoginProps) {
                     navigate("/adminMain");
             }
         }).catch((error) => {
-            setErrorMessage(error.response.data);
+            // console.log(error);
+            if (error.response.status == 404) {
+                setErrorMessage("Username or password is incorrect");
+            } else {
+                setErrorMessage(error.response.data);
+            }
             setIsSuccess(false);
             setErrorPopupOpen(true);
         });

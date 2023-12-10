@@ -45,7 +45,7 @@ export function PasswordReset({userService} : PasswordResetProps) {
             setIsSuccess(true);
             setErrorPopupOpen(true);
         }).catch((error) => {
-            console.log(error.response.data)
+            console.log(error)
             setErrorMessage(error.response.data);
             setIsSuccess(false);
             setErrorPopupOpen(true);

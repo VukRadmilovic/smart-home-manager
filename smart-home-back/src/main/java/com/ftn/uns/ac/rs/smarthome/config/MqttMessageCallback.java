@@ -1,5 +1,6 @@
 package com.ftn.uns.ac.rs.smarthome.config;
 
+import com.ftn.uns.ac.rs.smarthome.StillThereDevicesManager;
 import com.ftn.uns.ac.rs.smarthome.services.InfluxService;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IDeviceService;
 import org.eclipse.paho.mqttv5.client.IMqttToken;
@@ -19,11 +20,14 @@ public class MqttMessageCallback implements MqttCallback {
 
     private final InfluxService influxService;
     private final IDeviceService deviceService;
+    private final StillThereDevicesManager stillThereDevicesManager;
 
     public MqttMessageCallback(InfluxService influxService,
-                               IDeviceService deviceService) {
+                               IDeviceService deviceService,
+                               StillThereDevicesManager stillThereDevicesManager) {
         this.influxService = influxService;
         this.deviceService = deviceService;
+        this.stillThereDevicesManager = stillThereDevicesManager;
     }
 
     @Override
@@ -54,15 +58,16 @@ public class MqttMessageCallback implements MqttCallback {
         String valueWithUnit = data[1];
         float value = Float.parseFloat(valueWithUnit.substring(0, valueWithUnit.length() - 1));
         char unit = valueWithUnit.charAt(valueWithUnit.length() - 1);
-        String deviceId = data[2];
+        String deviceIdStr = data[2];
         influxService.save(measurementObject, value, new Date(),
-                Map.of("deviceId", deviceId, "unit", String.valueOf(unit)));
+                Map.of("deviceId", deviceIdStr, "unit", String.valueOf(unit)));
         System.out.println("Message arrived: " + message + ", ID: " + mqttMessage.getId());
 
-        if (measurementObject.equals("status")) {
-            if (value == 1) {
-                deviceService.setDeviceStillThere(Integer.parseInt(deviceId));
-            }
+        int deviceId = Integer.parseInt(deviceIdStr);
+        if (measurementObject.equals("status") && value == 1 &&
+                stillThereDevicesManager.isntThere(deviceId)) {
+            deviceService.setDeviceStillThere(deviceId);
+            stillThereDevicesManager.add(deviceId);
         }
     }
 

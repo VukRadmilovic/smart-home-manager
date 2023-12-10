@@ -2,13 +2,13 @@ package com.ftn.uns.ac.rs.smarthomesimulator;
 
 import com.ftn.uns.ac.rs.smarthomesimulator.models.TemperatureUnit;
 import com.ftn.uns.ac.rs.smarthomesimulator.services.MqttService;
-import com.zaxxer.hikari.util.SuspendResumeLock;
 import org.eclipse.paho.mqttv5.common.MqttException;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.LocalDateTime;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.Locale;
 
 public class ThermometerThread implements Runnable {
 
@@ -130,7 +130,7 @@ public class ThermometerThread implements Runnable {
     }
 
     private void sendAndDisplayMeasurements(double temp, double humidity) {
-        DecimalFormat df = new DecimalFormat("#.###");
+        DecimalFormat df = new DecimalFormat("#.###", new DecimalFormatSymbols(Locale.ENGLISH));
         df.setRoundingMode(RoundingMode.CEILING);
         String msgHumidity = "humidity," + df.format(humidity) + "%," + deviceId;
         String msgTemp = "temperature," + df.format(temp) + "C," + deviceId;
@@ -146,7 +146,7 @@ public class ThermometerThread implements Runnable {
             this.mqttService.publishMeasurementMessageLite(msgTemp);
             this.mqttService.publishMeasurementMessageLite(msgHumidity);
 
-            if (count % 5 == 0) {
+            if (count % 2 == 0) {
                 count = 1;
                 System.out.println("Sending status message");
                 this.mqttService.publishStatusMessageLite("status,1T," + deviceId);
