@@ -164,140 +164,152 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                             ml={{xl: '20%', lg: '20%', md: '25%', sm: '0', xs: '0'}}
                             mt={{xl: 0, lg: 0, md: 0, sm: '64px', xs: '64px'}}
                         >
+                            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                <Typography variant="h2" mb={5} fontWeight={400}>Register Device</Typography>
+                            </Grid>
                             <Grid container
                                   item
                                   xs={12} sm={12} md={12} lg={12} xl={12}
                                   direction={'row'}
                                   justifyContent={"center"}
                                   marginBottom={"-2vh"}>
-                                <Grid item container rowSpacing={0}>
-                                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                                        <Typography variant="h2" mb={5} fontWeight={400}>Register Device</Typography>
-                                    </Grid>
-                                    <Grid item container xs={12} sm={12} md={12} lg={12} xl={12} alignItems={'center'}
-                                          justifyContent={'center'}>
-                                        <Stack alignItems={'center'} spacing={1}>
-                                            <img src={imageUrl} className={'img'} alt={'Profile picture'}/>
-                                            <input
-                                                accept="image/*"
-                                                type="file"
-                                                id="select-image"
-                                                style={{display: "none"}}
-                                                onChange={(e) => setSelectedImage(e.target!.files?.[0] as File)}
-                                            />
-                                            <label htmlFor="select-image">
-                                                <Button variant="contained" color="secondary" component="span">
-                                                    Upload Image
-                                                </Button>
-                                            </label>
-                                        </Stack>
-                                    </Grid>
+                                <Grid container item xs={12} md={8} lg={8} xl={6}>
+                                    <Grid item xs={12} container direction={"column"} spacing={2}> {/* Left section */}
+                                        <Grid item container rowSpacing={0}>
+                                            <Grid item container xs={12} sm={12} md={12} lg={12} xl={12} alignItems={'center'}
+                                                  justifyContent={'center'}>
+                                                <Stack alignItems={'center'} spacing={1}>
+                                                    <img src={imageUrl} className={'img'} alt={'Profile picture'}/>
+                                                    <input
+                                                        accept="image/*"
+                                                        type="file"
+                                                        id="select-image"
+                                                        style={{display: "none"}}
+                                                        onChange={(e) => setSelectedImage(e.target!.files?.[0] as File)}
+                                                    />
+                                                    <label htmlFor="select-image">
+                                                        <Button variant="contained" color="secondary" component="span">
+                                                            Upload Image
+                                                        </Button>
+                                                    </label>
+                                                </Stack>
+                                            </Grid>
 
-                                    <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
-                                          justifyContent={'center'} marginTop={'20px'} marginBottom={'20px'}>
-                                        <FormControl variant="outlined">
-                                            <InputLabel id="deviceType-label">Device Type</InputLabel>
-                                            <Select
-                                                labelId="deviceType-label"
-                                                id="deviceType"
-                                                label="Device Type"
-                                                defaultValue="thermometer"
-                                                {...register('type', { required: true })}
-                                            >
-                                                <MenuItem value="thermometer">Thermometer</MenuItem>
-                                            </Select>
-                                        </FormControl>
-                                    </Grid>
+                                            <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
+                                                  justifyContent={'center'} marginTop={'20px'} marginBottom={'20px'}>
+                                                <FormControl variant="outlined">
+                                                    <InputLabel id="deviceType-label">Device Type</InputLabel>
+                                                    <Select
+                                                        labelId="deviceType-label"
+                                                        id="deviceType"
+                                                        label="Device Type"
+                                                        defaultValue="thermometer"
+                                                        {...register('type', {required: true})}
+                                                    >
+                                                        <MenuItem value="thermometer">Thermometer</MenuItem>
+                                                    </Select>
+                                                </FormControl>
+                                            </Grid>
 
-                                    <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
-                                          justifyContent={'center'} marginBottom={'10px'}>
-                                        <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
-                                            <TextField
-                                                id="propertyId"
-                                                label="Property ID"
-                                                type="number"
-                                                fullWidth={true}
-                                                InputLabelProps={{
-                                                    shrink: true,
-                                                }}
-                                                {...register("propertyId",
-                                                    {required: "Property ID is a required field!"})}
-                                                error={!!errors.propertyId}
-                                                helperText={errors.propertyId ? errors.propertyId?.message : "Required"}/>
+                                            <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
+                                                  justifyContent={'center'} marginBottom={'10px'}>
+                                                <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
+                                                    <TextField
+                                                        id="propertyId"
+                                                        label="Property ID"
+                                                        type="number"
+                                                        fullWidth={true}
+                                                        InputLabelProps={{
+                                                            shrink: true,
+                                                        }}
+                                                        {...register("propertyId",
+                                                            {required: "Property ID is a required field!"})}
+                                                        error={!!errors.propertyId}
+                                                        helperText={errors.propertyId ? errors.propertyId?.message : "Required"}/>
+                                                </Grid>
+                                            </Grid>
+                                            {/*name text field*/}
+                                            <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
+                                                  justifyContent={'center'} marginBottom={'10px'}>
+                                                <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
+                                                    <TextField id="name"
+                                                               label="Name"
+                                                               fullWidth={true}
+                                                               {...register("name",
+                                                                   {
+                                                                       required: "Name is a required field!",
+                                                                   })}
+                                                               error={!!errors.name}
+                                                               helperText={errors.name ? errors.name?.message : "Required"}
+                                                               variant="outlined"/>
+                                                </Grid>
+                                            </Grid>
+
+                                            <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
+                                                  justifyContent={'center'}>
+                                                <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
+                                                    <TextField id="energyExpenditure"
+                                                               label="Energy Expenditure (kWh)"
+                                                               type="text"
+                                                               fullWidth={true}
+                                                               {...register("energyExpenditure",
+                                                                   {
+                                                                       required: "Energy expenditure is a required field!",
+                                                                   })}
+                                                               error={!!errors.energyExpenditure}
+                                                               helperText={errors.energyExpenditure ? errors.energyExpenditure?.message : "Required"}
+                                                               variant="outlined"/>
+                                                </Grid>
+                                            </Grid>
                                         </Grid>
-                                    </Grid>
-                                    {/*name text field*/}
-                                    <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
-                                          justifyContent={'center'} marginBottom={'10px'}>
-                                        <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
-                                            <TextField id="name"
-                                                       label="Name"
-                                                       fullWidth={true}
-                                                       {...register("name",
-                                                           {
-                                                               required: "Name is a required field!",
-                                                           })}
-                                                       error={!!errors.name}
-                                                       helperText={errors.name ? errors.name?.message : "Required"}
-                                                       variant="outlined"/>
-                                        </Grid>
-                                    </Grid>
-
-                                    <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
-                                          justifyContent={'center'}>
-                                        <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
-                                            <TextField id="energyExpenditure"
-                                                       label="Energy Expenditure (kWh)"
-                                                       type="text"
-                                                       fullWidth={true}
-                                                       {...register("energyExpenditure",
-                                                           {
-                                                               required: "Energy expenditure is a required field!",
-                                                           })}
-                                                       error={!!errors.energyExpenditure}
-                                                       helperText={errors.energyExpenditure ? errors.energyExpenditure?.message : "Required"}
-                                                       variant="outlined"/>
+                                        <Grid item container justifyContent={'center'}>
+                                            <Grid item container xs={12} sm={12} md={8} lg={8} xl={6}
+                                                  style={{display: 'flex', justifyContent: 'center'}}>
+                                                <FormControl component="fieldset">
+                                                    <FormLabel component="legend">Energy Source</FormLabel>
+                                                    <RadioGroup
+                                                        aria-label="energySource"
+                                                        value={energySource}
+                                                        onChange={handleEnergySourceChange}
+                                                        style={{flexDirection: 'row'}}
+                                                    >
+                                                        <FormControlLabel value="autonomous" control={<Radio/>}
+                                                                          label="Autonomous"/>
+                                                        <FormControlLabel value="house" control={<Radio/>} label="House"/>
+                                                    </RadioGroup>
+                                                </FormControl>
+                                            </Grid>
                                         </Grid>
                                     </Grid>
                                 </Grid>
-                                <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
-                                      justifyContent={'center'}>
-                                    <Grid item container xs={12} sm={12} md={8} lg={8} xl={6} style={{ display: 'flex', justifyContent: 'center' }}>
-                                        <FormControl component="fieldset">
-                                            <FormLabel component="legend">Energy Source</FormLabel>
-                                            <RadioGroup
-                                                aria-label="energySource"
-                                                value={energySource}
-                                                onChange={handleEnergySourceChange}
-                                                style={{ flexDirection: 'row' }}
-                                            >
-                                                <FormControlLabel value="autonomous" control={<Radio />} label="Autonomous" />
-                                                <FormControlLabel value="house" control={<Radio />} label="House" />
-                                            </RadioGroup>
-                                        </FormControl>
-                                    </Grid>
-                                </Grid>
-                                <Grid item container xs={12} sm={12} md={12} lg={12} xl={12} justifyContent={'center'}>
-                                    <Grid item container xs={12} sm={12} md={8} lg={8} xl={6} style={{ display: 'flex', justifyContent: 'center' }}>
-                                        <FormControl component="fieldset">
-                                            <FormLabel component="legend">Measuring Unit</FormLabel>
-                                            <RadioGroup
-                                                aria-label="measuringUnit"
-                                                value={measuringUnit}
-                                                onChange={handleMeasuringUnitChange}
-                                                style={{ flexDirection: 'row' }}
-                                            >
-                                                <FormControlLabel value="celsius" control={<Radio />} label="Celsius" />
-                                                <FormControlLabel value="fahrenheit" control={<Radio />} label="Fahrenheit" />
-                                            </RadioGroup>
-                                        </FormControl>
+                                <Grid container item xs={12} md={4} lg={4} xl={6}>
+                                    <Grid item xs={12} container direction="column" spacing={2}> {/* Right section */}
+                                        <Grid item container xs={12} sm={12} md={12} lg={12} xl={12} justifyContent={'center'}>
+                                            <Grid item container xs={12} sm={12} md={8} lg={8} xl={6}
+                                                  style={{display: 'flex', justifyContent: 'center'}}>
+                                                <FormControl component="fieldset">
+                                                    <FormLabel component="legend">Measuring Unit</FormLabel>
+                                                    <RadioGroup
+                                                        aria-label="measuringUnit"
+                                                        value={measuringUnit}
+                                                        onChange={handleMeasuringUnitChange}
+                                                        style={{flexDirection: 'row'}}
+                                                    >
+                                                        <FormControlLabel value="celsius" control={<Radio/>} label="Celsius"/>
+                                                        <FormControlLabel value="fahrenheit" control={<Radio/>}
+                                                                          label="Fahrenheit"/>
+                                                    </RadioGroup>
+                                                </FormControl>
+                                            </Grid>
+                                        </Grid>
                                     </Grid>
                                 </Grid>
                             </Grid>
                             <Grid item xs={12} sm={12} md={12} lg={12} xl={12} mt={5}>
                                 <Button variant="contained" type="submit">Register device</Button>
                             </Grid>
-                            <PopupMessage message={errorMessage} isSuccess={isSuccess} handleClose={handleErrorPopupClose} open={errorPopupOpen}/>
+                            <PopupMessage message={errorMessage} isSuccess={isSuccess}
+                                          handleClose={handleErrorPopupClose} open={errorPopupOpen}/>
                         </Grid>
                     </Grid>
                 </Grid>
