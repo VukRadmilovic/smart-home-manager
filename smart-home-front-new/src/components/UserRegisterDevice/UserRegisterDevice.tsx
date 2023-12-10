@@ -172,47 +172,46 @@ export function UserRegisterDevice({userService}: UserMainProps) {
         setErrorPopupOpen(false);
     };
 
-    let cooling = false;
-    let heating = false;
-    let dry = false;
-    let fan = false;
-    let auto = false;
-    let health = false;
-    let fungusPrevention = false;
-
-    function coolingChanged() {
-        cooling = !cooling;
-    }
-
-    function heatingChanged() {
-        heating = !heating;
-    }
-
-    function dryChanged() {
-        dry = !dry;
-    }
-
-    function fanChanged() {
-        fan = !fan;
-    }
-
-    function autoChanged() {
-        auto = !auto;
-    }
-
-    function healthChanged() {
-        health = !health;
-    }
-
-    function fungusPreventionChanged() {
-        fungusPrevention = !fungusPrevention;
-    }
-
     const [deviceType, setDeviceType] = React.useState('ac');
+    const [cooling, setCooling] = React.useState(false);
+    const [heating, setHeating] = React.useState(false);
+    const [dry, setDry] = React.useState(false);
+    const [fan, setFan] = React.useState(false);
+    const [auto, setAuto] = React.useState(false);
+    const [health, setHealth] = React.useState(false);
+    const [fungusPrevention, setFungusPrevention] = React.useState(false);
 
     const deviceTypeChanged = (event: SelectChangeEvent) => {
         setDeviceType(event.target.value as string);
     }
+
+    const coolingChanged = () => {
+        setCooling(!cooling);
+    };
+
+    const heatingChanged = () => {
+        setHeating(!heating);
+    };
+
+    const dryChanged = () => {
+        setDry(!dry);
+    };
+
+    const fanChanged = () => {
+        setFan(!fan);
+    };
+
+    const autoChanged = () => {
+        setAuto(!auto);
+    };
+
+    const healthChanged = () => {
+        setHealth(!health);
+    };
+
+    const fungusPreventionChanged = () => {
+        setFungusPrevention(!fungusPrevention);
+    };
 
     function acForm() {
         return <div>
