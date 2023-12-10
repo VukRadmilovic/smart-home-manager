@@ -94,7 +94,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                 return;
             }
 
-            await axios.post('http://localhost:80/api/devices/register', deviceFormData, {
+            await axios.post('http://localhost:80/api/devices/registerThermo', deviceFormData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Authorization': 'Bearer ' + sessionStorage.getItem('user')

@@ -2,6 +2,7 @@ package com.ftn.uns.ac.rs.smarthome.models.devices;
 
 import com.ftn.uns.ac.rs.smarthome.models.PowerSource;
 import com.ftn.uns.ac.rs.smarthome.models.Property;
+import com.ftn.uns.ac.rs.smarthome.models.dtos.devices.AirConditionerDTO;
 import lombok.*;
 
 import javax.persistence.Column;
@@ -61,5 +62,19 @@ public class AirConditioner extends Device {
         this.auto = auto;
         this.health = health;
         this.fungusPrevention = fungusPrevention;
+    }
+
+    public AirConditioner(AirConditionerDTO dto, Property property) {
+        super(-1, property, dto.getName(), null, dto.getPowerSource(), dto.getEnergyConsumption(), false, false);
+        this.maxTemperature = dto.getMaxTemperature();
+        this.minTemperature = dto.getMinTemperature();
+        this.fanSpeed = dto.getFanSpeed();
+        this.cooling = dto.getCooling();
+        this.heating = dto.getHeating();
+        this.dry = dto.getDry();
+        this.fan = dto.getFan();
+        this.auto = dto.getAuto();
+        this.health = dto.getHealth();
+        this.fungusPrevention = dto.getFungusPrevention();
     }
 }
