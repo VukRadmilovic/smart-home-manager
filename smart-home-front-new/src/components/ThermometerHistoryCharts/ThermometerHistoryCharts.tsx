@@ -19,10 +19,9 @@ import {MeasurementRequest} from "../../models/MeasurementRequest.ts";
 import {LineChart} from "@mui/x-charts";
 import {DataPoint, LTTB} from 'downsample';
 import {useNavigate} from "react-router-dom";
-import {DateTimePicker, LocalizationProvider, MobileDateTimePicker} from "@mui/x-date-pickers";
+import {LocalizationProvider, MobileDateTimePicker} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {ChartData} from "../../models/ChartData.ts";
-import {ChartBatch} from "../../models/ChartBatch.ts";
 
 interface ThermometerChartsProps {
     userService: UserService
@@ -36,6 +35,12 @@ type ChartDataShort = {
 
 export function ThermometerChartsHistory({userService, deviceService} : ThermometerChartsProps) {
 
+    function dateFormatter (date: Date): string {
+        return date.toLocaleDateString();
+    }
+    function timeFormatter (date: Date): string {
+         return date.toLocaleTimeString();
+    }
     const [errorMessage, setErrorMessage] = React.useState<string>("");
     const [errorPopupOpen, setErrorPopupOpen] = React.useState<boolean>(false);
     const [isSuccess, setIsSuccess] = React.useState(true);
@@ -48,7 +53,7 @@ export function ThermometerChartsHistory({userService, deviceService} : Thermome
     const [from, setFrom] = React.useState<Date>(null);
     const [to, setTo] = React.useState<Date>(null);
     const [isCustom, setIsCustom] = React.useState<boolean>(false);
-
+    const [isTimeFormatter, setIsTimeFormatter] = React.useState<boolean>(true);
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         changeUnit((event.target as HTMLInputElement).value);
         setUnits((event.target as HTMLInputElement).value);
@@ -82,7 +87,7 @@ export function ThermometerChartsHistory({userService, deviceService} : Thermome
         data.forEach((val) => {
             if(val.value != null) {
                 const point: DataPoint = {
-                    x: val.timestamp,
+                    x: new Date(val.timestamp),
                     y: val.value
                 }
                 dataPoints.push(point);
@@ -150,10 +155,12 @@ export function ThermometerChartsHistory({userService, deviceService} : Thermome
             targetLength = 150;
         }
         else if (timeSpan == "W") {
+            setIsTimeFormatter(false);
             fromLocal = fromLocal.getTime() - 7 * 24 * 60 * 60 * 1000;
             targetLength = 150;
         }
         else if (timeSpan == "M") {
+            setIsTimeFormatter(false);
             fromLocal = fromLocal.getTime() - new Date(fromLocal.getFullYear(), fromLocal.getMonth() + 1, 0).getDate() * 24 * 60 * 60 * 1000;
             targetLength = 120;
         } else {
@@ -169,37 +176,24 @@ export function ThermometerChartsHistory({userService, deviceService} : Thermome
                 targetLength = 150;
             else if ((toLocal - fromLocal) <= 1000 * 60 * 60 * 24)
                 targetLength = 150;
-            else if ((toLocal - fromLocal) <= 1000 * 60 * 60 * 24 * 7)
+            else if ((toLocal - fromLocal) <= 1000 * 60 * 60 * 24 * 7) {
                 targetLength = 150;
-            else if ((toLocal - fromLocal) <= 1000 * 60 * 60 * 24 * 30)
+                setIsTimeFormatter(false);
+            }
+            else if ((toLocal - fromLocal) <= 1000 * 60 * 60 * 24 * 30) {
+                setIsTimeFormatter(false);
                 targetLength = 120;
+            }
+
         }
         const tempDataRaw: ChartData[] = [];
         const humDataRaw: ChartData[] = [];
-        let page = 0;
-        let stop = false;
-        while (!stop) {
-           await getMeasurement("temperature", fromLocal, toLocal, page).then((r) => {
-                tempDataRaw.push(...r.batch)
-                if (r.hasMore)
-                    page += 1;
-                else {
-                    stop = true;
-                }
-            })
-        }
-        page = 0;
-        stop = false;
-        while (!stop) {
-            await getMeasurement("humidity", fromLocal, toLocal, page).then((r) => {
-                humDataRaw.push(...r.batch)
-                if (r.hasMore)
-                    page += 1;
-                else {
-                    stop = true;
-                }
-            })
-        }
+        await getMeasurement("temperature", fromLocal, toLocal).then((r) => {
+                tempDataRaw.push(...r)
+            });
+        await getMeasurement("humidity", fromLocal, toLocal).then((r) => {
+            humDataRaw.push(...r)
+        });
 
         const preparedTemp = prepareData(tempDataRaw,targetLength);
         const preparedHum = prepareData(humDataRaw, targetLength);
@@ -223,30 +217,26 @@ export function ThermometerChartsHistory({userService, deviceService} : Thermome
         return downsampled;
     }
 
-    function getMeasurement (measurement: string, from: number, to: number, page: number) : Promise<ChartBatch>  {
+    function getMeasurement (measurement: string, from: number, to: number) : Promise<ChartData[]>  {
         const request : MeasurementRequest = {
             from: Math.floor(from / 1000),
             to: Math.floor(to / 1000),
             limit: 5000,
-            offset: page,
+            offset: 0,
             deviceId: deviceId,
             measurementName: measurement
         }
-        const nullBatch : ChartBatch = {
-            batch: [],
-            hasMore: false
-        }
         return deviceService.getDeviceMeasurements(request).then((response => {
-           if (response.batch.length != 0) {
+           if (response.length != 0) {
                return response
            }
-           return nullBatch;
+           return [];
        })).catch((err) => {
            console.log(err);
            setErrorMessage(err.response);
            setIsSuccess(false);
            setErrorPopupOpen(true);
-           return nullBatch;
+           return [];
        });
     }
 
@@ -331,14 +321,14 @@ export function ThermometerChartsHistory({userService, deviceService} : Thermome
                                             sx={{marginLeft: '1em'}}
                                             label="From"
                                             value={from}
-                                            onChange={(newValue) => setFrom(newValue)}
+                                            onChange={(newValue) => setFrom(newValue as Date)}
                                         />
                                         <MobileDateTimePicker
                                             sx={{marginLeft: '1em'}}
                                             disableFuture={true}
                                             label="To"
                                             value={to}
-                                            onChange={(newValue) => setTo(newValue)}
+                                            onChange={(newValue) => setTo(newValue as Date)}
                                         />
                                 </LocalizationProvider>
                             }
@@ -367,26 +357,62 @@ export function ThermometerChartsHistory({userService, deviceService} : Thermome
                             </FormControl>
                         </Grid>
                         <Grid container item xs={12} sm={12} md={12} lg={12} xl={12}>
+                            {isTimeFormatter ?
                             <ResizableBox height={300} width={1100}>
                                 <LineChart
                                     series={[
-                                        { dataKey:'value', label: ("Temperature (" + units + ")") as string},
+                                        { dataKey:'value',
+                                          label: ("Temperature (" + units + ")") as string,
+                                            showMark: false
+                                        }
                                     ]}
-                                    xAxis={[{ scaleType:'time', dataKey:'timestamp', label: 'Time'  }]}
+                                    xAxis={[{ scaleType:"time", valueFormatter:timeFormatter, dataKey:'timestamp', label: 'Time'  }]}
                                     dataset={tempData}
                                 />
                             </ResizableBox>
-                        </Grid>
-                        <Grid container item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                :
                             <ResizableBox height={300} width={1100}>
                                 <LineChart
                                     series={[
-                                        { dataKey:'value', label: 'Humidity (%)', color:'#59a14f' },
+                                        { dataKey:'value',
+                                            label: ("Temperature (" + units + ")") as string,
+                                            showMark: false
+                                        }
                                     ]}
-                                    xAxis={[{ scaleType:'time', dataKey:'timestamp', label:'Time' }]}
-                                    dataset={humidityData}
+                                    xAxis={[{ scaleType:"time", valueFormatter:dateFormatter, dataKey:'timestamp', label: 'Date'  }]}
+                                    dataset={tempData}
                                 />
                             </ResizableBox>
+                        }
+                        </Grid>
+                        <Grid container item xs={12} sm={12} md={12} lg={12} xl={12}>
+                            {isTimeFormatter ?
+                                <ResizableBox height={300} width={1100}>
+                                    <LineChart
+                                        series={[
+                                            { dataKey:'value',
+                                                label: "Humidity (%)",
+                                                showMark: false
+                                            }
+                                        ]}
+                                        xAxis={[{ scaleType:"time", valueFormatter:timeFormatter, dataKey:'timestamp', label: 'Time'  }]}
+                                        dataset={humidityData}
+                                    />
+                                </ResizableBox>
+                                :
+                                <ResizableBox height={300} width={1100}>
+                                    <LineChart
+                                        series={[
+                                            { dataKey:'value',
+                                                label: "Humidity (%)",
+                                                showMark: false
+                                            }
+                                        ]}
+                                        xAxis={[{ scaleType:"time", valueFormatter:dateFormatter, dataKey:'timestamp', label: 'Date'  }]}
+                                        dataset={humidityData}
+                                    />
+                                </ResizableBox>
+                            }
                         </Grid>
                     </Grid>
                 </Grid>

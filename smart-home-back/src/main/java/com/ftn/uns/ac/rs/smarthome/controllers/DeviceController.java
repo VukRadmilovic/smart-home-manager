@@ -4,8 +4,7 @@ import com.ftn.uns.ac.rs.smarthome.models.Measurement;
 import com.ftn.uns.ac.rs.smarthome.models.TemperatureUnit;
 import com.ftn.uns.ac.rs.smarthome.models.User;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.DeviceDetailsDTO;
-import com.ftn.uns.ac.rs.smarthome.models.dtos.MeasurementsDTO;
-import com.ftn.uns.ac.rs.smarthome.models.dtos.MeasurementsRequestDTO;
+import com.ftn.uns.ac.rs.smarthome.models.dtos.MeasurementsStreamRequestDTO;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.devices.ThermometerDTO;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IDeviceService;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IThermometerService;
@@ -17,10 +16,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import reactor.core.publisher.Flux;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -70,12 +69,12 @@ public class DeviceController {
         return new ResponseEntity<>(devices, HttpStatus.OK);
     }
 
-        @PutMapping(value = "/measurements")
-    public ResponseEntity<?> getMeasurements(@Valid @RequestBody MeasurementsRequestDTO requestDTO) {
+    @PutMapping(value = "/measurements")
+    public Flux<List<Measurement>> getMeasurements(@Valid @RequestBody MeasurementsStreamRequestDTO requestDTO) {
         try {
-            return new ResponseEntity<>(this.deviceService.getPaginatedByMeasurementNameAndDeviceIdInTimeRange(requestDTO), HttpStatus.OK);
+            return this.deviceService.getStreamByMeasurementNameAndDeviceIdInTimeRange(requestDTO);
         } catch(ResponseStatusException ex) {
-            return new ResponseEntity<>(ex.getReason(), ex.getStatus());
+            return Flux.error(new ResponseStatusException(ex.getStatus(), ex.getMessage()));
         }
     }
 }

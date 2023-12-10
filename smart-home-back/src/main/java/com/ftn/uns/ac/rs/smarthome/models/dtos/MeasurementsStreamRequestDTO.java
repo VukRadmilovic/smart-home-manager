@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class MeasurementsRequestDTO {
+public class MeasurementsStreamRequestDTO {
 
     @NotNull(message = "{required}")
     @Min(0)

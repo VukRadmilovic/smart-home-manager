@@ -41,11 +41,13 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
     const deviceId = String(location.pathname.split('/').pop());
     const shouldConnect = React.useRef(true);
     const navigate = useNavigate();
-    const [units, setUnits] = React.useState('C');
+    const units = React.useRef("C");
+    const [unitA, setUnitA] = React.useState<string>("C");
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         changeUnit((event.target as HTMLInputElement).value);
-        setUnits((event.target as HTMLInputElement).value);
+        units.current = (event.target as HTMLInputElement).value;
+        setUnitA((event.target as HTMLInputElement).value);
     };
 
     const connectSocket = () => {
@@ -70,28 +72,56 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
         }
     };
 
+    /*const insertNulls = (data: ChartDataShort[]) : ChartDataShort[] => {
+        const result : ChartDataShort[] = [];
+        data.forEach((val,idx) => {
+            if(idx!= data.length - 1 && data.length >= 2 &&
+                (data[idx + 1].timestamp.getTime() - val.timestamp.getTime() > 60000)){
+                const nullVal : ChartDataShort = {
+                    timestamp: val.timestamp,
+                    value: null
+                }
+                result.push(nullVal);
+            }
+            result.push(val);
+        });
+        return result;
+    }*/
+
+
     const changeUnit = (unit : string) => {
-        if(units == unit) return;
+        if(units.current == unit) return;
         const transformedData: ChartDataShort[] = [];
         if(unit == "F") {
             tempData.forEach((val) => {
-                const transformed : ChartDataShort = {
-                    timestamp: val.timestamp,
-                    value: (val.value * 9/5) + 32
+                if(val.value == null) {
+                    transformedData.push(val);
                 }
-                transformedData.push(transformed)
+                else {
+                    const transformed: ChartDataShort = {
+                        timestamp: val.timestamp,
+                        value: (val.value * 9 / 5) + 32
+                    }
+                    transformedData.push(transformed)
+                }
             })
         }
         else {
             tempData.forEach((val) => {
-                const transformed : ChartDataShort = {
-                    timestamp: val.timestamp,
-                    value: (val.value - 32) * 5/9
+                if(val.value == null) {
+                    transformedData.push(val);
                 }
-                transformedData.push(transformed)
+                else {
+                    const transformed: ChartDataShort = {
+                        timestamp: val.timestamp,
+                        value: (val.value - 32) * 5 / 9
+                    }
+                    transformedData.push(transformed)
+                }
             })
         }
         setTempData(transformedData);
+        units.current = unit;
     }
     const downsample = (data: ChartDataShort[], targetLength : number) => {
         const dataPoints : DataPoint[] = [];
@@ -105,6 +135,7 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
             }
         })
         const res =  LTTB(dataPoints, targetLength);
+
         let result : ChartDataShort[] = [];
         for (let entry of res) {
             const data : ChartDataShort = {
@@ -113,17 +144,8 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
             }
             result.push(data);
         }
-       /* result.forEach((val,idx) => {
-            if(idx!= result.length - 1 && result.length >= 2 &&
-                (result[idx + 1].timestamp.getTime() - val.timestamp.getTime() > 60000)){
-                const nullVal : ChartDataShort = {
-                    timestamp: val.timestamp,
-                    value: null
-                }
-                result.splice(idx,9,nullVal);
-            }
-        })*/
-        return result
+        //const r : ChartDataShort[] = insertNulls(result);
+        return result;
     }
 
     const getMeasurement = (measurement: string) => {
@@ -138,33 +160,24 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
             measurementName: measurement
         }
         deviceService.getDeviceMeasurements(request).then((response => {
-            if (response.batch.length == 0) {
+            if (response.length == 0) {
                 return;
             }
             const data : ChartDataShort[] = [];
-            response.batch.forEach((value,index) => {
+            response.forEach((value,index) => {
                 const newVal : ChartDataShort = {
                     timestamp : new Date(value.timestamp),
                     value: value.value,
                 };
                 data.push(newVal);
-                /*if(index != response.batch.length - 1 && response.batch.length >= 2 &&
-                    (new Date(response.batch[index + 1].timestamp).getTime() - newVal.timestamp.getTime() > 60000))
-                {
-                    const nullVal: ChartDataShort = {
-                        timestamp: newVal.timestamp,
-                        value: null
-                    }
-                    data.push(nullVal)
-                }*/
-
             })
             let downsampled : ChartDataShort[] = data;
             if(data.length > 60)
                 downsampled = downsample(data,60);
             if(measurement == "temperature") {
                setTempData(downsampled);
-               setUnits(response.batch[0].tags["unit"])
+               setUnitA(response[0].tags["unit"])
+               units.current = response[0].tags["unit"]
             }
             else {
                setHumidityData(downsampled);
@@ -205,18 +218,24 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
             value: val.value,
         };
         if(val.name == "temperature"){
+            if(val.tags["unit"] != units.current) {
+                if(val.tags["unit"] == "C")
+                    newVal.value = (val.value * 9/5) + 32
+                else
+                    newVal.value = (val.value - 32) * 5 / 9
+            }
             setTempData((prevTempData) => {
                 if(prevTempData.length > 0 ) {
                     if (newVal.timestamp.getTime() - prevTempData[0].timestamp.getTime() > 3900000)
                         prevTempData.shift();
-                    /*if (newVal.timestamp.getTime() - prevTempData[prevTempData.length - 1].timestamp.getTime() > 60000)
-                    {
-                        const nullVal : ChartDataShort = {
-                            timestamp: val.timestamp,
-                            value: null
-                        }
-                        prevTempData.push(nullVal)
-                    }*/
+                }
+                if (newVal.timestamp.getTime() - prevTempData[prevTempData.length - 1].timestamp.getTime() > 60000)
+                {
+                    const nullVal : ChartDataShort = {
+                        timestamp: new Date(val.timestamp),
+                        value: null
+                    }
+                    prevTempData.push(nullVal)
                 }
                 return [...prevTempData, newVal];
             });
@@ -226,6 +245,14 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
                 if(prevHumData.length > 0 ) {
                     if (newVal.timestamp.getTime() - prevHumData[0].timestamp.getTime() > 3900000)
                         prevHumData.shift();
+                    if (newVal.timestamp.getTime() - prevHumData[prevHumData.length - 1].timestamp.getTime() > 60000)
+                    {
+                        const nullVal : ChartDataShort = {
+                            timestamp: new Date(val.timestamp),
+                            value: null
+                        }
+                        prevHumData.push(nullVal)
+                    }
                 }
                 return [...prevHumData, newVal];
             });
@@ -278,7 +305,7 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
                                     row
                                     aria-labelledby="units"
                                     defaultValue="C"
-                                    value={units}
+                                    value={unitA}
                                     onChange={handleChange}
                                     name="units-group">
                                     <FormControlLabel value="C" control={<Radio />} label="C" />
@@ -290,7 +317,7 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
                             <ResizableBox height={300} width={1100}>
                                 <LineChart
                                     series={[
-                                        { dataKey:'value', label: ("Temperature (" + units + ")") as string},
+                                        { dataKey:'value', showMark: false, label: ("Temperature (" + unitA + ")") as string},
                                     ]}
                                     xAxis={[{ scaleType:'time', dataKey:'timestamp', label: 'Time'  }]}
                                     dataset={tempData}
@@ -301,7 +328,7 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
                             <ResizableBox height={300} width={1100}>
                                 <LineChart
                                     series={[
-                                        { dataKey:'value', label: 'Humidity (%)', color:'#59a14f' },
+                                        { dataKey:'value', showMark: false, label: 'Humidity (%)', color:'#59a14f' },
                                     ]}
                                     xAxis={[{ scaleType:'time', dataKey:'timestamp', label:'Time' }]}
                                     dataset={humidityData}

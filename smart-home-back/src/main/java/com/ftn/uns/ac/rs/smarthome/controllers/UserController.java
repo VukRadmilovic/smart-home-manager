@@ -62,7 +62,6 @@ public class UserController {
     @GetMapping(value = "/activate/{userId}")
     public ResponseEntity<?> activateAccount(@PathVariable Integer userId) {
         try{
-            System.out.println(userId);
             this.userService.activate(userId);
             return new ResponseEntity<>(messageSource.getMessage("activation.success", null, Locale.getDefault()), HttpStatus.USE_PROXY);
         }

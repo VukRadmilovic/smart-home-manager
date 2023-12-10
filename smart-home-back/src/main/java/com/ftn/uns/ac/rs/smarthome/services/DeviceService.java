@@ -5,7 +5,7 @@ import com.ftn.uns.ac.rs.smarthome.models.devices.Device;
 import com.ftn.uns.ac.rs.smarthome.models.devices.Thermometer;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.DeviceDetailsDTO;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.MeasurementsDTO;
-import com.ftn.uns.ac.rs.smarthome.models.dtos.MeasurementsRequestDTO;
+import com.ftn.uns.ac.rs.smarthome.models.dtos.MeasurementsStreamRequestDTO;
 import com.ftn.uns.ac.rs.smarthome.repositories.DeviceRepository;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IDeviceService;
 import org.slf4j.Logger;
@@ -14,6 +14,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import reactor.core.publisher.Flux;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +59,6 @@ public class DeviceService implements IDeviceService {
             );
             devicesDetails.add(details);
         }
-        System.out.println(devicesDetails);
         return devicesDetails;
     }
 
@@ -79,13 +79,27 @@ public class DeviceService implements IDeviceService {
     }
 
     @Override
-    public MeasurementsDTO getPaginatedByMeasurementNameAndDeviceIdInTimeRange(MeasurementsRequestDTO requestDTO) {
+    public Flux<List<Measurement>> getStreamByMeasurementNameAndDeviceIdInTimeRange(MeasurementsStreamRequestDTO requestDTO) {
         if(requestDTO.getFrom() >= requestDTO.getTo()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("dateRange.invalid", null, Locale.getDefault()));
         }
         if(deviceRepository.findById(requestDTO.getDeviceId()).isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("device.notFound", null, Locale.getDefault()));
         }
-        return influxService.findPaginatedByMeasurementNameAndDeviceIdInTimeRange(requestDTO);
+        int batchSize = 5000, page = 0;
+        List<List<Measurement>> batches = new ArrayList<>();
+        requestDTO.setLimit(batchSize);
+        while(true) {
+            requestDTO.setOffset(page * batchSize);
+            MeasurementsDTO batch = influxService.findPaginatedByMeasurementNameAndDeviceIdInTimeRange(requestDTO);
+            batches.add(batch.getBatch());
+            if(!batch.isHasMore()) {
+                break;}
+            else
+                page += 1;
+
+        }
+        return Flux.fromIterable(batches);
+
     }
 }

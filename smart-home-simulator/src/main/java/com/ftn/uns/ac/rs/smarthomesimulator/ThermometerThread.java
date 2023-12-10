@@ -44,15 +44,16 @@ public class ThermometerThread implements Runnable {
         //WIN,SPR,SUM,FAL
         int[][] dayStartEnd = new int[][]{{8, 17}, {7, 19}, {6, 20}, {7, 17}};
 
-        //WIN,SPR,SUM,FAL {day}
-        int[][] typicalDayNightTemps = new int[][]{{0, 10}, {15, 25},
-                {25, 35}, {15, 25}};
+        //WIN,SPR,SUM,FAL {day,night}
+        int[][][] typicalDayNightTemps = new int[][][]{{{0, 10}, {-5, 0}}, {{15, 25}, {5, 15}},
+                {{25, 35}, {15, 25}}, {{15, 25}, {5, 15}}};
+
         int interval = 5;
         int[][] typicalDayNightHumidity = new int[][]{{40, 50}, {35, 40}, {30, 35}, {35, 50}};
         double tempValue, humValue;
         while (true) {
             int[] currentDayStartEnd;
-            int[] currentTypicalDayNightTemps;
+            int[][] currentTypicalDayNightTemps;
             int[] currentTypicalDayNightHumidity;
             int correctIndex;
             LocalDateTime now = LocalDateTime.now();
@@ -66,17 +67,28 @@ public class ThermometerThread implements Runnable {
             currentDayStartEnd = dayStartEnd[correctIndex];
             currentTypicalDayNightTemps = typicalDayNightTemps[correctIndex];
             currentTypicalDayNightHumidity = typicalDayNightHumidity[correctIndex];
-
+            int wholeSectionDuration = Math.abs(currentDayStartEnd[0] - currentDayStartEnd[1]);
             if(now.getHour() >= currentDayStartEnd[0] && now.getHour() < currentDayStartEnd[1]) {
-                tempValue = currentTypicalDayNightTemps[0] +
-                        (((double) Math.abs(currentTypicalDayNightTemps[0] - currentTypicalDayNightTemps[1]) /
-                                ((double) 60 / interval * 60 * Math.abs(currentDayStartEnd[1] - currentDayStartEnd[0]))) *
-                                (((now.getHour() - currentDayStartEnd[0])) * 60 * 60 + 60 * now.getMinute() + now.getSecond()) / interval);
-                humValue = currentTypicalDayNightHumidity[1] -
-                        (((double) Math.abs(currentTypicalDayNightHumidity[1] - currentTypicalDayNightHumidity[0]) /
-                                ((double) 60 / interval * 60 * Math.abs(currentDayStartEnd[1] - currentDayStartEnd[0]))) *
-                                (((now.getHour() - currentDayStartEnd[0])) * 60 * 60 + 60 * now.getMinute() + now.getSecond()) / interval);
+                int multiplier = Math.abs(now.getHour() - currentDayStartEnd[0]);
+                double hourAllowedTempDifference = (double) Math.abs(currentTypicalDayNightTemps[0][0] - currentTypicalDayNightTemps[0][1]) / (double) wholeSectionDuration;
+                double hourAllowedHumDifference = (double) Math.abs(currentTypicalDayNightHumidity[0] - currentTypicalDayNightHumidity[1]) / (double) wholeSectionDuration;
+                int halfDay = Math.abs(currentDayStartEnd[1] - currentDayStartEnd[0]) / 2;
+                int multiplierHum = multiplier;
+                if(now.getHour() >= halfDay) {
+                    multiplier = multiplier % halfDay;
+                }
 
+                double maxTemp = hourAllowedTempDifference * multiplier + hourAllowedTempDifference;
+                double minTemp = hourAllowedTempDifference * multiplier;
+                double maxHum = hourAllowedHumDifference * multiplierHum + hourAllowedHumDifference;
+                double minHum = hourAllowedHumDifference * multiplierHum;
+                if(now.getHour() <= halfDay) {
+                    tempValue = currentTypicalDayNightTemps[0][0] + (minTemp + Math.random() * (maxTemp - minTemp));
+                }
+                else {
+                    tempValue = currentTypicalDayNightTemps[0][1] - (minTemp + Math.random() * (maxTemp - minTemp));
+                }
+                humValue = currentTypicalDayNightHumidity[1] - (minHum + Math.random() * (maxHum - minHum));
                 sendAndDisplayMeasurements(tempValue, humValue);
             }
             else {
@@ -86,45 +98,33 @@ public class ThermometerThread implements Runnable {
                     dividend = divisor;
                     divisor = 24;
                 }
-                double offsetTemp =  (((double) Math.abs(currentTypicalDayNightTemps[0] - currentTypicalDayNightTemps[1]) /
-                        ((double) 60 / interval * 60 * Math.abs(24 - currentDayStartEnd[1] + currentDayStartEnd[0]))) *
-                        (((dividend % divisor) * 60 * 60 + now.getMinute() * 60 + now.getSecond()) / interval));
-                double offsetHum =  (((double) Math.abs(currentTypicalDayNightHumidity[1] - currentTypicalDayNightHumidity[0]) /
-                        ((double) 60 / interval * 60 * Math.abs(currentDayStartEnd[1] - currentDayStartEnd[0]))) *
-                        (((dividend % divisor) * 60 * 60 + now.getMinute() * 60 + now.getSecond()) / interval));
-                tempValue = currentTypicalDayNightTemps[1] - offsetTemp;
-                humValue = currentTypicalDayNightHumidity[0] + offsetHum;
+                double hourAllowedTempDifference = (double) Math.abs(currentTypicalDayNightTemps[1][0] - currentTypicalDayNightTemps[1][1]) / (double) wholeSectionDuration;
+                double hourAllowedHumDifference = (double) Math.abs(currentTypicalDayNightHumidity[0] - currentTypicalDayNightHumidity[1]) / (double) wholeSectionDuration;
 
+                int halfNight = Math.abs(24 - currentDayStartEnd[1] + currentDayStartEnd[0]) / 2;
+                int multiplier = dividend % divisor;
+                int multiplierHum = multiplier;
+                if(multiplier >= halfNight) {
+                    multiplier = multiplier % halfNight;
+                }
+
+                double maxTemp = hourAllowedTempDifference * multiplier + hourAllowedTempDifference;
+                double minTemp = hourAllowedTempDifference * multiplier;
+                double maxHum = hourAllowedHumDifference * multiplierHum + hourAllowedHumDifference;
+                double minHum = hourAllowedHumDifference * multiplierHum;
+                System.out.println(minTemp);
+                System.out.println(maxTemp);
+                System.out.println(multiplier);
+                if(multiplier <= halfNight) {
+                    tempValue = currentTypicalDayNightTemps[1][1] - (minTemp + Math.random() * (maxTemp - minTemp));
+                }
+                else {
+                    tempValue = currentTypicalDayNightTemps[1][0] + (minTemp + Math.random() * (maxTemp - minTemp));
+                }
+                humValue = currentTypicalDayNightHumidity[0] + (minHum + Math.random() * (maxHum - minHum));
                 sendAndDisplayMeasurements(tempValue, humValue);
             }
 
-            /*int correctedTemp;
-            if (now.getHour() >= currentDayStartEnd[0] && now.getHour() < currentDayStartEnd[1]) {
-                if (now.getHour() > (currentDayStartEnd[1] -
-                        ((currentDayStartEnd[1] - currentDayStartEnd[0]) / 2)))
-                    correctedTemp = currentTypicalDayNightTemps[0][1] - 5;
-                else
-                    correctedTemp = currentTypicalDayNightTemps[0][0];
-
-                int temp = ThreadLocalRandom.current().nextInt(correctedTemp, correctedTemp + 5);
-                int humidity = ThreadLocalRandom.current().nextInt(currentTypicalDayNightHumidity[0] - 3,
-                        currentTypicalDayNightHumidity[0] + 4);
-
-                sendAndDisplayMeasurements(temp, humidity);
-            } else {
-                if (now.getHour() > (
-                        (currentDayStartEnd[1] + ((currentDayStartEnd[1] - currentDayStartEnd[0]) / 2)) % 24)) {
-                    correctedTemp = currentTypicalDayNightTemps[1][1] - 5;
-                }
-                else
-                    correctedTemp = currentTypicalDayNightTemps[1][0];
-
-                int temp = ThreadLocalRandom.current().nextInt(correctedTemp, correctedTemp + 5);
-                int humidity = ThreadLocalRandom.current().nextInt(currentTypicalDayNightHumidity[1] - 3,
-                        currentTypicalDayNightHumidity[1] + 4);
-
-                sendAndDisplayMeasurements(temp, humidity);
-            }*/
             Thread.sleep(interval * 1000);
         }
     }

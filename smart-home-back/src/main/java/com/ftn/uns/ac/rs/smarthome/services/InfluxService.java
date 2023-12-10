@@ -2,7 +2,7 @@ package com.ftn.uns.ac.rs.smarthome.services;
 
 import com.ftn.uns.ac.rs.smarthome.models.Measurement;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.MeasurementsDTO;
-import com.ftn.uns.ac.rs.smarthome.models.dtos.MeasurementsRequestDTO;
+import com.ftn.uns.ac.rs.smarthome.models.dtos.MeasurementsStreamRequestDTO;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.QueryApi;
 import com.influxdb.client.WriteApiBlocking;
@@ -57,11 +57,10 @@ public class InfluxService {
             hasMore = true;
             result.remove(result.size() - 1);
         }
-        System.out.println(result);
         return new MeasurementsDTO(result,hasMore);
     }
 
-    public MeasurementsDTO findPaginatedByMeasurementNameAndDeviceIdInTimeRange(MeasurementsRequestDTO requestDTO) {
+    public MeasurementsDTO findPaginatedByMeasurementNameAndDeviceIdInTimeRange(MeasurementsStreamRequestDTO requestDTO) {
         String fluxQuery = String.format(
                 "from(bucket: \"%s\") " +
                         "  |> range(start: %d, stop: %d) " +

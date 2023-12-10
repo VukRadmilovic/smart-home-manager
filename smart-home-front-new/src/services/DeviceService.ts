@@ -1,7 +1,7 @@
 import axios from "axios";
 import {DeviceDetailsDto} from "../models/DeviceDetailsDto.ts";
-import {ChartBatch} from "../models/ChartBatch.ts";
 import {MeasurementRequest} from "../models/MeasurementRequest.ts";
+import {ChartData} from "../models/ChartData.ts";
 
 export class DeviceService {
     private api_host = "http://localhost:80"
@@ -19,15 +19,24 @@ export class DeviceService {
         });
     }
 
-    public getDeviceMeasurements( request: MeasurementRequest): Promise<ChartBatch> {
+    public getDeviceMeasurements( request: MeasurementRequest): Promise<ChartData[]> {
+        const result : ChartData[] = [];
         return axios({
             method: 'PUT',
             url: `${this.api_host}/api/devices/measurements`,
+            responseType: 'stream',
             headers: {
-                'Authorization': 'Bearer ' + sessionStorage.getItem('user')
+                'Authorization': 'Bearer ' + sessionStorage.getItem('user'),
+
             },
-            data: request
-        }).then((response) => response.data
+            data: request,
+            onDownloadProgress: (evt) => {
+                const batches : Array<ChartData[]> = JSON.parse(evt.event.target.response)
+                batches.forEach((batch) => {
+                    result.push(...batch)
+                })
+            }
+        }).then(() =>  result
         ).catch((err) => {
             throw err
         });
