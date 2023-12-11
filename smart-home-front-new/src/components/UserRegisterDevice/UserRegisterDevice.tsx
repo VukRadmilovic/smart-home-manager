@@ -46,7 +46,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
             picture: "",
             minTemperature: 14,
             maxTemperature: 34,
-            fanSpeed: -1,
+            fanSpeed: 1,
         },
         mode: "onChange"
     });
@@ -79,6 +79,20 @@ export function UserRegisterDevice({userService}: UserMainProps) {
 
     const onSubmit = async (formData: DeviceForm) => {
         async function submitACRegistration(deviceFormData: FormData) {
+            if (formData.minTemperature && formData.maxTemperature && formData.minTemperature > formData.maxTemperature) {
+                setErrorMessage('Min temperature cannot be greater than max temperature!');
+                setErrorPopupOpen(true);
+                setIsSuccess(false);
+                return false;
+            }
+
+            if (formData.fanSpeed && formData.fanSpeed < 1) {
+                setErrorMessage('Number of fan speeds must be greater than 0!');
+                setErrorPopupOpen(true);
+                setIsSuccess(false);
+                return false;
+            }
+
             deviceFormData.append('fanSpeed', formData.fanSpeed);
             deviceFormData.append('minTemperature', formData.minTemperature?.toString() || '');
             deviceFormData.append('maxTemperature', formData.maxTemperature?.toString() || '');
@@ -96,6 +110,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                     'Authorization': 'Bearer ' + sessionStorage.getItem('user')
                 },
             });
+            return true;
         }
 
         async function submitThermometerRegistration(deviceFormData: FormData) {
@@ -107,6 +122,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                     'Authorization': 'Bearer ' + sessionStorage.getItem('user')
                 },
             });
+            return true;
         }
 
         function initDeviceFormData() {
@@ -135,9 +151,9 @@ export function UserRegisterDevice({userService}: UserMainProps) {
             }
 
             if (deviceType == 'thermometer') {
-                await submitThermometerRegistration(deviceFormData);
+                if (!await submitThermometerRegistration(deviceFormData)) return;
             } else if (deviceType == 'ac') {
-                await submitACRegistration(deviceFormData);
+                if (!await submitACRegistration(deviceFormData)) return;
             }
 
             setErrorMessage('Device registered successfully!');
@@ -148,7 +164,9 @@ export function UserRegisterDevice({userService}: UserMainProps) {
             }, 1000);
         } catch (error) {
             console.log(error);
-            if (error.response.data.includes('image' && 'null')) {
+            if (error.code == "ERR_NETWORK") {
+                setErrorMessage('File too large! Please select a file smaller than 5MB!');
+            } else if (error.response.data.includes('image' && 'null')) {
                 setErrorMessage('Please select an image!');
             } else {
                 setErrorMessage(error.response.data);
@@ -172,47 +190,46 @@ export function UserRegisterDevice({userService}: UserMainProps) {
         setErrorPopupOpen(false);
     };
 
-    let cooling = false;
-    let heating = false;
-    let dry = false;
-    let fan = false;
-    let auto = false;
-    let health = false;
-    let fungusPrevention = false;
-
-    function coolingChanged() {
-        cooling = !cooling;
-    }
-
-    function heatingChanged() {
-        heating = !heating;
-    }
-
-    function dryChanged() {
-        dry = !dry;
-    }
-
-    function fanChanged() {
-        fan = !fan;
-    }
-
-    function autoChanged() {
-        auto = !auto;
-    }
-
-    function healthChanged() {
-        health = !health;
-    }
-
-    function fungusPreventionChanged() {
-        fungusPrevention = !fungusPrevention;
-    }
-
     const [deviceType, setDeviceType] = React.useState('ac');
+    const [cooling, setCooling] = React.useState(false);
+    const [heating, setHeating] = React.useState(false);
+    const [dry, setDry] = React.useState(false);
+    const [fan, setFan] = React.useState(false);
+    const [auto, setAuto] = React.useState(false);
+    const [health, setHealth] = React.useState(false);
+    const [fungusPrevention, setFungusPrevention] = React.useState(false);
 
     const deviceTypeChanged = (event: SelectChangeEvent) => {
         setDeviceType(event.target.value as string);
     }
+
+    const coolingChanged = () => {
+        setCooling(!cooling);
+    };
+
+    const heatingChanged = () => {
+        setHeating(!heating);
+    };
+
+    const dryChanged = () => {
+        setDry(!dry);
+    };
+
+    const fanChanged = () => {
+        setFan(!fan);
+    };
+
+    const autoChanged = () => {
+        setAuto(!auto);
+    };
+
+    const healthChanged = () => {
+        setHealth(!health);
+    };
+
+    const fungusPreventionChanged = () => {
+        setFungusPrevention(!fungusPrevention);
+    };
 
     function acForm() {
         return <div>
@@ -221,7 +238,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                   justifyContent={'center'} marginBottom={'20px'}>
                 <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
                     <TextField id="fanSpeed"
-                               label="Fan speed (optional)"
+                               label="Num. of fan speeds"
                                fullWidth={true}
                                type={"number"}
                                {...register("fanSpeed")}
