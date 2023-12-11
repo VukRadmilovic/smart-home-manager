@@ -4,6 +4,7 @@ package com.ftn.uns.ac.rs.smarthome.models.devices;
 import com.ftn.uns.ac.rs.smarthome.models.PowerSource;
 import com.ftn.uns.ac.rs.smarthome.models.Property;
 import com.ftn.uns.ac.rs.smarthome.models.TemperatureUnit;
+import com.ftn.uns.ac.rs.smarthome.models.dtos.devices.WashingMachineDTO;
 import lombok.*;
 
 import javax.persistence.*;
@@ -97,5 +98,27 @@ public class WashingMachine extends Device {
         this.temperatureMin = temperatureMin;
         this.temperatureMax = temperatureMax;
         this.temperatureUnit = temperatureUnit;
+    }
+
+    public WashingMachine(WashingMachineDTO dto, Property property) {
+        super(-1, property, dto.getName(), null, dto.getPowerSource(), dto.getEnergyConsumption(), false, false);
+        this.cottons = dto.getCottons();
+        this.synthetics = dto.getSynthetics();
+        this.dailyExpress = dto.getDailyExpress();
+        this.wool = dto.getWool();
+        this.darkWash = dto.getDarkWash();
+        this.outdoor = dto.getOutdoor();
+        this.shirts = dto.getShirts();
+        this.duvet = dto.getDuvet();
+        this.mixed = dto.getMixed();
+        this.steam = dto.getSteam();
+        this.rinseAndSpin = dto.getRinseAndSpin();
+        this.spinOnly = dto.getSpinOnly();
+        this.hygiene = dto.getHygiene();
+        this.centrifugeMin = dto.getCentrifugeMin();
+        this.centrifugeMax = dto.getCentrifugeMax();
+        this.temperatureMin = dto.getTemperatureMin();
+        this.temperatureMax = dto.getTemperatureMax();
+        this.temperatureUnit = dto.getTemperatureUnit();
     }
 }

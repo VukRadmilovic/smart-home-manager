@@ -7,9 +7,11 @@ import com.ftn.uns.ac.rs.smarthome.models.dtos.DeviceDetailsDTO;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.MeasurementsStreamRequestDTO;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.devices.AirConditionerDTO;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.devices.ThermometerDTO;
+import com.ftn.uns.ac.rs.smarthome.models.dtos.devices.WashingMachineDTO;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IAirConditionerService;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IDeviceService;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IThermometerService;
+import com.ftn.uns.ac.rs.smarthome.services.interfaces.IWashingMachineService;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,15 +36,18 @@ public class DeviceController {
     private final MessageSource messageSource;
     private final IThermometerService thermometerService;
     private final IAirConditionerService airConditionerService;
+    private final IWashingMachineService washingMachineService;
 
     public DeviceController(IDeviceService deviceService,
                             MessageSource messageSource,
                             IThermometerService thermometerService,
-                            IAirConditionerService airConditionerService) {
+                            IAirConditionerService airConditionerService,
+                            IWashingMachineService washingMachineService) {
         this.deviceService = deviceService;
         this.messageSource = messageSource;
         this.thermometerService = thermometerService;
         this.airConditionerService = airConditionerService;
+        this.washingMachineService = washingMachineService;
     }
 
     @PostMapping(value = "/registerThermo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -61,6 +66,18 @@ public class DeviceController {
     public ResponseEntity<?> registerAirConditioner(@Valid @ModelAttribute AirConditionerDTO airConditionerDTO) {
         try {
             this.airConditionerService.register(airConditionerDTO);
+            return new ResponseEntity<>(messageSource.getMessage("device.registration.success", null, Locale.getDefault()), HttpStatus.OK);
+        } catch(ResponseStatusException ex) {
+            return new ResponseEntity<>(ex.getReason(), ex.getStatus());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PostMapping(value = "/registerWM", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> registerWashingMachine(@Valid @ModelAttribute WashingMachineDTO washingMachineDTO) {
+        try {
+            this.washingMachineService.register(washingMachineDTO);
             return new ResponseEntity<>(messageSource.getMessage("device.registration.success", null, Locale.getDefault()), HttpStatus.OK);
         } catch(ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());
