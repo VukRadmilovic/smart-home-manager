@@ -13,6 +13,6 @@ public interface IDeviceService {
     List<DeviceDetailsDTO> findByOwnerId(Integer ownerId);
     void update(Device device);
     void setDeviceStillThere(int id);
-    Flux<List<Measurement>> getStreamByMeasurementNameAndDeviceIdInTimeRange(MeasurementsStreamRequestDTO requestDTO);
+    List<List<Measurement>> getStreamByMeasurementNameAndDeviceIdInTimeRange(MeasurementsStreamRequestDTO requestDTO);
 
 }

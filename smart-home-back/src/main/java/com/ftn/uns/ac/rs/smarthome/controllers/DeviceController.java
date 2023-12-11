@@ -86,10 +86,12 @@ public class DeviceController {
         return new ResponseEntity<>(devices, HttpStatus.OK);
     }
 
-    @PutMapping(value = "/measurements")
-    public Flux<List<Measurement>> getMeasurements(@Valid @RequestBody MeasurementsStreamRequestDTO requestDTO) {
+    @GetMapping(value = "/measurements", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<List<Measurement>> getMeasurements(@RequestParam Long from, @RequestParam Long to, @RequestParam Integer deviceId, @RequestParam String measurement) {
         try {
-            return this.deviceService.getStreamByMeasurementNameAndDeviceIdInTimeRange(requestDTO);
+            MeasurementsStreamRequestDTO dto = new MeasurementsStreamRequestDTO(from, to, 5000,0,deviceId,measurement);
+            List<List<Measurement>> measurements = this.deviceService.getStreamByMeasurementNameAndDeviceIdInTimeRange(dto);
+            return Flux.fromIterable(measurements);
         } catch(ResponseStatusException ex) {
             return Flux.error(new ResponseStatusException(ex.getStatus(), ex.getMessage()));
         }

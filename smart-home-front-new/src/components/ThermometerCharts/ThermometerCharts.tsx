@@ -43,7 +43,8 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
     const navigate = useNavigate();
     const units = React.useRef("C");
     const [unitA, setUnitA] = React.useState<string>("C");
-
+    const [latestTemp, setLatestTemp] = React.useState<string>("Latest Value: ");
+    const [latestHum, setLatestHum] = React.useState<string>("Latest Value: ");
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         changeUnit((event.target as HTMLInputElement).value);
         units.current = (event.target as HTMLInputElement).value;
@@ -122,6 +123,7 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
         }
         setTempData(transformedData);
         units.current = unit;
+        setLatestTemp("Latest Value: " + transformedData[transformedData.length - 1].value.toFixed(3) + units.current)
     }
     const downsample = (data: ChartDataShort[], targetLength : number) => {
         const dataPoints : DataPoint[] = [];
@@ -154,8 +156,6 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
         const request : MeasurementRequest = {
             from: Math.floor(from / 1000),
             to: Math.floor(Date.now() / 1000),
-            limit: 1000,
-            offset: 0,
             deviceId: deviceId,
             measurementName: measurement
         }
@@ -178,9 +178,11 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
                setTempData(downsampled);
                setUnitA(response[0].tags["unit"])
                units.current = response[0].tags["unit"]
+                setLatestTemp("Latest Value: " + downsampled[downsampled.length - 1].value.toFixed(3) + units.current)
             }
             else {
                setHumidityData(downsampled);
+               setLatestHum("Latest Value: " + downsampled[downsampled.length - 1].value.toFixed(3) + "%")
             }
         })).catch((err) => {
             console.log(err);
@@ -224,6 +226,7 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
                 else
                     newVal.value = (val.value - 32) * 5 / 9
             }
+            setLatestTemp("Latest Value: " + newVal.value.toFixed(3) + units.current)
             setTempData((prevTempData) => {
                 if(prevTempData.length > 0 ) {
                     if (newVal.timestamp.getTime() - prevTempData[0].timestamp.getTime() > 3900000)
@@ -241,6 +244,7 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
             });
         }
         else {
+            setLatestHum("Latest Value: " + newVal.value.toFixed(3) + "%")
             setHumidityData((prevHumData) => {
                 if(prevHumData.length > 0 ) {
                     if (newVal.timestamp.getTime() - prevHumData[0].timestamp.getTime() > 3900000)
@@ -317,7 +321,7 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
                             <ResizableBox height={300} width={1100}>
                                 <LineChart
                                     series={[
-                                        { dataKey:'value', showMark: false, label: ("Temperature (" + unitA + ")") as string},
+                                        { dataKey:'value', showMark: false, label: ("Temperature (" + unitA + ")\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0" + latestTemp) as string},
                                     ]}
                                     xAxis={[{ scaleType:'time', dataKey:'timestamp', label: 'Time'  }]}
                                     dataset={tempData}
@@ -328,7 +332,7 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
                             <ResizableBox height={300} width={1100}>
                                 <LineChart
                                     series={[
-                                        { dataKey:'value', showMark: false, label: 'Humidity (%)', color:'#59a14f' },
+                                        { dataKey:'value', showMark: false, label: ('Humidity (%)\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + latestHum), color:'#59a14f' },
                                     ]}
                                     xAxis={[{ scaleType:'time', dataKey:'timestamp', label:'Time' }]}
                                     dataset={humidityData}

@@ -67,7 +67,7 @@ public class WebSecurityConfig {
 				.antMatchers(HttpMethod.POST, "/api/user/login").permitAll()
 				.antMatchers(HttpMethod.GET, "/api/user/activate/*").permitAll()
 				.antMatchers(HttpMethod.GET, "/api/devices/ownerAll").hasAnyRole("USER")
-				.antMatchers(HttpMethod.PUT, "/api/devices/measurements").hasAnyRole("USER")
+				.antMatchers(HttpMethod.GET, "/api/devices/measurements").hasAnyRole("USER")
 				.antMatchers(HttpMethod.POST, "/api/property/registerProperty").hasAnyRole("USER", "SUPERADMIN", "ADMIN")
 				.antMatchers(HttpMethod.GET, "/api/property/getProperty").hasAnyRole("USER", "SUPERADMIN", "ADMIN")
 				.antMatchers(HttpMethod.GET, "/api/property/getAllProperty").hasAnyRole("USER", "SUPERADMIN", "ADMIN")

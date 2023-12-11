@@ -120,7 +120,6 @@ export function ThermometerChartsHistory({userService, deviceService} : Thermome
     async function getData  ()  {
         setHumidityData([]);
         setTempData([]);
-        setIsLoading(true);
         let fromLocal: Date | number = new Date();
         let toLocal = new Date().getTime();
         let targetLength = 0;
@@ -137,6 +136,7 @@ export function ThermometerChartsHistory({userService, deviceService} : Thermome
             setErrorPopupOpen(true);
             return;
         }
+        setIsLoading(true);
         if (timeSpan == "1") {
             fromLocal = fromLocal.getTime() - 60 * 60 * 1000;
             targetLength = 60;
@@ -232,8 +232,6 @@ export function ThermometerChartsHistory({userService, deviceService} : Thermome
         const request : MeasurementRequest = {
             from: Math.floor(from / 1000),
             to: Math.floor(to / 1000),
-            limit: 5000,
-            offset: 0,
             deviceId: deviceId,
             measurementName: measurement
         }
