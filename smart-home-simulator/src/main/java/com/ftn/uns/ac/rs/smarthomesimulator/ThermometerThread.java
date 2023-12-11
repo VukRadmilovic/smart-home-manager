@@ -4,6 +4,7 @@ import com.ftn.uns.ac.rs.smarthomesimulator.models.TemperatureUnit;
 import com.ftn.uns.ac.rs.smarthomesimulator.services.MqttService;
 import org.eclipse.paho.mqttv5.common.MqttException;
 
+import java.io.Console;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -67,8 +68,8 @@ public class ThermometerThread implements Runnable {
             currentDayStartEnd = dayStartEnd[correctIndex];
             currentTypicalDayNightTemps = typicalDayNightTemps[correctIndex];
             currentTypicalDayNightHumidity = typicalDayNightHumidity[correctIndex];
-            int wholeSectionDuration = Math.abs(currentDayStartEnd[0] - currentDayStartEnd[1]);
             if(now.getHour() >= currentDayStartEnd[0] && now.getHour() < currentDayStartEnd[1]) {
+                int wholeSectionDuration = Math.abs(currentDayStartEnd[0] - currentDayStartEnd[1]);
                 int multiplier = Math.abs(now.getHour() - currentDayStartEnd[0]);
                 double hourAllowedTempDifference = (double) Math.abs(currentTypicalDayNightTemps[0][0] - currentTypicalDayNightTemps[0][1]) / (double) wholeSectionDuration;
                 double hourAllowedHumDifference = (double) Math.abs(currentTypicalDayNightHumidity[0] - currentTypicalDayNightHumidity[1]) / (double) wholeSectionDuration;
@@ -92,30 +93,29 @@ public class ThermometerThread implements Runnable {
                 sendAndDisplayMeasurements(tempValue, humValue);
             }
             else {
+                int wholeSectionDuration = 24 - Math.abs(currentDayStartEnd[1] - currentDayStartEnd[0]);
                 int divisor = 24 - currentDayStartEnd[1] + now.getHour();
-                int dividend = 24;
-                if(divisor > 24) {
-                    dividend = divisor;
-                    divisor = 24;
-                }
                 double hourAllowedTempDifference = (double) Math.abs(currentTypicalDayNightTemps[1][0] - currentTypicalDayNightTemps[1][1]) / (double) wholeSectionDuration;
                 double hourAllowedHumDifference = (double) Math.abs(currentTypicalDayNightHumidity[0] - currentTypicalDayNightHumidity[1]) / (double) wholeSectionDuration;
-
-                int halfNight = Math.abs(24 - currentDayStartEnd[1] + currentDayStartEnd[0]) / 2;
-                int multiplier = dividend % divisor;
+                int halfNight = wholeSectionDuration / 2;
+                int multiplier;
+                boolean hasPassedHalf = false;
+                if(divisor < 24) {
+                    multiplier =  divisor;
+                }
+                else {
+                    multiplier = divisor % 24;
+                }
                 int multiplierHum = multiplier;
                 if(multiplier >= halfNight) {
+                    hasPassedHalf = true;
                     multiplier = multiplier % halfNight;
                 }
-
                 double maxTemp = hourAllowedTempDifference * multiplier + hourAllowedTempDifference;
                 double minTemp = hourAllowedTempDifference * multiplier;
                 double maxHum = hourAllowedHumDifference * multiplierHum + hourAllowedHumDifference;
                 double minHum = hourAllowedHumDifference * multiplierHum;
-                System.out.println(minTemp);
-                System.out.println(maxTemp);
-                System.out.println(multiplier);
-                if(multiplier <= halfNight) {
+                if(!hasPassedHalf) {
                     tempValue = currentTypicalDayNightTemps[1][1] - (minTemp + Math.random() * (maxTemp - minTemp));
                 }
                 else {

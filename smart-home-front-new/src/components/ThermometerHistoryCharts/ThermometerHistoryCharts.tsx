@@ -1,5 +1,6 @@
 import {
     Button,
+    CircularProgress,
     CssBaseline,
     FormControl,
     FormControlLabel,
@@ -54,6 +55,7 @@ export function ThermometerChartsHistory({userService, deviceService} : Thermome
     const [to, setTo] = React.useState<Date>(null);
     const [isCustom, setIsCustom] = React.useState<boolean>(false);
     const [isTimeFormatter, setIsTimeFormatter] = React.useState<boolean>(true);
+    const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         changeUnit((event.target as HTMLInputElement).value);
         setUnits((event.target as HTMLInputElement).value);
@@ -116,8 +118,9 @@ export function ThermometerChartsHistory({userService, deviceService} : Thermome
     };
 
     async function getData  ()  {
-        setHumidityData([])
-        setTempData([])
+        setHumidityData([]);
+        setTempData([]);
+        setIsLoading(true);
         let fromLocal: Date | number = new Date();
         let toLocal = new Date().getTime();
         let targetLength = 0;
@@ -137,22 +140,27 @@ export function ThermometerChartsHistory({userService, deviceService} : Thermome
         if (timeSpan == "1") {
             fromLocal = fromLocal.getTime() - 60 * 60 * 1000;
             targetLength = 60;
+            setIsTimeFormatter(true);
         }
         else if (timeSpan == "3") {
             fromLocal = fromLocal.getTime() - 3 * 60 * 60 * 1000;
             targetLength = 100;
+            setIsTimeFormatter(true);
         }
         else if (timeSpan == "6") {
             fromLocal = fromLocal.getTime() - 6 * 60 * 60 * 1000;
             targetLength = 130;
+            setIsTimeFormatter(true);
         }
         else if (timeSpan == "12") {
             fromLocal = fromLocal.getTime() - 12 * 60 * 60 * 1000;
             targetLength = 150;
+            setIsTimeFormatter(true);
         }
         else if (timeSpan == "24") {
             fromLocal = fromLocal.getTime() - 24 * 60 * 60 * 1000;
             targetLength = 150;
+            setIsTimeFormatter(true);
         }
         else if (timeSpan == "W") {
             setIsTimeFormatter(false);
@@ -164,6 +172,7 @@ export function ThermometerChartsHistory({userService, deviceService} : Thermome
             fromLocal = fromLocal.getTime() - new Date(fromLocal.getFullYear(), fromLocal.getMonth() + 1, 0).getDate() * 24 * 60 * 60 * 1000;
             targetLength = 120;
         } else {
+            setIsTimeFormatter(true);
             fromLocal = from.valueOf();
             toLocal = to.valueOf();
             if((toLocal - fromLocal) <= 1000 * 60 * 60)
@@ -199,6 +208,8 @@ export function ThermometerChartsHistory({userService, deviceService} : Thermome
         const preparedHum = prepareData(humDataRaw, targetLength);
         setTempData(preparedTemp);
         setHumidityData(preparedHum);
+        setIsLoading(false);
+        setUnits(tempDataRaw[0].tags["unit"]);
     }
 
     const prepareData = (data: ChartDataShort[], targetLength: number) => {
@@ -331,6 +342,9 @@ export function ThermometerChartsHistory({userService, deviceService} : Thermome
                                             onChange={(newValue) => setTo(newValue as Date)}
                                         />
                                 </LocalizationProvider>
+                            }
+                            {!isLoading? null :
+                                <CircularProgress sx={{marginLeft:'auto'}} />
                             }
                             <Button variant={'contained'}
                                     color={'secondary'}

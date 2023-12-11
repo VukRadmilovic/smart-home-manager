@@ -150,7 +150,7 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
 
     const getMeasurement = (measurement: string) => {
         const now = new Date()
-        const from = now.getHours() == 0 ? 23 : new Date().setHours(now.getHours() - 1);
+        const from = now.getTime() - 1000 * 60 * 60;
         const request : MeasurementRequest = {
             from: Math.floor(from / 1000),
             to: Math.floor(Date.now() / 1000),

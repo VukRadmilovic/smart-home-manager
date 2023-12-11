@@ -6,7 +6,6 @@ import com.ftn.uns.ac.rs.smarthome.models.User;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.DeviceDetailsDTO;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.MeasurementsStreamRequestDTO;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.devices.AirConditionerDTO;
-import com.ftn.uns.ac.rs.smarthome.models.dtos.devices.DeviceDTO;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.devices.ThermometerDTO;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IAirConditionerService;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IDeviceService;
