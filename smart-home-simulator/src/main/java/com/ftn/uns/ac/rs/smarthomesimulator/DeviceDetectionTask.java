@@ -28,7 +28,8 @@ public class DeviceDetectionTask {
         log.info("Device detection task started at {}", new Date());
         List<Device> allDevices = deviceService.findAll();
         for (Device device : allDevices) {
-            if (deviceThreadManager.getDeviceThread(device.getId()) == null) {
+            if (deviceThreadManager.getDeviceThread(device.getId()) == null // device is not running
+                    && deviceThreadManager.isSimulatedDevice(device.getId())) { // but device should be running
                 log.info("Device {} is not running, starting it", device.getName());
                 deviceThreadManager.addDeviceThread(device);
             }
