@@ -71,4 +71,6 @@ public class WashingMachine extends Device {
     @Enumerated(EnumType.STRING)
     private TemperatureUnit temperatureUnit;
 
+    @Column(nullable = false)
+    private Boolean isOn;
 }
