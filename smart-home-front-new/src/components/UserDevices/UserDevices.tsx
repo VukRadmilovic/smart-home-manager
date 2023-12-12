@@ -26,6 +26,7 @@ import React, {useEffect, useRef} from "react";
 import {DeviceService} from "../../services/DeviceService.ts";
 import {DeviceDetailsDto} from "../../models/DeviceDetailsDto.ts";
 import {PopupMessage} from "../PopupMessage/PopupMessage.tsx";
+import {AirConditionerRemote} from "../AirConditionerRemote/AirConditionerRemote.tsx";
 
 interface UserDevicesProps {
     userService: UserService
@@ -33,6 +34,7 @@ interface UserDevicesProps {
 }
 export function UserDevices({userService, deviceService} : UserDevicesProps) {
     const navigate = useNavigate();
+    const [isRemoteOpen, setIsRemoteOpen] = React.useState<boolean>(false);
     const [errorMessage, setErrorMessage] = React.useState<string>("");
     const [errorPopupOpen, setErrorPopupOpen] = React.useState<boolean>(false);
     const [isSuccess, setIsSuccess] = React.useState(true);
@@ -80,12 +82,20 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
     }));
     const [menuAnchorEl, setMenuAnchorEl] = React.useState<null | HTMLElement>(null);
     const openMenu = !!menuAnchorEl;
-    const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    const [activeDevice, setActiveDevice] = React.useState<number>(-1);
+    const handleMenuClick = (event: React.MouseEvent<HTMLElement>,deviceId: number) => {
         setMenuAnchorEl(event.currentTarget);
+        setActiveDevice(deviceId);
     };
+
+    const openRemote = (deviceId: number) => {
+        setIsRemoteOpen(true);
+        handleMenuClose();
+    }
 
     const handleMenuClose = () => {
         setMenuAnchorEl(null);
+        setActiveDevice(-1)
     };
 
     const handleErrorPopupClose = (reason?: string) => {
@@ -209,20 +219,20 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
                                         <Button  color={'secondary'} variant={'contained'} sx={{marginRight:'10px'}}>Share</Button>
                                         <div>
                                             <Button
-                                                id="demo-customized-button"
-                                                aria-controls={openMenu ? 'demo-customized-menu' : undefined}
+                                                id={"button_" + device.id}
+                                                aria-controls={openMenu ? 'menu_' + device.id : undefined}
                                                 aria-haspopup="true"
                                                 aria-expanded={openMenu ? 'true' : undefined}
                                                 variant="contained"
                                                 disableElevation
-                                                onClick={handleMenuClick}
+                                                onClick={(evt) => handleMenuClick(evt,device.id)}
                                                 endIcon={<KeyboardArrowDownIcon />}>
                                                 More
                                             </Button>
+                                            {device.id != activeDevice ? null :
                                             <OptionsMenu
-                                                id="demo-customized-menu"
                                                 MenuListProps={{
-                                                    'aria-labelledby': 'demo-customized-button',
+                                                    'aria-labelledby': 'button_' + device.id,
                                                 }}
                                                 anchorEl={menuAnchorEl}
                                                 open={openMenu}
@@ -233,17 +243,20 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
                                                     Real-Time Monitoring
                                                 </MenuItem>
                                                 }
+                                                {device.type != "THERMOMETER" ? null :
                                                 <MenuItem onClick={() => navigateToHistoryCharts(device.id)} disableRipple>
                                                     <TimelineIcon />
                                                         History Monitoring
                                                 </MenuItem>
+                                                }
                                                 {device.type == "THERMOMETER" ? null :
-                                                <MenuItem onClick={handleMenuClose} disableRipple>
+                                                <MenuItem onClick={() => openRemote(device.id)} disableRipple>
                                                     <ControlCameraIcon />
                                                     Control
                                                 </MenuItem>
                                                 }
                                             </OptionsMenu>
+                                        }
                                         </div>
                                     </Box>
                                 </Box>
@@ -267,6 +280,7 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
                 </Grid>
             </Grid>
             <PopupMessage message={errorMessage} isSuccess={isSuccess} handleClose={handleErrorPopupClose} open={errorPopupOpen}/>
+            <AirConditionerRemote open={isRemoteOpen} ></AirConditionerRemote>
         </>
     );
 }
