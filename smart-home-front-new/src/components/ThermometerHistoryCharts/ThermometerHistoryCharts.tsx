@@ -404,10 +404,11 @@ export function ThermometerChartsHistory({userService, deviceService} : Thermome
                                         series={[
                                             { dataKey:'value',
                                                 label: "Humidity (%)",
-                                                showMark: false
+                                                showMark: false,
+                                                color:'#59a14f'
                                             }
                                         ]}
-                                        xAxis={[{ scaleType:"time", valueFormatter:timeFormatter, dataKey:'timestamp', label: 'Time'  }]}
+                                        xAxis={[{ scaleType:"time", valueFormatter:timeFormatter, dataKey:'timestamp', label: 'Time',  }]}
                                         dataset={humidityData}
                                     />
                                 </ResizableBox>
@@ -417,7 +418,8 @@ export function ThermometerChartsHistory({userService, deviceService} : Thermome
                                         series={[
                                             { dataKey:'value',
                                                 label: "Humidity (%)",
-                                                showMark: false
+                                                showMark: false,
+                                                color:'#59a14f'
                                             }
                                         ]}
                                         xAxis={[{ scaleType:"time", valueFormatter:dateFormatter, dataKey:'timestamp', label: 'Date'  }]}

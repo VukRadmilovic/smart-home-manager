@@ -38,33 +38,5 @@ export class DeviceService {
         return promise.then((val) => {
             return val})
 
-        /* return axios({
-            method: 'PUT',
-            url: `${this.api_host}/api/devices/measurements`,
-            responseType: 'stream',
-            headers: {
-                'Authorization': 'Bearer ' + sessionStorage.getItem('user'),
-
-            },
-            data: request,
-            onDownloadProgress: (evt) => {
-                //console.log(evt)
-                /*let percentCompleted = Math.round(evt.loaded * 100 / evt.total);
-                if(percentCompleted == 100) {
-                    const batches: Array<ChartData[]> = JSON.parse(evt.event.target.response)
-                    batches.forEach((batch) => {
-                        result.push(...batch)
-                    })
-                }
-            }
-        }).then((res) =>  {
-            const stream = res.data;
-            stream.on("data", chunk => {
-                console.log(chunk)
-            });
-            }
-        ).catch((err) => {
-            throw err
-        });*/
     }
 }
