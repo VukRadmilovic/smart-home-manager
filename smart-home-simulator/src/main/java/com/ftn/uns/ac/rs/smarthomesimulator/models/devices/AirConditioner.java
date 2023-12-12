@@ -49,4 +49,6 @@ public class AirConditioner extends Device {
     @Column(nullable = false)
     private Boolean fungusPrevention;
 
+    @Column(nullable = false)
+    private Boolean isOn;
 }

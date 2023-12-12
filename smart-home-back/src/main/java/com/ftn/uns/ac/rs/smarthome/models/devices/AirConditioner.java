@@ -50,6 +50,9 @@ public class AirConditioner extends Device {
     @Column(nullable = false)
     private Boolean fungusPrevention;
 
+    @Column(nullable = false)
+    private Boolean isOn;
+
     public AirConditioner(AirConditionerDTO dto, Property property) {
         super(-1, property, dto.getName(), null, dto.getPowerSource(), dto.getEnergyConsumption(), false, false);
         this.temperatureUnit = dto.getTemperatureUnit();
@@ -63,5 +66,6 @@ public class AirConditioner extends Device {
         this.auto = dto.getAuto();
         this.health = dto.getHealth();
         this.fungusPrevention = dto.getFungusPrevention();
+        this.isOn = false;
     }
 }
