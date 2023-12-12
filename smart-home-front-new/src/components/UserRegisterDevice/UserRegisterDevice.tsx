@@ -87,6 +87,36 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                 return false;
             }
 
+            if (formData.measuringUnit?.toUpperCase() === 'CELSIUS') {
+                if (formData.minTemperature && parseInt(formData.minTemperature) < 14) {
+                    setErrorMessage('Min temperature cannot be less than 14 degrees Celsius!');
+                    setErrorPopupOpen(true);
+                    setIsSuccess(false);
+                    return false;
+                }
+                if (formData.maxTemperature && parseInt(formData.maxTemperature) > 38) {
+                    setErrorMessage('Max temperature cannot be greater than 38 degrees Celsius!');
+                    setErrorPopupOpen(true);
+                    setIsSuccess(false);
+                    return false;
+                }
+            }
+
+            if (formData.measuringUnit?.toUpperCase() === 'FAHRENHEIT') {
+                if (formData.minTemperature && parseInt(formData.minTemperature) < 58) {
+                    setErrorMessage('Min temperature cannot be less than 58 degrees Fahrenheit!');
+                    setErrorPopupOpen(true);
+                    setIsSuccess(false);
+                    return false;
+                }
+                if (formData.maxTemperature && parseInt(formData.maxTemperature) > 101) {
+                    setErrorMessage('Max temperature cannot be greater than 101 degrees Fahrenheit!');
+                    setErrorPopupOpen(true);
+                    setIsSuccess(false);
+                    return false;
+                }
+            }
+
             if (formData.fanSpeed && formData.fanSpeed < 1) {
                 setErrorMessage('Number of fan speeds must be greater than 0!');
                 setErrorPopupOpen(true);
