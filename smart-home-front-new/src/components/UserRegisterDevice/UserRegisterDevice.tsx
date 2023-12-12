@@ -95,6 +95,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
             }
 
             deviceFormData.append('fanSpeed', formData.fanSpeed);
+            deviceFormData.append('temperatureUnit', formData.measuringUnit?.toUpperCase());
             deviceFormData.append('minTemperature', formData.minTemperature?.toString() || '');
             deviceFormData.append('maxTemperature', formData.maxTemperature?.toString() || '');
             deviceFormData.append('cooling', cooling);
@@ -259,7 +260,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
         setErrorPopupOpen(false);
     };
 
-    const [deviceType, setDeviceType] = React.useState('wm');
+    const [deviceType, setDeviceType] = React.useState('ac');
 
     /* AC checkboxes */
     const [cooling, setCooling] = React.useState(false);
@@ -394,7 +395,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                                variant="outlined"/>
                 </Grid>
             </Grid>
-            <p>Temperature:</p>
+            <p style={{color: 'rgba(0, 0, 0, 0.6)'}}>Temperature:</p>
             <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
                   justifyContent={'center'} marginBottom={'10px'}>
                 <Grid item xs={12} sm={12} md={8} lg={8} xl={6} display="flex" gap={2}>
@@ -425,6 +426,20 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                     />
                 </Grid>
             </Grid>
+            <FormControl component="fieldset">
+                <FormLabel component="legend">Temperature Unit</FormLabel>
+                <RadioGroup
+                    aria-label="measuringUnit"
+                    value={measuringUnit}
+                    onChange={handleMeasuringUnitChange}
+                    style={{flexDirection: 'row'}}
+                >
+                    <FormControlLabel value="celsius" control={<Radio/>} label="Celsius"/>
+                    <FormControlLabel value="fahrenheit" control={<Radio/>}
+                                      label="Fahrenheit"/>
+                </RadioGroup>
+            </FormControl>
+            <br/><br/>
             <FormControl component={"fieldset"} style={{'marginRight': '20px'}}>
                 <FormLabel component={"legend"}>Cooling</FormLabel>
                 <Checkbox aria-label={"cooling"} value={cooling} onChange={coolingChanged}></Checkbox>
