@@ -43,10 +43,6 @@ public class MqttMessageCallback implements MqttCallback {
         System.out.println("MQTT error occurred.");
     }
 
-    /*
-     * Callback in case the app received a message from one of the topics it's subscribed to.
-     * These include the "measurements" and "statuses" topics.
-     */
     //TODO Menjaj mapu tagova ako ti treba nesto
     @Override public void messageArrived(String topic, MqttMessage mqttMessage) throws JsonProcessingException {
         String message = new String(mqttMessage.getPayload());

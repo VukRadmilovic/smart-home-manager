@@ -17,7 +17,7 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.enableSimpleBroker("/thermometer");
+        registry.enableSimpleBroker("/thermometer","/ac");
         registry.setApplicationDestinationPrefixes("/app");
     }
 }

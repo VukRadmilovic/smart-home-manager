@@ -9,7 +9,7 @@ import {
     ToggleButtonGroup,
     Typography
 } from "@mui/material";
-import React from "react";
+import React, {useEffect, useRef} from "react";
 import LightModeIcon from '@mui/icons-material/LightMode';
 import AcUnitIcon from '@mui/icons-material/AcUnit';
 import AirIcon from '@mui/icons-material/Air';
@@ -17,13 +17,59 @@ import HdrAutoIcon from '@mui/icons-material/HdrAuto';
 import {LocalizationProvider, MobileTimePicker } from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import CloseIcon from '@mui/icons-material/Close';
+import Stomp from "stompjs";
+import SockJS from 'sockjs-client';
 
 interface AirConditionerRemoteProps {
-    open: boolean
+    open: boolean,
+    handleClose: () => void,
+    deviceId: number,
+    openSocket: boolean,
 }
 
-export function AirConditionerRemote ({open} : AirConditionerRemoteProps)  {
-    const [isOpen, setIsOpen] = React.useState<boolean>(true);
+const AntSwitch = styled(Switch)(({ theme }) => ({
+    width: 70,
+    height: 25,
+    padding: 0,
+    display: 'flex',
+    '&:active': {
+        '& .MuiSwitch-thumb': {
+            width: 25,
+        },
+        '& .MuiSwitch-switchBase.Mui-checked': {
+            transform: 'translateX(30px)',
+        },
+    },
+    '& .MuiSwitch-switchBase': {
+        padding: 1,
+        '&.Mui-checked': {
+            transform: 'translateX(45px)',
+            color: '#fff',
+            '& + .MuiSwitch-track': {
+                opacity: 1,
+                backgroundColor: theme.palette.mode === 'dark' ? '#177ddc' : '#1890ff',
+            },
+        },
+    },
+    '& .MuiSwitch-thumb': {
+        boxShadow: '0 2px 4px 0 rgb(0 35 11 / 20%)',
+        width: 22,
+        height: 22,
+        borderRadius: 20,
+        transition: theme.transitions.create(['width'], {
+            duration: 200,
+        }),
+    },
+    '& .MuiSwitch-track': {
+        borderRadius: 24 / 2,
+        opacity: 1,
+        backgroundColor:
+            theme.palette.mode === 'dark' ? 'rgba(255,255,255,.35)' : 'rgba(0,0,0,.25)',
+        boxSizing: 'border-box',
+    },
+}));
+
+export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} : AirConditionerRemoteProps)  {
     const [defaultFanSpeedChecked, setDefaultFanSpeedChecked] = React.useState(true);
     const [healthChecked, setHealthChecked] = React.useState(false);
     const [fungusChecked, setFungusChecked] = React.useState(false);
@@ -31,49 +77,8 @@ export function AirConditionerRemote ({open} : AirConditionerRemoteProps)  {
     const [repeatChecked, setRepeatChecked] = React.useState(false);
     const [mode, setMode] = React.useState<string | null>(null);
     const [fanSpeedDisable, setFanSpeedDisable] = React.useState<boolean>(false);
-    const AntSwitch = styled(Switch)(({ theme }) => ({
-        width: 70,
-        height: 25,
-        padding: 0,
-        display: 'flex',
-        '&:active': {
-            '& .MuiSwitch-thumb': {
-                width: 25,
-            },
-            '& .MuiSwitch-switchBase.Mui-checked': {
-                transform: 'translateX(30px)',
-            },
-        },
-        '& .MuiSwitch-switchBase': {
-            padding: 1,
-            '&.Mui-checked': {
-                transform: 'translateX(45px)',
-                color: '#fff',
-                '& + .MuiSwitch-track': {
-                    opacity: 1,
-                    backgroundColor: theme.palette.mode === 'dark' ? '#177ddc' : '#1890ff',
-                },
-            },
-        },
-        '& .MuiSwitch-thumb': {
-            boxShadow: '0 2px 4px 0 rgb(0 35 11 / 20%)',
-            width: 22,
-            height: 22,
-            borderRadius: 20,
-            transition: theme.transitions.create(['width'], {
-                duration: 200,
-            }),
-        },
-        '& .MuiSwitch-track': {
-            borderRadius: 24 / 2,
-            opacity: 1,
-            backgroundColor:
-                theme.palette.mode === 'dark' ? 'rgba(255,255,255,.35)' : 'rgba(0,0,0,.25)',
-            boxSizing: 'border-box',
-        },
-    }));
-
-
+    const webChatUrl = "http://localhost:80/realtime";
+    const client = useRef(null);
     const handleMode = (
         event: React.MouseEvent<HTMLElement>,
         newMode: string | null,
@@ -104,20 +109,51 @@ export function AirConditionerRemote ({open} : AirConditionerRemoteProps)  {
     const handleRepeatCheckedChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setRepeatChecked(event.target.checked);
     };
-    const handleClose = () => {
-        setIsOpen(false);
-    };
     const marks = [
         {value: 15, label: '15°C'},
         {value:38,label:'38°C'}
     ];
+
+    const connectSocket = () => {
+        try {
+            client.current = Stomp.over(new SockJS(webChatUrl));
+            client.current.connect(
+                {},
+                () => {
+                    console.log(':::::: SOCKET CONNECTED ::::::');
+                    client.current.subscribe('/ac/freshest/' + deviceId, onMessageReceived);
+                },
+                () => {
+                    console.log(':::::: SOCKET TRYING TO RECONNECT ::::::');
+                }
+            );
+        } catch (err) {
+            console.log(
+                ':::::: ERROR: SOCKET CONNECTION ::::::' + JSON.stringify(err)
+            );
+        }
+    };
+
+    const onMessageReceived = (payload) => {}
+
+    useEffect(() => {
+        console.log(open)
+        if(!openSocket) {
+            if(client.current != null) {
+                client.current.disconnect(() => {})
+            }
+            return;
+        } else {
+            connectSocket();
+        }
+    }, [openSocket]);
 
     return (
         <React.Fragment>
         <Dialog
             maxWidth={'sm'}
             fullWidth={true}
-            open={isOpen}
+            open={true}
             onClose={handleClose}>
             <DialogTitle textAlign={'center'}>Remote</DialogTitle>
             <DialogContent>
@@ -163,7 +199,7 @@ export function AirConditionerRemote ({open} : AirConditionerRemoteProps)  {
                         <Grid item xs={12} sm={12} md={12} lg={12} xl={5}>
                             <Slider
                                 aria-label="Fan Speed"
-                                disabled={defaultFanSpeedChecked | fanSpeedDisable}
+                                disabled={defaultFanSpeedChecked || fanSpeedDisable}
                                 defaultValue={1}
                                 valueLabelDisplay="on"
                                 sx={{margin:'0'}}
@@ -211,12 +247,19 @@ export function AirConditionerRemote ({open} : AirConditionerRemoteProps)  {
                             onChange={handleFungusChange}
                         />} label="Fungus Prevention" />
                     </Grid>
-                    <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} justifyContent={'center'}>
-                        <Stack direction="row" spacing={1} alignItems="center">
-                            <Typography>Off</Typography>
-                            <AntSwitch defaultChecked  />
-                            <Typography>On</Typography>
-                        </Stack>
+                    <Grid container item xs={12} sm={12} md={12} lg={12} xl={12}
+                          alignItems={'center'}
+                          justifyContent={'center'}>
+                        <Grid item xs={12} sm={12} md={12} lg={12} xl={3}>
+                            <Stack direction="row" spacing={1} alignItems="center">
+                                <Typography>Off</Typography>
+                                <AntSwitch defaultChecked  />
+                                <Typography>On</Typography>
+                            </Stack>
+                        </Grid>
+                        <Grid item xs={12} sm={12} md={12} lg={12} xl={3} ml={5}>
+                            <Button color={'secondary'} variant={'contained'}>Send</Button>
+                        </Grid>
                     </Grid>
                     <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} alignItems={'center'}
                     columnSpacing={2}>
