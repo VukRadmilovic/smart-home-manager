@@ -1,5 +1,6 @@
 package com.ftn.uns.ac.rs.smarthome.models.dtos.devices;
 
+import com.ftn.uns.ac.rs.smarthome.models.TemperatureUnit;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,6 +13,9 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AirConditionerDTO extends DeviceDTO {
+
+    @NotNull(message = "{required}")
+    private TemperatureUnit temperatureUnit;
 
     @NotNull(message = "{required}")
     private Integer maxTemperature;

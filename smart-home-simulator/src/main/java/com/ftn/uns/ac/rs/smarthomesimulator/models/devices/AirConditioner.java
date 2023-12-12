@@ -2,11 +2,10 @@ package com.ftn.uns.ac.rs.smarthomesimulator.models.devices;
 
 import com.ftn.uns.ac.rs.smarthomesimulator.models.PowerSource;
 import com.ftn.uns.ac.rs.smarthomesimulator.models.Property;
+import com.ftn.uns.ac.rs.smarthomesimulator.models.TemperatureUnit;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name="AIR_CONDITIONERS")
@@ -16,6 +15,10 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AirConditioner extends Device {
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private TemperatureUnit temperatureUnit;
+
     @Column(nullable = false)
     private Integer maxTemperature;
 
@@ -46,20 +49,4 @@ public class AirConditioner extends Device {
     @Column(nullable = false)
     private Boolean fungusPrevention;
 
-    public AirConditioner(Property property, String name,
-                          PowerSource powerSource, Double energyConsumption, Integer maxTemperature,
-                          Integer minTemperature, Integer fanSpeed, Boolean cooling, Boolean heating,
-                          Boolean dry, Boolean fan, Boolean auto, Boolean health, Boolean fungusPrevention) {
-        super(-1, property, name, null, powerSource, energyConsumption, false, false);
-        this.maxTemperature = maxTemperature;
-        this.minTemperature = minTemperature;
-        this.fanSpeed = fanSpeed;
-        this.cooling = cooling;
-        this.heating = heating;
-        this.dry = dry;
-        this.fan = fan;
-        this.auto = auto;
-        this.health = health;
-        this.fungusPrevention = fungusPrevention;
-    }
 }

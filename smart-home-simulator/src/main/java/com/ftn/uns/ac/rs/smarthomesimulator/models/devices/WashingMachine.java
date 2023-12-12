@@ -71,31 +71,4 @@ public class WashingMachine extends Device {
     @Enumerated(EnumType.STRING)
     private TemperatureUnit temperatureUnit;
 
-    public WashingMachine(Property property, String name,
-                          PowerSource powerSource, Double energyConsumption, Boolean cottons,
-                          Boolean synthetics, Boolean dailyExpress, Boolean wool, Boolean darkWash,
-                          Boolean outdoor, Boolean shirts, Boolean duvet, Boolean mixed, Boolean steam,
-                          Boolean rinseAndSpin, Boolean spinOnly, Boolean hygiene, Integer centrifugeMin,
-                          Integer centrifugeMax, Integer temperatureMin, Integer temperatureMax,
-                          TemperatureUnit temperatureUnit) {
-        super(-1, property, name, null, powerSource, energyConsumption, false, false);
-        this.cottons = cottons;
-        this.synthetics = synthetics;
-        this.dailyExpress = dailyExpress;
-        this.wool = wool;
-        this.darkWash = darkWash;
-        this.outdoor = outdoor;
-        this.shirts = shirts;
-        this.duvet = duvet;
-        this.mixed = mixed;
-        this.steam = steam;
-        this.rinseAndSpin = rinseAndSpin;
-        this.spinOnly = spinOnly;
-        this.hygiene = hygiene;
-        this.centrifugeMin = centrifugeMin;
-        this.centrifugeMax = centrifugeMax;
-        this.temperatureMin = temperatureMin;
-        this.temperatureMax = temperatureMax;
-        this.temperatureUnit = temperatureUnit;
-    }
 }

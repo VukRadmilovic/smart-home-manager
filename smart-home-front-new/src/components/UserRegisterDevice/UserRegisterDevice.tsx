@@ -4,7 +4,7 @@ import {UserService} from "../../services/UserService.ts";
 import {
     Button, Checkbox,
     CssBaseline, FormControl, FormControlLabel, FormLabel,
-    Grid, InputLabel, MenuItem, Radio, RadioGroup, Select, SelectChangeEvent, Stack, TextField, Typography
+    Grid, InputLabel, MenuItem, Radio, RadioGroup, Select, SelectChangeEvent, Slider, Stack, TextField, Typography
 } from "@mui/material";
 import {SideNav} from "../Sidenav/SideNav.tsx";
 import React, {useEffect, useState} from "react";
@@ -12,6 +12,7 @@ import {useForm} from "react-hook-form";
 import {useNavigate} from "react-router-dom";
 import {PopupMessage} from "../PopupMessage/PopupMessage";
 import axios from 'axios';
+import {color} from "chart.js/helpers";
 
 interface UserMainProps {
     userService: UserService,
@@ -79,11 +80,41 @@ export function UserRegisterDevice({userService}: UserMainProps) {
 
     const onSubmit = async (formData: DeviceForm) => {
         async function submitACRegistration(deviceFormData: FormData) {
-            if (formData.minTemperature && formData.maxTemperature && formData.minTemperature > formData.maxTemperature) {
+            if (formData.minTemperature && formData.maxTemperature && parseInt(formData.minTemperature) > parseInt(formData.maxTemperature)) {
                 setErrorMessage('Min temperature cannot be greater than max temperature!');
                 setErrorPopupOpen(true);
                 setIsSuccess(false);
                 return false;
+            }
+
+            if (formData.measuringUnit?.toUpperCase() === 'CELSIUS') {
+                if (formData.minTemperature && parseInt(formData.minTemperature) < 14) {
+                    setErrorMessage('Min temperature cannot be less than 14 degrees Celsius!');
+                    setErrorPopupOpen(true);
+                    setIsSuccess(false);
+                    return false;
+                }
+                if (formData.maxTemperature && parseInt(formData.maxTemperature) > 38) {
+                    setErrorMessage('Max temperature cannot be greater than 38 degrees Celsius!');
+                    setErrorPopupOpen(true);
+                    setIsSuccess(false);
+                    return false;
+                }
+            }
+
+            if (formData.measuringUnit?.toUpperCase() === 'FAHRENHEIT') {
+                if (formData.minTemperature && parseInt(formData.minTemperature) < 58) {
+                    setErrorMessage('Min temperature cannot be less than 58 degrees Fahrenheit!');
+                    setErrorPopupOpen(true);
+                    setIsSuccess(false);
+                    return false;
+                }
+                if (formData.maxTemperature && parseInt(formData.maxTemperature) > 101) {
+                    setErrorMessage('Max temperature cannot be greater than 101 degrees Fahrenheit!');
+                    setErrorPopupOpen(true);
+                    setIsSuccess(false);
+                    return false;
+                }
             }
 
             if (formData.fanSpeed && formData.fanSpeed < 1) {
@@ -94,6 +125,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
             }
 
             deviceFormData.append('fanSpeed', formData.fanSpeed);
+            deviceFormData.append('temperatureUnit', formData.measuringUnit?.toUpperCase());
             deviceFormData.append('minTemperature', formData.minTemperature?.toString() || '');
             deviceFormData.append('maxTemperature', formData.maxTemperature?.toString() || '');
             deviceFormData.append('cooling', cooling);
@@ -110,6 +142,72 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                     'Authorization': 'Bearer ' + sessionStorage.getItem('user')
                 },
             });
+            return true;
+        }
+
+        async function submitWMRegistration(deviceFormData: FormData) {
+            if (formData.minTemperature && formData.maxTemperature && parseInt(formData.minTemperature) > parseInt(formData.maxTemperature)) {
+                setErrorMessage('Min temperature cannot be greater than max temperature!');
+                setErrorPopupOpen(true);
+                setIsSuccess(false);
+                return false;
+            }
+
+            if (formData.measuringUnit?.toUpperCase() === 'CELSIUS') {
+                if (formData.minTemperature && parseInt(formData.minTemperature) < 30) {
+                    setErrorMessage('Min temperature cannot be less than 30 degrees Celsius!');
+                    setErrorPopupOpen(true);
+                    setIsSuccess(false);
+                    return false;
+                }
+                if (formData.maxTemperature && parseInt(formData.maxTemperature) > 95) {
+                    setErrorMessage('Max temperature cannot be greater than 95 degrees Celsius!');
+                    setErrorPopupOpen(true);
+                    setIsSuccess(false);
+                    return false;
+                }
+            }
+            if (formData.measuringUnit?.toUpperCase() === 'FAHRENHEIT') {
+                if (formData.minTemperature && parseInt(formData.minTemperature) < 86) {
+                    setErrorMessage('Min temperature cannot be less than 86 degrees Fahrenheit!');
+                    setErrorPopupOpen(true);
+                    setIsSuccess(false);
+                    return false;
+                }
+                if (formData.maxTemperature && parseInt(formData.maxTemperature) > 203) {
+                    setErrorMessage('Max temperature cannot be greater than 203 degrees Fahrenheit!');
+                    setErrorPopupOpen(true);
+                    setIsSuccess(false);
+                    return false;
+                }
+            }
+
+            deviceFormData.append('centrifugeMin', centrifuge[0]);
+            deviceFormData.append('centrifugeMax', centrifuge[1]);
+            deviceFormData.append('temperatureUnit', formData.measuringUnit?.toUpperCase());
+            deviceFormData.append('temperatureMin', formData.minTemperature?.toString() || '');
+            deviceFormData.append('temperatureMax', formData.maxTemperature?.toString() || '');
+            deviceFormData.append('cottons', cottons);
+            deviceFormData.append('synthetics', synthetics);
+            deviceFormData.append('dailyExpress', dailyExpress);
+            deviceFormData.append('wool', wool);
+            deviceFormData.append('darkWash', darkWash);
+            deviceFormData.append('outdoor', outdoor);
+            deviceFormData.append('shirts', shirts);
+            deviceFormData.append('duvet', duvet);
+            deviceFormData.append('mixed', mixed);
+            deviceFormData.append('steam', steam);
+            deviceFormData.append('rinseAndSpin', rinseAndSpin);
+            deviceFormData.append('spinOnly', spinOnly);
+            deviceFormData.append('hygiene', hygiene);
+
+            await axios.post('http://localhost:80/api/devices/registerWM', deviceFormData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('user')
+                },
+            });
+
             return true;
         }
 
@@ -154,6 +252,8 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                 if (!await submitThermometerRegistration(deviceFormData)) return;
             } else if (deviceType == 'ac') {
                 if (!await submitACRegistration(deviceFormData)) return;
+            } else if (deviceType == 'wm') {
+                if (!await submitWMRegistration(deviceFormData)) return;
             }
 
             setErrorMessage('Device registered successfully!');
@@ -191,6 +291,8 @@ export function UserRegisterDevice({userService}: UserMainProps) {
     };
 
     const [deviceType, setDeviceType] = React.useState('ac');
+
+    /* AC checkboxes */
     const [cooling, setCooling] = React.useState(false);
     const [heating, setHeating] = React.useState(false);
     const [dry, setDry] = React.useState(false);
@@ -199,10 +301,35 @@ export function UserRegisterDevice({userService}: UserMainProps) {
     const [health, setHealth] = React.useState(false);
     const [fungusPrevention, setFungusPrevention] = React.useState(false);
 
+
+    /* Washing machine */
+
+    /* Checkboxes */
+    const [cottons, setCottons] = React.useState(false);
+    const [synthetics, setSynthetics] = React.useState(false);
+    const [dailyExpress, setDailyExpress] = React.useState(false);
+    const [wool, setWool] = React.useState(false);
+    const [darkWash, setDarkWash] = React.useState(false);
+    const [outdoor, setOutdoor] = React.useState(false);
+    const [shirts, setShirts] = React.useState(false);
+    const [duvet, setDuvet] = React.useState(false);
+    const [mixed, setMixed] = React.useState(false);
+    const [steam, setSteam] = React.useState(false);
+    const [rinseAndSpin, setRinseAndSpin] = React.useState(false);
+    const [spinOnly, setSpinOnly] = React.useState(false);
+    const [hygiene, setHygiene] = React.useState(false);
+
+    const [centrifuge, setCentrifuge] = React.useState<number[]>([400, 1600]);
+
+    const centrifugeChanged = (event: Event, newValue: number | number[]) => {
+        setCentrifuge(newValue as number[]);
+    };
+
     const deviceTypeChanged = (event: SelectChangeEvent) => {
         setDeviceType(event.target.value as string);
     }
 
+    /* AC checkboxes */
     const coolingChanged = () => {
         setCooling(!cooling);
     };
@@ -231,6 +358,59 @@ export function UserRegisterDevice({userService}: UserMainProps) {
         setFungusPrevention(!fungusPrevention);
     };
 
+    /* Washing machine checkboxes */
+    const cottonsChanged = () => {
+        setCottons(!cottons);
+    }
+
+    const syntheticsChanged = () => {
+        setSynthetics(!synthetics);
+    }
+
+    const dailyExpressChanged = () => {
+        setDailyExpress(!dailyExpress);
+    }
+
+    const woolChanged = () => {
+        setWool(!wool);
+    }
+
+    const darkWashChanged = () => {
+        setDarkWash(!darkWash);
+    }
+
+    const outdoorChanged = () => {
+        setOutdoor(!outdoor);
+    }
+
+    const shirtsChanged = () => {
+        setShirts(!shirts);
+    }
+
+    const duvetChanged = () => {
+        setDuvet(!duvet);
+    }
+
+    const mixedChanged = () => {
+        setMixed(!mixed);
+    }
+
+    const steamChanged = () => {
+        setSteam(!steam);
+    }
+
+    const rinseAndSpinChanged = () => {
+        setRinseAndSpin(!rinseAndSpin);
+    }
+
+    const spinOnlyChanged = () => {
+        setSpinOnly(!spinOnly);
+    }
+
+    const hygieneChanged = () => {
+        setHygiene(!hygiene);
+    }
+
     function acForm() {
         return <div>
             {/*fan speed text field*/}
@@ -245,7 +425,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                                variant="outlined"/>
                 </Grid>
             </Grid>
-            <p>Temperature:</p>
+            <p style={{color: 'rgba(0, 0, 0, 0.6)'}}>Temperature:</p>
             <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
                   justifyContent={'center'} marginBottom={'10px'}>
                 <Grid item xs={12} sm={12} md={8} lg={8} xl={6} display="flex" gap={2}>
@@ -276,6 +456,20 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                     />
                 </Grid>
             </Grid>
+            <FormControl component="fieldset">
+                <FormLabel component="legend">Temperature Unit</FormLabel>
+                <RadioGroup
+                    aria-label="measuringUnit"
+                    value={measuringUnit}
+                    onChange={handleMeasuringUnitChange}
+                    style={{flexDirection: 'row'}}
+                >
+                    <FormControlLabel value="celsius" control={<Radio/>} label="Celsius"/>
+                    <FormControlLabel value="fahrenheit" control={<Radio/>}
+                                      label="Fahrenheit"/>
+                </RadioGroup>
+            </FormControl>
+            <br/><br/>
             <FormControl component={"fieldset"} style={{'marginRight': '20px'}}>
                 <FormLabel component={"legend"}>Cooling</FormLabel>
                 <Checkbox aria-label={"cooling"} value={cooling} onChange={coolingChanged}></Checkbox>
@@ -305,6 +499,121 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                 <FormLabel component={"legend"}>Fungus prevention</FormLabel>
                 <Checkbox aria-label={"fungusPrevention"} value={fungusPrevention}
                           onChange={fungusPreventionChanged}></Checkbox>
+            </FormControl>
+        </div>;
+    }
+
+    function wmForm() {
+        return <div>
+            <p style={{color: 'rgba(0, 0, 0, 0.6)'}}>Centrifuge range:</p><br/>
+            <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
+                  justifyContent={'center'}>
+                <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
+                    <Slider defaultValue={400} getAriaLabel={() => 'Centrifuge range'} valueLabelDisplay="on"
+                    step={200} marks min={400} max={1600} value={centrifuge} onChange={centrifugeChanged}
+                    disableSwap/>
+                </Grid>
+            </Grid>
+            <p style={{color: 'rgba(0, 0, 0, 0.6)'}}>Washing temperature</p>
+            <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
+                  justifyContent={'center'} marginBottom={'10px'}>
+                <Grid item xs={12} sm={12} md={8} lg={8} xl={6} display="flex" gap={2}>
+                    <TextField
+                        id="minTemperature"
+                        label="Minimum"
+                        type="number"
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                        {...register("minTemperature", {required: "Minimum temperature is a required field!"})}
+                        error={!!errors.minTemperature}
+                        helperText={errors.minTemperature ? errors.minTemperature?.message : "Required"}
+                        fullWidth
+                    />
+
+                    <TextField
+                        id="maxTemperature"
+                        label="Maximum"
+                        type="number"
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                        {...register("maxTemperature", {required: "Maximum temperature is a required field!"})}
+                        error={!!errors.maxTemperature}
+                        helperText={errors.maxTemperature ? errors.maxTemperature?.message : "Required"}
+                        fullWidth
+                    />
+                </Grid>
+            </Grid>
+            <FormControl component="fieldset">
+                <FormLabel component="legend">Temperature Unit</FormLabel>
+                <RadioGroup
+                    aria-label="measuringUnit"
+                    value={measuringUnit}
+                    onChange={handleMeasuringUnitChange}
+                    style={{flexDirection: 'row'}}
+                >
+                    <FormControlLabel value="celsius" control={<Radio/>} label="Celsius"/>
+                    <FormControlLabel value="fahrenheit" control={<Radio/>}
+                                      label="Fahrenheit"/>
+                </RadioGroup>
+            </FormControl>
+            <br/><br/>
+            <FormControl component={"fieldset"} style={{'marginRight': '20px'}}>
+                <FormLabel component={"legend"}>Cottons</FormLabel>
+                <Checkbox aria-label={"cottons"} value={cottons} onChange={cottonsChanged}></Checkbox>
+            </FormControl>
+            <FormControl component={"fieldset"} style={{'marginRight': '20px'}}>
+                <FormLabel component={"legend"}>Synthetics</FormLabel>
+                <Checkbox aria-label={"synthetics"} value={synthetics} onChange={syntheticsChanged}></Checkbox>
+            </FormControl>
+            <FormControl component={"fieldset"}>
+                <FormLabel component={"legend"}>Daily Express</FormLabel>
+                <Checkbox aria-label={"dailyExpress"} value={dailyExpress} onChange={dailyExpressChanged}></Checkbox>
+            </FormControl>
+            <br/>
+            <FormControl component={"fieldset"} style={{'marginRight': '20px'}}>
+                <FormLabel component={"legend"}>Wool</FormLabel>
+                <Checkbox aria-label={"wool"} value={wool} onChange={woolChanged}></Checkbox>
+            </FormControl>
+            <FormControl component={"fieldset"} style={{'marginRight': '20px'}}>
+                <FormLabel component={"legend"}>Dark Wash</FormLabel>
+                <Checkbox aria-label={"darkWash"} value={darkWash} onChange={darkWashChanged}></Checkbox>
+            </FormControl>
+            <FormControl component={"fieldset"}>
+                <FormLabel component={"legend"}>Outdoor</FormLabel>
+                <Checkbox aria-label={"outdoor"} value={outdoor} onChange={outdoorChanged}></Checkbox>
+            </FormControl>
+            <br/>
+            <FormControl component={"fieldset"} style={{'marginRight': '20px'}}>
+                <FormLabel component={"legend"}>Shirts</FormLabel>
+                <Checkbox aria-label={"shirts"} value={shirts} onChange={shirtsChanged}></Checkbox>
+            </FormControl>
+            <FormControl component={"fieldset"} style={{'marginRight': '20px'}}>
+                <FormLabel component={"legend"}>Duvet</FormLabel>
+                <Checkbox aria-label={"duvet"} value={duvet} onChange={duvetChanged}></Checkbox>
+            </FormControl>
+            <FormControl component={"fieldset"}>
+                <FormLabel component={"legend"}>Mixed</FormLabel>
+                <Checkbox aria-label={"mixed"} value={mixed} onChange={mixedChanged}></Checkbox>
+            </FormControl>
+            <br/>
+            <FormControl component={"fieldset"} style={{'marginRight': '20px'}}>
+                <FormLabel component={"legend"}>Steam</FormLabel>
+                <Checkbox aria-label={"steam"} value={steam} onChange={steamChanged}></Checkbox>
+            </FormControl>
+            <FormControl component={"fieldset"} style={{'marginRight': '20px'}}>
+                <FormLabel component={"legend"}>Rinse and spin</FormLabel>
+                <Checkbox aria-label={"rinseAndSpin"} value={rinseAndSpin} onChange={rinseAndSpinChanged}></Checkbox>
+            </FormControl>
+            <FormControl component={"fieldset"}>
+                <FormLabel component={"legend"}>Spin only</FormLabel>
+                <Checkbox aria-label={"spinOnly"} value={spinOnly} onChange={spinOnlyChanged}></Checkbox>
+            </FormControl>
+            <br/>
+            <FormControl component={"fieldset"} style={{'marginRight': '20px'}}>
+                <FormLabel component={"legend"}>Hygiene</FormLabel>
+                <Checkbox aria-label={"hygiene"} value={hygiene} onChange={hygieneChanged}></Checkbox>
             </FormControl>
         </div>;
     }
@@ -361,6 +670,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                         >
                             <MenuItem value="thermometer">Thermometer</MenuItem>
                             <MenuItem value="ac">Air Conditioner</MenuItem>
+                            <MenuItem value="wm">Washing Machine</MenuItem>
                         </Select>
                     </FormControl>
                 </Grid>
@@ -481,6 +791,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                                                   }}>
                                                 {deviceType === "thermometer" && thermometerForm()}
                                                 {deviceType === "ac" && acForm()}
+                                                {deviceType === "wm" && wmForm()}
                                             </Grid>
                                         </Grid>
                                     </Grid>

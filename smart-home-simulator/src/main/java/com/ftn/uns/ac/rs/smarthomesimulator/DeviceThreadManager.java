@@ -10,11 +10,13 @@ import com.ftn.uns.ac.rs.smarthomesimulator.services.interfaces.IDeviceService;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class DeviceThreadManager {
     private final Map<Integer, Thread> deviceThreadMap = new ConcurrentHashMap<>();
+    private final Set<Integer> nonSimulatedDevices = ConcurrentHashMap.newKeySet();
     private final MqttService mqttService;
     private final IDeviceService deviceService;
 
@@ -58,5 +60,20 @@ public class DeviceThreadManager {
     public void reloadDeviceThread(int id) {
         removeDeviceThread(id);
         deviceService.findById(id).ifPresent(this::addDeviceThread);
+    }
+
+    public void addNonSimulatedDevice(Integer deviceId) {
+        nonSimulatedDevices.add(deviceId);
+    }
+
+    public boolean isSimulatedDevice(Integer deviceId) {
+        return !nonSimulatedDevices.contains(deviceId);
+    }
+
+    public void shutOffDevice(Integer deviceId) {
+        if (deviceThreadMap.containsKey(deviceId)) {
+            addNonSimulatedDevice(deviceId);
+            removeDeviceThread(deviceId);
+        }
     }
 }
