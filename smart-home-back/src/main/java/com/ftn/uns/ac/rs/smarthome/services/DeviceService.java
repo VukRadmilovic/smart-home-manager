@@ -69,7 +69,7 @@ public class DeviceService implements IDeviceService {
 
     @Override
     public void setDeviceStillThere(int id) {
-//        log.info("Setting device with id {} to still there", id);
+        log.info("Setting device with id {} to still there", id);
         Optional<Device> device = deviceRepository.findById(id);
         if (device.isEmpty()) {
             log.error("Device with id {} not found", id);

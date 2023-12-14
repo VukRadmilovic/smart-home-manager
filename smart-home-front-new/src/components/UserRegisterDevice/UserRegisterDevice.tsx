@@ -136,7 +136,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
             deviceFormData.append('health', health);
             deviceFormData.append('fungusPrevention', fungusPrevention);
 
-            await axios.post('http://localhost:80/api/devices/registerAC', deviceFormData, {
+            await axios.post('http://localhost:80/api/devices/registerAirConditioner', deviceFormData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Authorization': 'Bearer ' + sessionStorage.getItem('user')
@@ -201,7 +201,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
             deviceFormData.append('spinOnly', spinOnly);
             deviceFormData.append('hygiene', hygiene);
 
-            await axios.post('http://localhost:80/api/devices/registerWM', deviceFormData, {
+            await axios.post('http://localhost:80/api/devices/registerWashingMachine', deviceFormData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Authorization': 'Bearer ' + sessionStorage.getItem('user')
@@ -214,7 +214,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
         async function submitThermometerRegistration(deviceFormData: FormData) {
             deviceFormData.append('temperatureUnit', formData.measuringUnit?.toUpperCase());
 
-            await axios.post('http://localhost:80/api/devices/registerThermo', deviceFormData, {
+            await axios.post('http://localhost:80/api/devices/registerThermometer', deviceFormData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Authorization': 'Bearer ' + sessionStorage.getItem('user')

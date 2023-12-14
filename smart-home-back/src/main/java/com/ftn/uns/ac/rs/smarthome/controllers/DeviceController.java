@@ -6,12 +6,10 @@ import com.ftn.uns.ac.rs.smarthome.models.User;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.DeviceDetailsDTO;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.MeasurementsStreamRequestDTO;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.devices.AirConditionerDTO;
+import com.ftn.uns.ac.rs.smarthome.models.dtos.devices.SolarPanelSystemDTO;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.devices.ThermometerDTO;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.devices.WashingMachineDTO;
-import com.ftn.uns.ac.rs.smarthome.services.interfaces.IAirConditionerService;
-import com.ftn.uns.ac.rs.smarthome.services.interfaces.IDeviceService;
-import com.ftn.uns.ac.rs.smarthome.services.interfaces.IThermometerService;
-import com.ftn.uns.ac.rs.smarthome.services.interfaces.IWashingMachineService;
+import com.ftn.uns.ac.rs.smarthome.services.interfaces.*;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -37,20 +35,23 @@ public class DeviceController {
     private final IThermometerService thermometerService;
     private final IAirConditionerService airConditionerService;
     private final IWashingMachineService washingMachineService;
+    private final ISolarPanelSystemService solarPanelSystemService;
 
     public DeviceController(IDeviceService deviceService,
                             MessageSource messageSource,
                             IThermometerService thermometerService,
                             IAirConditionerService airConditionerService,
-                            IWashingMachineService washingMachineService) {
+                            IWashingMachineService washingMachineService,
+                            ISolarPanelSystemService solarPanelSystemService) {
         this.deviceService = deviceService;
         this.messageSource = messageSource;
         this.thermometerService = thermometerService;
         this.airConditionerService = airConditionerService;
         this.washingMachineService = washingMachineService;
+        this.solarPanelSystemService = solarPanelSystemService;
     }
 
-    @PostMapping(value = "/registerThermo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/registerThermometer", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> registerThermometer(@Valid @ModelAttribute ThermometerDTO thermometerDTO) {
         try {
             this.thermometerService.register(thermometerDTO);
@@ -62,7 +63,7 @@ public class DeviceController {
         }
     }
 
-    @PostMapping(value = "/registerAC", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/registerAirConditioner", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> registerAirConditioner(@Valid @ModelAttribute AirConditionerDTO airConditionerDTO) {
         try {
             this.airConditionerService.register(airConditionerDTO);
@@ -74,10 +75,22 @@ public class DeviceController {
         }
     }
 
-    @PostMapping(value = "/registerWM", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/registerWashingMachine", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> registerWashingMachine(@Valid @ModelAttribute WashingMachineDTO washingMachineDTO) {
         try {
             this.washingMachineService.register(washingMachineDTO);
+            return new ResponseEntity<>(messageSource.getMessage("device.registration.success", null, Locale.getDefault()), HttpStatus.OK);
+        } catch(ResponseStatusException ex) {
+            return new ResponseEntity<>(ex.getReason(), ex.getStatus());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PostMapping(value = "/registerSolarPanelSystem", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> registerSolarPanelSystem(@Valid @ModelAttribute SolarPanelSystemDTO solarPanelSystemDTO) {
+        try {
+            this.solarPanelSystemService.register(solarPanelSystemDTO);
             return new ResponseEntity<>(messageSource.getMessage("device.registration.success", null, Locale.getDefault()), HttpStatus.OK);
         } catch(ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());
