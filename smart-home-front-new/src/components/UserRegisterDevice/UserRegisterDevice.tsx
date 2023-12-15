@@ -2,9 +2,24 @@
 
 import {UserService} from "../../services/UserService.ts";
 import {
-    Button, Checkbox,
-    CssBaseline, FormControl, FormControlLabel, FormLabel,
-    Grid, InputLabel, MenuItem, Radio, RadioGroup, Select, SelectChangeEvent, Slider, Stack, TextField, Typography
+    Button,
+    Checkbox,
+    CssBaseline,
+    FormControl,
+    FormControlLabel, FormHelperText,
+    FormLabel,
+    Grid, InputAdornment,
+    InputLabel,
+    MenuItem,
+    OutlinedInput,
+    Radio,
+    RadioGroup,
+    Select,
+    SelectChangeEvent,
+    Slider,
+    Stack,
+    TextField,
+    Typography
 } from "@mui/material";
 import {SideNav} from "../Sidenav/SideNav.tsx";
 import React, {useEffect, useState} from "react";
@@ -12,7 +27,12 @@ import {useForm} from "react-hook-form";
 import {useNavigate} from "react-router-dom";
 import {PopupMessage} from "../PopupMessage/PopupMessage";
 import axios from 'axios';
-import {color} from "chart.js/helpers";
+
+function isInt(value) {
+    return !isNaN(value) &&
+        parseInt(Number(value)) == value &&
+        !isNaN(parseInt(value, 10));
+}
 
 interface UserMainProps {
     userService: UserService,
@@ -79,7 +99,36 @@ export function UserRegisterDevice({userService}: UserMainProps) {
     });
 
     const onSubmit = async (formData: DeviceForm) => {
-        async function submitACRegistration(deviceFormData: FormData) {
+        async function submitSolarPanelSystemRegistration(deviceFormData: FormData) {
+            if (!isInt(numberOfPanels) || parseInt(numberOfPanels) <= 0) {
+                setErrorMessage('Number of panels must be a positive whole number!');
+                setErrorPopupOpen(true);
+                setIsSuccess(false);
+                return false;
+            }
+
+            if (!Number(panelSize) || parseFloat(panelSize) <= 0) {
+                setErrorMessage('Panel size must be a positive number!');
+                setErrorPopupOpen(true);
+                setIsSuccess(false);
+                return false;
+            }
+
+            deviceFormData.append('numberOfPanels', numberOfPanels);
+            deviceFormData.append('panelSize', panelSize);
+            deviceFormData.append('panelEfficiency', panelEfficiency / 100.0);
+
+            await axios.post('http://localhost:80/api/devices/registerSolarPanelSystem', deviceFormData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('user')
+                },
+            });
+
+            return true;
+        }
+
+        async function submitAirConditionerRegistration(deviceFormData: FormData) {
             if (formData.minTemperature && formData.maxTemperature && parseInt(formData.minTemperature) > parseInt(formData.maxTemperature)) {
                 setErrorMessage('Min temperature cannot be greater than max temperature!');
                 setErrorPopupOpen(true);
@@ -145,7 +194,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
             return true;
         }
 
-        async function submitWMRegistration(deviceFormData: FormData) {
+        async function submitWashingMachineRegistration(deviceFormData: FormData) {
             if (formData.minTemperature && formData.maxTemperature && parseInt(formData.minTemperature) > parseInt(formData.maxTemperature)) {
                 setErrorMessage('Min temperature cannot be greater than max temperature!');
                 setErrorPopupOpen(true);
@@ -250,10 +299,12 @@ export function UserRegisterDevice({userService}: UserMainProps) {
 
             if (deviceType == 'thermometer') {
                 if (!await submitThermometerRegistration(deviceFormData)) return;
-            } else if (deviceType == 'ac') {
-                if (!await submitACRegistration(deviceFormData)) return;
-            } else if (deviceType == 'wm') {
-                if (!await submitWMRegistration(deviceFormData)) return;
+            } else if (deviceType == 'airConditioner') {
+                if (!await submitAirConditionerRegistration(deviceFormData)) return;
+            } else if (deviceType == 'washingMachine') {
+                if (!await submitWashingMachineRegistration(deviceFormData)) return;
+            } else if (deviceType == "solarPanelSystem") {
+                if (!await submitSolarPanelSystemRegistration(deviceFormData)) return;
             }
 
             setErrorMessage('Device registered successfully!');
@@ -290,7 +341,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
         setErrorPopupOpen(false);
     };
 
-    const [deviceType, setDeviceType] = React.useState('ac');
+    const [deviceType, setDeviceType] = React.useState('solarPanelSystem');
 
     /* AC checkboxes */
     const [cooling, setCooling] = React.useState(false);
@@ -320,6 +371,12 @@ export function UserRegisterDevice({userService}: UserMainProps) {
     const [hygiene, setHygiene] = React.useState(false);
 
     const [centrifuge, setCentrifuge] = React.useState<number[]>([400, 1600]);
+
+    const [panelEfficiency, setPanelEfficiency] = React.useState<number>(20);
+
+    const panelEfficiencyChanged = (event: Event, newValue: number) => {
+        setPanelEfficiency(newValue as number);
+    }
 
     const centrifugeChanged = (event: Event, newValue: number | number[]) => {
         setCentrifuge(newValue as number[]);
@@ -411,7 +468,42 @@ export function UserRegisterDevice({userService}: UserMainProps) {
         setHygiene(!hygiene);
     }
 
-    function acForm() {
+    const [numberOfPanels, setNumberOfPanels] = React.useState<number>(0);
+    const [panelSize, setPanelSize] = React.useState<number>(0);
+
+    const numberOfPanelsChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = event.target.value as number;
+        setNumberOfPanels(newValue);
+    }
+
+    const panelSizeChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = event.target.value as number;
+        setPanelSize(newValue);
+    }
+
+    function solarPanelSystemForm() {
+        return <div>
+            <TextField id="numberOfPanels" label="Number of panels" fullWidth={true} type={"number"} variant="outlined"
+                       margin={"normal"} value={numberOfPanels} onChange={numberOfPanelsChanged}/>
+            <FormControl sx={{m: 1, width: '25ch'}} variant="outlined">
+                <OutlinedInput id="panelSize" aria-describedby={"panelSize-helper-text"} inputProps={{
+                    'aria-label': 'panel size',
+                }} endAdornment={<InputAdornment position={"end"}>m&sup2;</InputAdornment>}
+                               value={panelSize} onChange={panelSizeChanged}/>
+                <FormHelperText id="panelSize-helper-text">Panel size in m&sup2;</FormHelperText>
+            </FormControl>
+            <p style={{color: 'rgba(0, 0, 0, 0.6)'}}>Panel efficiency (%):</p><br/>
+            <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
+                  justifyContent={'center'}>
+                <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
+                    <Slider defaultValue={20} getAriaLabel={() => 'Panel efficiency'} valueLabelDisplay="on"
+                            min={1} max={100} value={panelEfficiency} onChange={panelEfficiencyChanged}/>
+                </Grid>
+            </Grid>
+        </div>;
+    }
+
+    function airConditionerForm() {
         return <div>
             {/*fan speed text field*/}
             <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
@@ -503,15 +595,15 @@ export function UserRegisterDevice({userService}: UserMainProps) {
         </div>;
     }
 
-    function wmForm() {
+    function washingMachineForm() {
         return <div>
             <p style={{color: 'rgba(0, 0, 0, 0.6)'}}>Centrifuge range:</p><br/>
             <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
                   justifyContent={'center'}>
                 <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
                     <Slider defaultValue={400} getAriaLabel={() => 'Centrifuge range'} valueLabelDisplay="on"
-                    step={200} marks min={400} max={1600} value={centrifuge} onChange={centrifugeChanged}
-                    disableSwap/>
+                            step={200} marks min={400} max={1600} value={centrifuge} onChange={centrifugeChanged}
+                            disableSwap/>
                 </Grid>
             </Grid>
             <p style={{color: 'rgba(0, 0, 0, 0.6)'}}>Washing temperature</p>
@@ -669,8 +761,9 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                             onChange={deviceTypeChanged}
                         >
                             <MenuItem value="thermometer">Thermometer</MenuItem>
-                            <MenuItem value="ac">Air Conditioner</MenuItem>
-                            <MenuItem value="wm">Washing Machine</MenuItem>
+                            <MenuItem value="airConditioner">Air Conditioner</MenuItem>
+                            <MenuItem value="washingMachine">Washing Machine</MenuItem>
+                            <MenuItem value="solarPanelSystem">Solar Panel System</MenuItem>
                         </Select>
                     </FormControl>
                 </Grid>
@@ -790,8 +883,9 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                                                       alignItems: 'center'
                                                   }}>
                                                 {deviceType === "thermometer" && thermometerForm()}
-                                                {deviceType === "ac" && acForm()}
-                                                {deviceType === "wm" && wmForm()}
+                                                {deviceType === "airConditioner" && airConditionerForm()}
+                                                {deviceType === "washingMachine" && washingMachineForm()}
+                                                {deviceType === "solarPanelSystem" && solarPanelSystemForm()}
                                             </Grid>
                                         </Grid>
                                     </Grid>
