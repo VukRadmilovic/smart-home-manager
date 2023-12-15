@@ -1,4 +1,6 @@
 export interface Property {
+    id: number,
+    name: string,
     address: string,
     propertyType: string,
     city: string,
