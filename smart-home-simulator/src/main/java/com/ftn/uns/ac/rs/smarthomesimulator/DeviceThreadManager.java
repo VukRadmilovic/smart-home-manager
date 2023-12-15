@@ -43,6 +43,11 @@ public class DeviceThreadManager {
             addDeviceThread(device.getId(),
                     new ThermometerThread(TemperatureUnit.CELSIUS,
                             mqttService, device.getId()).getNewSimulatorThread());
+        } else if (device.getClass().equals(Battery.class)) {
+            Battery battery = (Battery) device;
+            addDeviceThread(device.getId(),
+                    new ThermometerThread(TemperatureUnit.CELSIUS,
+                            mqttService, device.getId()).getNewSimulatorThread());
         }
     }
 

@@ -5,10 +5,7 @@ import com.ftn.uns.ac.rs.smarthome.models.TemperatureUnit;
 import com.ftn.uns.ac.rs.smarthome.models.User;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.DeviceDetailsDTO;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.MeasurementsStreamRequestDTO;
-import com.ftn.uns.ac.rs.smarthome.models.dtos.devices.AirConditionerDTO;
-import com.ftn.uns.ac.rs.smarthome.models.dtos.devices.SolarPanelSystemDTO;
-import com.ftn.uns.ac.rs.smarthome.models.dtos.devices.ThermometerDTO;
-import com.ftn.uns.ac.rs.smarthome.models.dtos.devices.WashingMachineDTO;
+import com.ftn.uns.ac.rs.smarthome.models.dtos.devices.*;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.*;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -36,19 +33,22 @@ public class DeviceController {
     private final IAirConditionerService airConditionerService;
     private final IWashingMachineService washingMachineService;
     private final ISolarPanelSystemService solarPanelSystemService;
+    private final IBatteryService batteryService;
 
     public DeviceController(IDeviceService deviceService,
                             MessageSource messageSource,
                             IThermometerService thermometerService,
                             IAirConditionerService airConditionerService,
                             IWashingMachineService washingMachineService,
-                            ISolarPanelSystemService solarPanelSystemService) {
+                            ISolarPanelSystemService solarPanelSystemService,
+                            IBatteryService batteryService) {
         this.deviceService = deviceService;
         this.messageSource = messageSource;
         this.thermometerService = thermometerService;
         this.airConditionerService = airConditionerService;
         this.washingMachineService = washingMachineService;
         this.solarPanelSystemService = solarPanelSystemService;
+        this.batteryService = batteryService;
     }
 
     @PostMapping(value = "/registerThermometer", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -91,6 +91,18 @@ public class DeviceController {
     public ResponseEntity<?> registerSolarPanelSystem(@Valid @ModelAttribute SolarPanelSystemDTO solarPanelSystemDTO) {
         try {
             this.solarPanelSystemService.register(solarPanelSystemDTO);
+            return new ResponseEntity<>(messageSource.getMessage("device.registration.success", null, Locale.getDefault()), HttpStatus.OK);
+        } catch(ResponseStatusException ex) {
+            return new ResponseEntity<>(ex.getReason(), ex.getStatus());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PostMapping(value = "/registerBattery", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> registerBattery(@Valid @ModelAttribute BatteryDTO batteryDTO) {
+        try {
+            this.batteryService.register(batteryDTO);
             return new ResponseEntity<>(messageSource.getMessage("device.registration.success", null, Locale.getDefault()), HttpStatus.OK);
         } catch(ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());
