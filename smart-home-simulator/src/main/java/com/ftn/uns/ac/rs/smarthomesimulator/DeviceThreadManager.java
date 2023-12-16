@@ -64,6 +64,11 @@ public class DeviceThreadManager {
             addDeviceThreadInternal(device.getId(),
                     new ThermometerThread(TemperatureUnit.CELSIUS,
                             mqttService, device.getId()).getNewSimulatorThread());
+        } else if (device.getClass().equals(Gate.class)) {
+            Gate gate = (Gate) device;
+            addDeviceThreadInternal(device.getId(),
+                    new ThermometerThread(TemperatureUnit.CELSIUS,
+                            mqttService, device.getId()).getNewSimulatorThread());
         }
     }
 
