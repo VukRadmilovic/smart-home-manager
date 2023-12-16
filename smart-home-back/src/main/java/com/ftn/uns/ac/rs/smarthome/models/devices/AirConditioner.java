@@ -1,6 +1,5 @@
 package com.ftn.uns.ac.rs.smarthome.models.devices;
 
-import com.ftn.uns.ac.rs.smarthome.models.PowerSource;
 import com.ftn.uns.ac.rs.smarthome.models.Property;
 import com.ftn.uns.ac.rs.smarthome.models.TemperatureUnit;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.devices.AirConditionerDTO;
