@@ -99,6 +99,28 @@ export function UserRegisterDevice({userService}: UserMainProps) {
     });
 
     const onSubmit = async (formData: DeviceForm) => {
+        async function submitChargerRegistration(deviceFormData: FormData) {
+            if (!Number(chargerPower)) {
+                setErrorMessage('Power must be a number!');
+                setErrorPopupOpen(true);
+                setIsSuccess(false);
+                return false;
+            }
+
+            deviceFormData.append('power', chargerPower);
+            deviceFormData.append('numberOfPorts', numberOfPorts);
+            deviceFormData.append('chargeUntil', chargeUntil / 100.0);
+
+            await axios.post('http://localhost:80/api/devices/registerCharger', deviceFormData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('user')
+                },
+            });
+
+            return true;
+        }
+
         async function submitSolarPanelSystemRegistration(deviceFormData: FormData) {
             if (!isInt(numberOfPanels) || parseInt(numberOfPanels) <= 0) {
                 setErrorMessage('Number of panels must be a positive whole number!');
@@ -326,6 +348,8 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                 if (!await submitSolarPanelSystemRegistration(deviceFormData)) return;
             } else if (deviceType == "battery") {
                 if (!await submitBatteryRegistration(deviceFormData)) return;
+            } else if (deviceType == "charger") {
+                if (!await submitChargerRegistration(deviceFormData)) return;
             }
 
             setErrorMessage('Device registered successfully!');
@@ -362,7 +386,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
         setErrorPopupOpen(false);
     };
 
-    const [deviceType, setDeviceType] = React.useState('battery');
+    const [deviceType, setDeviceType] = React.useState('charger');
 
     /* AC checkboxes */
     const [cooling, setCooling] = React.useState(false);
@@ -509,6 +533,27 @@ export function UserRegisterDevice({userService}: UserMainProps) {
         setBatteryCapacity(newValue);
     }
 
+    const [chargerPower, setChargerPower] = React.useState<number>(1);
+
+    const chargerPowerChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = event.target.value as number;
+        setChargerPower(newValue);
+    }
+
+    const [numberOfPorts, setNumberOfPorts] = React.useState<number>(1);
+
+    const numberOfPortsChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = event.target.value as number;
+        setNumberOfPorts(newValue);
+    }
+
+    const [chargeUntil, setChargeUntil] = React.useState<number>(100);
+
+    const chargeUntilChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = event.target.value as number;
+        setChargeUntil(newValue);
+    }
+
     function solarPanelSystemForm() {
         return <div>
             <TextField id="numberOfPanels" label="Number of panels" fullWidth={true} type={"number"} variant="outlined"
@@ -538,7 +583,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                   justifyContent={'center'} marginBottom={'20px'}>
                 <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
                     <TextField id="fanSpeed"
-                               label="Num. of fan speeds"
+                               label="Number of fan speeds"
                                fullWidth={true}
                                type={"number"}
                                {...register("fanSpeed")}
@@ -621,6 +666,28 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                           onChange={fungusPreventionChanged}></Checkbox>
             </FormControl>
         </div>;
+    }
+
+    function chargerForm() {
+        return <div>
+            <p style={{color: 'rgba(0, 0, 0, 0.6)'}}>Charge until what % of car battery filled:</p><br/>
+            <Grid item container xs={12} sm={12} md={12} lg={12} xl={12} justifyContent={'center'}>
+                <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
+                    <Slider defaultValue={100} getAriaLabel={() => 'Charge until what % of car battery is filled'}
+                            min={1} max={100} value={chargeUntil} onChange={chargeUntilChanged}
+                            valueLabelDisplay="on"/>
+                </Grid>
+            </Grid>
+            <FormControl sx={{m: 1, width: '25ch'}} variant="outlined">
+                <OutlinedInput id="chargerPower" aria-describedby={"chargerPower-helper-text"} inputProps={{
+                    'aria-label': 'charger power',
+                }} endAdornment={<InputAdornment position={"end"}>kW</InputAdornment>}
+                               value={chargerPower} onChange={chargerPowerChanged}/>
+                <FormHelperText id="chargerPower-helper-text">Charger power in kW</FormHelperText>
+            </FormControl>
+            <TextField id="numberOfPorts" label="Number of charging ports" fullWidth={true} type={"number"}
+                       variant="outlined" margin={"normal"} value={numberOfPorts} onChange={numberOfPortsChanged}/>
+        </div>
     }
 
     function washingMachineForm() {
@@ -803,6 +870,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                             <MenuItem value="washingMachine">Washing Machine</MenuItem>
                             <MenuItem value="solarPanelSystem">Solar Panel System</MenuItem>
                             <MenuItem value="battery">Battery</MenuItem>
+                            <MenuItem value="charger">Charger</MenuItem>
                         </Select>
                     </FormControl>
                 </Grid>
@@ -926,6 +994,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                                                 {deviceType === "washingMachine" && washingMachineForm()}
                                                 {deviceType === "solarPanelSystem" && solarPanelSystemForm()}
                                                 {deviceType === "battery" && batteryForm()}
+                                                {deviceType === "charger" && chargerForm()}
                                             </Grid>
                                         </Grid>
                                     </Grid>
