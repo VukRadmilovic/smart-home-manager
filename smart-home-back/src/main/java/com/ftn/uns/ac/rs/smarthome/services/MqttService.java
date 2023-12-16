@@ -16,6 +16,7 @@ public class MqttService {
         this.mqttConfiguration = mqttConfiguration;
         this.mqttConfiguration.getClient().subscribe("$share/group/measurements",2);
         this.mqttConfiguration.getClient().subscribe("$share/group/statuses",2);
+        this.mqttConfiguration.getClient().subscribe("$share/group/states",2);
     }
 
     public void publishCommandMessage(String message) throws MqttException {

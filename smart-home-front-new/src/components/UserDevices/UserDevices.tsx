@@ -35,6 +35,8 @@ interface UserDevicesProps {
 export function UserDevices({userService, deviceService} : UserDevicesProps) {
     const navigate = useNavigate();
     const [isRemoteOpen, setIsRemoteOpen] = React.useState<boolean>(false);
+    const [remoteDeviceId, setRemoteDeviceId] = React.useState<number>(-1);
+    const [openRemoteSocket, setOpenRemoteSocket] = React.useState<boolean>(false);
     const [errorMessage, setErrorMessage] = React.useState<string>("");
     const [errorPopupOpen, setErrorPopupOpen] = React.useState<boolean>(false);
     const [isSuccess, setIsSuccess] = React.useState(true);
@@ -90,7 +92,14 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
 
     const openRemote = (deviceId: number) => {
         setIsRemoteOpen(true);
+        setRemoteDeviceId(deviceId);
+        setOpenRemoteSocket(true);
         handleMenuClose();
+    }
+
+    const handleRemoteClose = () => {
+        setIsRemoteOpen(false);
+        setOpenRemoteSocket(false);
     }
 
     const handleMenuClose = () => {
@@ -280,7 +289,10 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
                 </Grid>
             </Grid>
             <PopupMessage message={errorMessage} isSuccess={isSuccess} handleClose={handleErrorPopupClose} open={errorPopupOpen}/>
-            <AirConditionerRemote open={isRemoteOpen} ></AirConditionerRemote>
+            <AirConditionerRemote open={isRemoteOpen}
+                                  handleClose={handleRemoteClose}
+                                  openSocket={openRemoteSocket}
+                                  deviceId={remoteDeviceId}></AirConditionerRemote>
         </>
     );
 }

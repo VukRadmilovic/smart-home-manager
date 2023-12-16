@@ -1,92 +1,189 @@
 import {
-    Button, Checkbox,
+    Button,
+    Checkbox,
     Dialog,
     DialogContent,
     DialogTitle,
     FormControlLabel,
-    Grid, IconButton, Slider, Stack, styled, Switch,
+    Grid,
+    IconButton,
+    Slider,
+    Stack,
+    styled,
+    Switch,
     ToggleButton,
     ToggleButtonGroup,
     Typography
 } from "@mui/material";
-import React from "react";
-import LightModeIcon from '@mui/icons-material/LightMode';
-import AcUnitIcon from '@mui/icons-material/AcUnit';
-import AirIcon from '@mui/icons-material/Air';
-import HdrAutoIcon from '@mui/icons-material/HdrAuto';
-import {LocalizationProvider, MobileTimePicker } from "@mui/x-date-pickers";
+import React, {useEffect, useRef} from "react";
+import LightModeIcon from "@mui/icons-material/LightMode";
+import AcUnitIcon from "@mui/icons-material/AcUnit";
+import AirIcon from "@mui/icons-material/Air";
+import HdrAutoIcon from "@mui/icons-material/HdrAuto";
+import {LocalizationProvider, MobileTimePicker} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import CloseIcon from '@mui/icons-material/Close';
+import CloseIcon from "@mui/icons-material/Close";
+import Stomp, {Client, Message} from "stompjs";
+import SockJS from "sockjs-client";
+import { Dayjs } from "dayjs";
+import {ACValueDigest} from "../../models/ACValueDigest.ts";
+import {ACCommand} from "../../models/ACCommand.ts";
+import {CommandType} from "../../models/enums/CommandType.ts";
+import {CommandParams} from "../../models/CommandParams.ts";
+import {ACMode} from "../../models/enums/ACMode.ts";
+import {PopupMessage} from "../PopupMessage/PopupMessage.tsx";
+import {DeviceCapabilities} from "../../models/DeviceCapabilities.ts";
 
 interface AirConditionerRemoteProps {
-    open: boolean
+    open: boolean,
+    handleClose: () => void,
+    deviceId: number,
+    openSocket: boolean,
 }
 
-export function AirConditionerRemote ({open} : AirConditionerRemoteProps)  {
-    const [isOpen, setIsOpen] = React.useState<boolean>(true);
-    const [defaultFanSpeedChecked, setDefaultFanSpeedChecked] = React.useState(true);
+const AntSwitch = styled(Switch)(({ theme }) => ({
+    width: 70,
+    height: 25,
+    padding: 0,
+    display: 'flex',
+    '&:active': {
+        '& .MuiSwitch-thumb': {
+            width: 25,
+        },
+        '& .MuiSwitch-switchBase.Mui-checked': {
+            transform: 'translateX(30px)',
+        },
+    },
+    '& .MuiSwitch-switchBase': {
+        padding: 1,
+        '&.Mui-checked': {
+            transform: 'translateX(45px)',
+            color: '#fff',
+            '& + .MuiSwitch-track': {
+                opacity: 1,
+                backgroundColor: theme.palette.mode === 'dark' ? '#177ddc' : '#1890ff',
+            },
+        },
+    },
+    '& .MuiSwitch-thumb': {
+        boxShadow: '0 2px 4px 0 rgb(0 35 11 / 20%)',
+        width: 22,
+        height: 22,
+        borderRadius: 20,
+        transition: theme.transitions.create(['width'], {
+            duration: 200,
+        }),
+    },
+    '& .MuiSwitch-track': {
+        borderRadius: 24 / 2,
+        opacity: 1,
+        backgroundColor:
+            theme.palette.mode === 'dark' ? 'rgba(255,255,255,.35)' : 'rgba(0,0,0,.25)',
+        boxSizing: 'border-box',
+    },
+}));
+
+interface Mark {
+    value: number,
+    label: string
+}
+
+export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} : AirConditionerRemoteProps)  {
+
+    const [errorMessage, setErrorMessage] = React.useState<string>("");
+    const [errorPopupOpen, setErrorPopupOpen] = React.useState<boolean>(false);
+    const [isSuccess, setIsSuccess] = React.useState(true);
     const [healthChecked, setHealthChecked] = React.useState(false);
     const [fungusChecked, setFungusChecked] = React.useState(false);
     const [scheduledChecked, setScheduledChecked] = React.useState(false);
     const [repeatChecked, setRepeatChecked] = React.useState(false);
-    const [mode, setMode] = React.useState<string | null>(null);
+    const [mode, setMode] = React.useState<string | null>("AUTO");
     const [fanSpeedDisable, setFanSpeedDisable] = React.useState<boolean>(false);
-    const AntSwitch = styled(Switch)(({ theme }) => ({
-        width: 70,
-        height: 25,
-        padding: 0,
-        display: 'flex',
-        '&:active': {
-            '& .MuiSwitch-thumb': {
-                width: 25,
-            },
-            '& .MuiSwitch-switchBase.Mui-checked': {
-                transform: 'translateX(30px)',
-            },
-        },
-        '& .MuiSwitch-switchBase': {
-            padding: 1,
-            '&.Mui-checked': {
-                transform: 'translateX(45px)',
-                color: '#fff',
-                '& + .MuiSwitch-track': {
-                    opacity: 1,
-                    backgroundColor: theme.palette.mode === 'dark' ? '#177ddc' : '#1890ff',
-                },
-            },
-        },
-        '& .MuiSwitch-thumb': {
-            boxShadow: '0 2px 4px 0 rgb(0 35 11 / 20%)',
-            width: 22,
-            height: 22,
-            borderRadius: 20,
-            transition: theme.transitions.create(['width'], {
-                duration: 200,
-            }),
-        },
-        '& .MuiSwitch-track': {
-            borderRadius: 24 / 2,
-            opacity: 1,
-            backgroundColor:
-                theme.palette.mode === 'dark' ? 'rgba(255,255,255,.35)' : 'rgba(0,0,0,.25)',
-            boxSizing: 'border-box',
-        },
-    }));
+    const [fanSpeed, setFanSpeed] = React.useState<number>(2);
+    const [targetTemp, setTargetTemp] = React.useState<number>(25);
+    const realtimeUrl = "http://localhost:80/realtime";
+    const client = useRef<Client | null>(null);
+    const [currentStatus, setCurrentStatus] = React.useState<string>("Offline");
+    const [currentStatusColor, setCurrentStatusColor] = React.useState<string>('grey');
+    const [isOn, setIsOn] = React.useState<boolean>(false);
+    const firstLoad = useRef(true);
+    const lastStatusReceived = useRef(0);
+    const [from, setFrom] = React.useState<Dayjs | null>(null);
+    const [to, setTo] = React.useState<Dayjs | null>(null);
+    const [disableForm, setDisableForm] = React.useState<boolean>(true);
+    const [tempMarks, setTempMarks] = React.useState<Mark[]>([]);
+    const [fanSpeedMarks, setFanSpeedMarks] = React.useState<Mark[]>([]);
+    const [deviceCapabilities, setDeviceCapabilities] = React.useState<DeviceCapabilities | null>(null);
+    const defaultParams : CommandParams = {
+        userId: -1,
+        unit: 'C',
+        target: 23,
+        fanSpeed: 2,
+        currentTemp: -1,
+        health: false,
+        fungus: false,
+        mode: ACMode.HEAT,
+        everyDay: false,
+        from: 0,
+        to: 0,
+        taskId: 0
+    }
+    const defaultConfig : ACCommand = {
+        deviceId: deviceId,
+        commandType: CommandType.OFF,
+        commandParams: defaultParams
+    }
+    const [currentConfig] = React.useState<ACCommand>(defaultConfig);
+    const emptyState : ACValueDigest = {
+        deviceId: deviceId,
+        currentTemp: -1,
+        targetTemp: 23,
+        unit: 'C',
+        mode: "AUTO",
+        fanSpeed: 1,
+        health: false,
+        fungusPrevent: false
+    }
 
-
+    const close = () => {
+        setCurrentState(emptyState);
+        setCurrentStatus("Offline");
+        setCurrentStatusColor("grey");
+        setFungusChecked(false);
+        setHealthChecked(false);
+        setTargetTemp(+deviceCapabilities?.capabilities.get("minTemperature")!);
+        setFanSpeed(1);
+        setMode("");
+        handleClose();
+    }
+    const [currentState, setCurrentState] = React.useState<ACValueDigest>(emptyState);
     const handleMode = (
-        event: React.MouseEvent<HTMLElement>,
+        _event: React.MouseEvent<HTMLElement>,
         newMode: string | null,
     ) => {
         setMode(newMode);
-        if(newMode == "auto")
+        if(newMode == "AUTO")
             setFanSpeedDisable(true);
         else
             setFanSpeedDisable(false);
     };
 
-    const handleFanChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setDefaultFanSpeedChecked(event.target.checked);
+    const handleErrorPopupClose = (reason?: string) => {
+        if (reason === 'clickaway') return;
+        setErrorPopupOpen(false);
+
+    };
+
+    const handleSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setIsOn(event.target.checked);
+    };
+
+    const handleTempChange = (_event: Event, newValue: number | number[]) => {
+        setTargetTemp(newValue as number);
+    };
+
+    const handleFanSpeedChange = (_event: Event, newValue: number | number[]) => {
+        setFanSpeed(newValue as number);
     };
 
     const handleHealthChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,20 +201,188 @@ export function AirConditionerRemote ({open} : AirConditionerRemoteProps)  {
     const handleRepeatCheckedChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setRepeatChecked(event.target.checked);
     };
-    const handleClose = () => {
-        setIsOpen(false);
+
+    const connectSocket = () => {
+        try {
+            client.current = Stomp.over(new SockJS(realtimeUrl));
+            client.current.connect(
+                {},
+                () => {
+                    console.log(':::::: SOCKET CONNECTED ::::::');
+                    client.current!.subscribe('/ac/freshest/' + deviceId, onMessageReceived);
+                    client.current!.subscribe("/ac/status/" + deviceId, onStatusReceived);
+                    client.current!.send("/app/capabilities/ac", {}, deviceId.toString());
+                    client.current!.subscribe("/ac/capabilities/" + deviceId,onCapabilitiesReceived);
+                },
+                () => {
+                    console.log(':::::: SOCKET TRYING TO RECONNECT ::::::');
+                }
+            );
+        } catch (err) {
+            console.log(
+                ':::::: ERROR: SOCKET CONNECTION ::::::' + JSON.stringify(err)
+            );
+        }
     };
-    const marks = [
-        {value: 15, label: '15°C'},
-        {value:38,label:'38°C'}
-    ];
+
+    const onStatusReceived = (payload : Message) => {
+        lastStatusReceived.current = new Date().getTime();
+        setInterval(() => {
+           if(Math.abs(lastStatusReceived.current - new Date().getTime()) >= 30 * 1000) {
+               setCurrentStatus("Offline");
+               setCurrentStatusColor('grey');
+               setDisableForm(true);
+           }
+        }, 30 * 1000)
+        if(payload.body == "ON") {
+            setIsOn(true);
+            setCurrentStatus("ON")
+            setCurrentStatusColor("green");
+            setDisableForm(false);
+        }
+        else {
+            setIsOn(false);
+            setCurrentStatus("OFF")
+            setCurrentStatusColor("red");
+            setDisableForm(false);
+        }
+    }
+
+    const onCapabilitiesReceived = (payload : Message) => {
+       const capabilities  = JSON.parse(payload.body);
+       const map = new Map<string,string>();
+       for(let val in capabilities.capabilities) {
+           map.set(val, capabilities.capabilities[val]);
+       }
+       capabilities.capabilities = map;
+       const fanSpeedMarksNew : Mark[] = [];
+       const tempMarksNew : Mark[] = [];
+       for (let i = 1; i <= +map.get("fanSpeed")!; i++) {
+           const mark : Mark = {
+               value: i,
+               label: i.toString()
+           }
+           fanSpeedMarksNew.push(mark);
+       }
+       tempMarksNew.push({value: +map.get("minTemperature")!, label: map.get("minTemperature")!},
+           {value: Math.floor((+map.get("maxTemperature")! + +map.get("minTemperature")!) / 2), label:  Math.floor((+map.get("maxTemperature")! + +map.get("minTemperature")!) / 2).toString()},
+           {value: +map.get("maxTemperature")!, label: map.get("maxTemperature")!}
+           )
+        setTempMarks(tempMarksNew);
+        setFanSpeedMarks(fanSpeedMarksNew);
+       currentState.unit = capabilities.capabilities.get("temperatureUnit");
+       setCurrentState(currentState);
+       setDeviceCapabilities(capabilities);
+    }
+
+    const onMessageReceived = (payload : Message) => {
+        const val : ACValueDigest =  JSON.parse(payload.body);
+        setCurrentState(val);
+        if(firstLoad.current) {
+            setFanSpeed(val.fanSpeed);
+            setMode(val.mode);
+            setHealthChecked(val.health);
+            setFungusChecked(val.fungusPrevent);
+            setTargetTemp(val.targetTemp);
+            firstLoad.current = false;
+        }
+    }
+
+
+    useEffect(() => {
+        if(!openSocket) {
+            if(client.current != null) {
+                client.current.disconnect(() => {})
+            }
+            return;
+        } else {
+            connectSocket();
+        }
+    }, [openSocket]);
+
+    const sendCommand = () => {
+        let commandType: CommandType = CommandType.ON;
+        let currentTemp = -1;
+        let fanSpeedInt = 3;
+        if(isOn && currentConfig.commandType == CommandType.OFF)
+            commandType = CommandType.ON
+        if(!isOn)
+            commandType = CommandType.OFF
+        if(isOn && (currentConfig.commandType == CommandType.ON || currentConfig.commandType == CommandType.CHANGE)) {
+            commandType = CommandType.CHANGE
+            currentTemp = currentState.currentTemp
+        }
+        if(mode != ACMode.AUTO){
+            fanSpeedInt = fanSpeed
+        }
+        const params : CommandParams = {
+            userId: +sessionStorage.getItem("id")!,
+            unit: deviceCapabilities?.capabilities.get("temperatureUnit")!,
+            target: targetTemp,
+            fanSpeed: fanSpeedInt,
+            health: healthChecked,
+            currentTemp: currentTemp,
+            fungus: fungusChecked,
+            mode: mode as ACMode,
+            everyDay: false,
+            from: 0,
+            to: 0,
+            taskId: 0
+        }
+
+        console.log(currentConfig.commandParams.unit)
+        const command : ACCommand = {
+            deviceId: deviceId,
+            commandType: commandType,
+            commandParams: params
+        }
+        client.current!.send("/app/command/ac", {}, JSON.stringify(command));
+        currentConfig.commandType = commandType;
+    }
+
+    const schedule = () => {
+        if(from == null || to == null) {
+            setErrorMessage("Specify the scheduled time span!");
+            setIsSuccess(false);
+            setErrorPopupOpen(true);
+            return;
+        }
+        const fromLocal : number = from!.valueOf();
+        let toLocal : number = to!.valueOf();
+        let fanSpeedInt = 3;
+        if(from > to) {
+            toLocal = toLocal + 1000 * 60 * 60 * 24;
+        }
+            if(mode != ACMode.AUTO){
+                fanSpeedInt = fanSpeed
+            }
+            const params : CommandParams = {
+                target: targetTemp,
+                fanSpeed: fanSpeedInt,
+                health: healthChecked,
+                currentTemp: -1,
+                fungus: fungusChecked,
+                mode: mode as ACMode,
+                everyDay: repeatChecked,
+                from: fromLocal,
+                to: toLocal,
+                taskId: 0
+            }
+            const command : ACCommand = {
+                deviceId: deviceId,
+                commandType: CommandType.SCHEDULE,
+                commandParams: params
+            }
+            client.current!.send("/app/command/ac", {}, JSON.stringify(command));
+
+    }
 
     return (
         <React.Fragment>
         <Dialog
             maxWidth={'sm'}
             fullWidth={true}
-            open={isOpen}
+            open={open}
             onClose={handleClose}>
             <DialogTitle textAlign={'center'}>Remote</DialogTitle>
             <DialogContent>
@@ -125,10 +390,10 @@ export function AirConditionerRemote ({open} : AirConditionerRemoteProps)  {
                     <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} mt={2}>
                         <Grid item container xs={12} sm={12} md={6} lg={6} xl={6}>
                             <Typography variant={"body1"} display={'inline'}>Current Status:&nbsp;</Typography>
-                            <Typography color={'green'} display={'inline'}><b> ON</b></Typography>
+                            <Typography color={currentStatusColor} display={'inline'}><b> {currentStatus}</b></Typography>
                         </Grid>
                         <Grid item container xs={12} sm={12} md={6} lg={6} xl={6} justifyContent={'right'}>
-                            <Typography variant={"body1"}>Current Temperature: <b>23°C</b></Typography>
+                            <Typography variant={"body1"}>Current Temperature: <b>{currentState.currentTemp == -1? "-" : Math.floor(currentState.currentTemp)}°{currentState.unit}</b></Typography>
                         </Grid>
                     </Grid>
                     <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} alignItems={'center'}>
@@ -138,39 +403,35 @@ export function AirConditionerRemote ({open} : AirConditionerRemoteProps)  {
                         <Grid item xs={12} sm={12} md={12} lg={12} xl={8}>
                             <Slider
                                 sx={{margin:'0'}}
+                                value={targetTemp}
+                                disabled={disableForm}
+                                onChange={handleTempChange}
                                 aria-label="Temperature"
-                                defaultValue={23}
                                 valueLabelDisplay="on"
                                 step={1}
-                                marks={marks}
-                                min={15}
-                                max={38}/>
+                                marks={tempMarks}
+                                min={deviceCapabilities == null ? 14 : +deviceCapabilities?.capabilities.get("minTemperature")!}
+                                max={deviceCapabilities == null ? 38 : +deviceCapabilities?.capabilities.get("maxTemperature")!}/>
                         </Grid>
                     </Grid>
                     <Grid container item xs={12} sm={12} md={12} lg={12} xl={12}
+                          mt={3}
                           columnSpacing={1} alignItems={'center'}>
-                        <Grid item xs={12} sm={12} md={12} lg={12} xl={3}>
+                        <Grid item xs={12} sm={12} md={12} lg={12} xl={4}>
                             <Typography variant={"body1"} display={'inline'}>Fan Speed:</Typography>
                         </Grid>
-                        <Grid item xs={12} sm={12} md={12} lg={12} xl={4} alignItems={'center'}>
-                            <FormControlLabel control={<Checkbox
-                                disabled={fanSpeedDisable}
-                                checked={defaultFanSpeedChecked}
-                                onChange={handleFanChange}
-                            />} label="Default" />
-
-                        </Grid>
-                        <Grid item xs={12} sm={12} md={12} lg={12} xl={5}>
+                        <Grid item xs={12} sm={12} md={12} lg={12} xl={8}>
                             <Slider
                                 aria-label="Fan Speed"
-                                disabled={defaultFanSpeedChecked | fanSpeedDisable}
-                                defaultValue={1}
+                                value={fanSpeed}
+                                disabled={fanSpeedDisable || disableForm}
+                                onChange={handleFanSpeedChange}
                                 valueLabelDisplay="on"
                                 sx={{margin:'0'}}
                                 step={1}
-                                marks={[{value:1,label:'1'},{value:3,label:'3'}]}
+                                marks={fanSpeedMarks}
                                 min={1}
-                                max={3}/>
+                                max={deviceCapabilities == null ? 1 : +deviceCapabilities?.capabilities.get("fanSpeed")!}/>
                         </Grid>
                     </Grid>
 
@@ -182,19 +443,28 @@ export function AirConditionerRemote ({open} : AirConditionerRemoteProps)  {
                             <ToggleButtonGroup
                                 color="primary"
                                 value={mode}
+                                disabled={disableForm}
                                 exclusive
                                 onChange={handleMode}
                                 aria-label="mode">
-                                <ToggleButton value="heat" aria-label="heat">
+                                <ToggleButton value="HEAT" aria-label="heat"
+                                              disabled={deviceCapabilities == null ? true : deviceCapabilities?.capabilities.get("heating"!) != "true"}
+                                              selected={mode == "HEAT"}>
                                     <LightModeIcon/> Heat
                                 </ToggleButton>
-                                <ToggleButton value="cool" aria-label="cool">
+                                <ToggleButton value="COOL" aria-label="cool"
+                                              disabled={deviceCapabilities == null ? true : deviceCapabilities?.capabilities.get("cooling"!) != "true"}
+                                              selected={mode == "COOL"}>
                                     <AcUnitIcon/> Cool
                                 </ToggleButton>
-                                <ToggleButton value="dry" aria-label="dry">
-                                    <AirIcon/> Dry
+                                <ToggleButton value="DRY" aria-label="dry"
+                                              disabled={deviceCapabilities == null ? true : deviceCapabilities?.capabilities.get("dry"!) != "true"}
+                                              selected={mode == "DRY"}>
+                                    <AirIcon/> Vent
                                 </ToggleButton>
-                                <ToggleButton value="auto" aria-label="auto">
+                                <ToggleButton value="AUTO" aria-label="auto"
+                                              disabled={deviceCapabilities == null ? true : deviceCapabilities?.capabilities.get("auto"!) != "true"}
+                                              selected={mode == "AUTO"}>
                                     <HdrAutoIcon/> Auto
                                 </ToggleButton>
                             </ToggleButtonGroup>
@@ -204,57 +474,82 @@ export function AirConditionerRemote ({open} : AirConditionerRemoteProps)  {
                           columnSpacing={1} alignItems={'center'} justifyContent={'center'} columnGap={3}>
                         <FormControlLabel control={<Checkbox
                             checked={healthChecked}
+                            disabled={disableForm || deviceCapabilities == null ? true : deviceCapabilities?.capabilities.get("health"!) != "true"}
                             onChange={handleHealthChange}
                         />} label="Health/Ionizing Air" />
                         <FormControlLabel control={<Checkbox
+                            disabled={disableForm || deviceCapabilities == null ? true : deviceCapabilities?.capabilities.get("fungusPrevention"!) != "true"}
                             checked={fungusChecked}
                             onChange={handleFungusChange}
                         />} label="Fungus Prevention" />
                     </Grid>
-                    <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} justifyContent={'center'}>
-                        <Stack direction="row" spacing={1} alignItems="center">
-                            <Typography>Off</Typography>
-                            <AntSwitch defaultChecked  />
-                            <Typography>On</Typography>
-                        </Stack>
+                    <Grid container item xs={12} sm={12} md={12} lg={12} xl={12}
+                          alignItems={'center'}
+                          justifyContent={'center'}>
+                        <Grid item xs={12} sm={12} md={12} lg={12} xl={3}>
+                            <Stack direction="row" spacing={1} alignItems="center">
+                                <Typography>Off</Typography>
+                                <AntSwitch checked={isOn} disabled={disableForm} onChange={handleSwitchChange}/>
+                                <Typography>On</Typography>
+                            </Stack>
+                        </Grid>
+                        <Grid item xs={12} sm={12} md={12} lg={12} xl={3} ml={5}>
+                            <Button color={'secondary'}
+                                    disabled={disableForm}
+                                    variant={'contained'}
+                                    onClick={sendCommand}>Send</Button>
+                        </Grid>
                     </Grid>
                     <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} alignItems={'center'}
                     columnSpacing={2}>
                         <Grid item xs={12} sm={12} md={12} lg={12} xl={3}>
                             <FormControlLabel control={<Checkbox
                                 checked={scheduledChecked}
+                                disabled={disableForm}
                                 onChange={handleScheduleCheckedChange}
                             />} label="Scheduled" />
                         </Grid>
                         <Grid item xs={12} sm={12} md={12} lg={5} xl={4} mr={3}>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <MobileTimePicker  label={'From'}  disabled={!scheduledChecked}/>
+                                <MobileTimePicker  label={'From'}
+                                                   value={from}
+                                                   onChange={(newValue) => setFrom(newValue)}
+                                                   disabled={!scheduledChecked || disableForm}/>
                             </LocalizationProvider>
                         </Grid>
                         <Grid item xs={12} sm={12} md={12} lg={5} xl={4}>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <MobileTimePicker   label={'To'} disabled={!scheduledChecked}/>
+                                <MobileTimePicker   label={'To'}
+                                                    value={to}
+                                                    onChange={(newValue) => setTo(newValue)}
+                                                    disabled={!scheduledChecked || disableForm}/>
                             </LocalizationProvider>
                         </Grid>
                     </Grid>
                     <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} justifyContent={'center'}>
                         <FormControlLabel control={<Checkbox
-                            disabled={!scheduledChecked}
+                            disabled={!scheduledChecked || disableForm}
                             checked={repeatChecked}
                             onChange={handleRepeatCheckedChange}
                         />} label="Repeat Daily" />
                     </Grid>
                     <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} mb={1}  justifyContent={'center'}>
-                        <Button variant={'contained'} disabled={!scheduledChecked} color={'primary'}>Schedule Cycle</Button>
+                        <Button variant={'contained'}
+                                onClick={schedule}
+                                disabled={!scheduledChecked || disableForm}
+                                color={'primary'}>Schedule Cycle</Button>
                     </Grid>
 
                 </Grid>
-            <IconButton aria-label="close" sx={{position:'absolute',top:'2px',right:'3px'}} onClick={handleClose}>
+            <IconButton aria-label="close" sx={{position:'absolute',top:'2px',right:'3px'}} onClick={close}>
                 <CloseIcon />
             </IconButton>
             </DialogContent>
 
         </Dialog>
+        <PopupMessage message={errorMessage} isSuccess={isSuccess} handleClose={handleErrorPopupClose}
+                      open={errorPopupOpen}/>
         </React.Fragment>
+
     );
-};
+}
