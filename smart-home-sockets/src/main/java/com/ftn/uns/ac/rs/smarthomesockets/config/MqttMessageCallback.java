@@ -1,7 +1,9 @@
 package com.ftn.uns.ac.rs.smarthomesockets.config;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.SerializableString;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ftn.uns.ac.rs.smarthomesockets.models.ACValueDigest;
 import com.ftn.uns.ac.rs.smarthomesockets.models.Measurement;
 import org.eclipse.paho.mqttv5.client.IMqttToken;
 import org.eclipse.paho.mqttv5.client.MqttCallback;
@@ -46,15 +48,31 @@ public class MqttMessageCallback implements MqttCallback {
     //TODO Menjaj mapu tagova ako ti treba nesto
     @Override public void messageArrived(String topic, MqttMessage mqttMessage) throws JsonProcessingException {
         String message = new String(mqttMessage.getPayload());
-        String[] data = message.split(",");
-        String valueWithUnit = data[1];
-        String deviceId = data[2];
-        float value = Float.parseFloat(valueWithUnit.substring(0, valueWithUnit.length() - 1));
-        Map<String,String> tags = new HashMap<>();
-        tags.put("unit",valueWithUnit.substring(valueWithUnit.length() - 1));
-        Measurement measurement = new Measurement(data[0],value,(new Date()).getTime(),tags );
-        String toSend = jsonMapper.writeValueAsString(measurement);
-        messagingTemplate.convertAndSend("/thermometer/freshest/" + deviceId, toSend);
+        if(topic.equals("ac")){
+            try {
+                ACValueDigest received = jsonMapper.readValue(message, ACValueDigest.class);
+                messagingTemplate.convertAndSend("/ac/freshest/" + received.getDeviceId(), jsonMapper.writeValueAsString(received));
+            }
+            catch (Exception ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
+        else if(topic.contains("status/ac")) {
+            String[] data = message.split(",");
+            messagingTemplate.convertAndSend("/ac/status/" + data[1],data[0]);
+        }
+        else {
+
+            String[] data = message.split(",");
+            String valueWithUnit = data[1];
+            String deviceId = data[2];
+            float value = Float.parseFloat(valueWithUnit.substring(0, valueWithUnit.length() - 1));
+            Map<String, String> tags = new HashMap<>();
+            tags.put("unit", valueWithUnit.substring(valueWithUnit.length() - 1));
+            Measurement measurement = new Measurement(data[0], value, (new Date()).getTime(), tags);
+            String toSend = jsonMapper.writeValueAsString(measurement);
+            messagingTemplate.convertAndSend("/thermometer/freshest/" + deviceId, toSend);
+        }
         System.out.println("Message received. ID:" + mqttMessage.getId() + ", Message: " + message);
     }
 

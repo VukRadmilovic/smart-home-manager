@@ -87,7 +87,7 @@ public class DeviceService implements IDeviceService {
         if(deviceRepository.findById(requestDTO.getDeviceId()).isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("device.notFound", null, Locale.getDefault()));
         }
-        int batchSize = 1000, page = 0;
+        int batchSize = 5000, page = 0;
         List<List<Measurement>> batches = new ArrayList<>();
         requestDTO.setLimit(batchSize);
         while(true) {
@@ -100,6 +100,7 @@ public class DeviceService implements IDeviceService {
                 page += 1;
 
         }
+
 
         return batches;
 

@@ -1,10 +1,9 @@
-package com.ftn.uns.ac.rs.smarthomesimulator;
+package com.ftn.uns.ac.rs.smarthomesimulator.threads;
 
 import com.ftn.uns.ac.rs.smarthomesimulator.models.TemperatureUnit;
 import com.ftn.uns.ac.rs.smarthomesimulator.services.MqttService;
 import org.eclipse.paho.mqttv5.common.MqttException;
 
-import java.io.Console;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -37,7 +36,6 @@ public class ThermometerThread implements Runnable {
     }
 
     public void generateValues() throws InterruptedException {
-
         String[] seasons = {
                 "WIN", "WIN", "SPR", "SPR", "SPR", "SUM",
                 "SUM", "SUM", "FAL", "FAL", "FAL", "WIN"
@@ -143,8 +141,8 @@ public class ThermometerThread implements Runnable {
         System.out.println(msgTemp + "\n" + msgHumidity);
 
         try {
-            this.mqttService.publishMeasurementMessageLite(msgTemp);
-            this.mqttService.publishMeasurementMessageLite(msgHumidity);
+            this.mqttService.publishMessageLite(msgTemp,"measurements");
+            this.mqttService.publishMessageLite(msgHumidity,"measurements");
 
             if (count % 2 == 0) {
                 count = 1;

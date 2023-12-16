@@ -1,18 +1,15 @@
 package com.ftn.uns.ac.rs.smarthomesimulator.config;
 
-import com.ftn.uns.ac.rs.smarthomesimulator.DeviceThreadManager;
 import lombok.Getter;
-import org.eclipse.paho.mqttv5.client.*;
+import lombok.Setter;
+
+import org.eclipse.paho.mqttv5.client.MqttCallback;
+import org.eclipse.paho.mqttv5.client.MqttClient;
+import org.eclipse.paho.mqttv5.client.MqttConnectionOptions;
 import org.eclipse.paho.mqttv5.client.persist.MemoryPersistence;
 import org.eclipse.paho.mqttv5.common.MqttException;
-import org.eclipse.paho.mqttv5.common.MqttMessage;
-import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
-
 import java.util.*;
 
-@Configuration
 public class MqttConfiguration {
     private final Properties env;
     private final String broker;
@@ -20,14 +17,14 @@ public class MqttConfiguration {
     @Getter
     private final MqttClient client;
     @Getter
-    private final MqttMessageCallback mqttMessageCallback;
+    @Setter
+    private MqttCallback mqttMessageCallback;
 
-    public MqttConfiguration(Environment environment,
-                             MqttMessageCallback mqttMessageCallback) throws Exception {
-        this.mqttMessageCallback = mqttMessageCallback;
+    public MqttConfiguration(MqttCallback messageCallback) throws Exception {
         this.env = new Properties();
+        this.mqttMessageCallback = messageCallback;
         env.load(MqttConfiguration.class.getClassLoader().getResourceAsStream("application.properties"));
-        this.broker = String.format("tcp://%s:%s", environment.getProperty("mqtt.host"), environment.getProperty("mqtt.port"));
+        this.broker = String.format("tcp://%s:%s", this.env.getProperty("mqtt.host"), this.env.getProperty("mqtt.port"));
         this.uniqueClientIdentifier = UUID.randomUUID().toString();
         this.client = this.mqttClient();
     }

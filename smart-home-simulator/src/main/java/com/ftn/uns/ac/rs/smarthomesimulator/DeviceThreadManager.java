@@ -1,5 +1,7 @@
 package com.ftn.uns.ac.rs.smarthomesimulator;
 
+import com.ftn.uns.ac.rs.smarthomesimulator.models.ACCommand;
+import com.ftn.uns.ac.rs.smarthomesimulator.models.Command;
 import com.ftn.uns.ac.rs.smarthomesimulator.models.TemperatureUnit;
 import com.ftn.uns.ac.rs.smarthomesimulator.models.devices.AirConditioner;
 import com.ftn.uns.ac.rs.smarthomesimulator.models.devices.Device;
@@ -7,18 +9,23 @@ import com.ftn.uns.ac.rs.smarthomesimulator.models.devices.Thermometer;
 import com.ftn.uns.ac.rs.smarthomesimulator.models.devices.WashingMachine;
 import com.ftn.uns.ac.rs.smarthomesimulator.services.MqttService;
 import com.ftn.uns.ac.rs.smarthomesimulator.services.interfaces.IDeviceService;
+import com.ftn.uns.ac.rs.smarthomesimulator.threads.ACThread;
+import com.ftn.uns.ac.rs.smarthomesimulator.threads.ThermometerThread;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.*;
 
 @Component
 public class DeviceThreadManager {
     private final Map<Integer, Thread> deviceThreadMap = new ConcurrentHashMap<>();
+
     private final Set<Integer> nonSimulatedDevices = ConcurrentHashMap.newKeySet();
+
     private final MqttService mqttService;
     private final IDeviceService deviceService;
+
 
     public DeviceThreadManager(MqttService mqttService,
                                IDeviceService deviceService) {
@@ -26,25 +33,24 @@ public class DeviceThreadManager {
         this.deviceService = deviceService;
     }
 
-    public void addDeviceThread(Device device) {
+    public void addDeviceThread(Device device, Command command) {
         if (device.getClass().equals(Thermometer.class)) {
-            addDeviceThread(device.getId(),
+            addDeviceThreadInternal(device.getId(),
                     new ThermometerThread(((Thermometer) device).getTemperatureUnit(),
                             mqttService, device.getId()).getNewSimulatorThread());
         } else if (device.getClass().equals(AirConditioner.class)) {
             AirConditioner ac = (AirConditioner) device;
-            addDeviceThread(device.getId(),
-                    new ThermometerThread(TemperatureUnit.CELSIUS,
-                            mqttService, device.getId()).getNewSimulatorThread());
+            addDeviceThreadInternal(device.getId(),
+                    new ACThread(ac,(ACCommand) command).getNewSimulatorThread());
         } else if (device.getClass().equals(WashingMachine.class)) {
             WashingMachine machine = (WashingMachine) device;
-            addDeviceThread(device.getId(),
+            addDeviceThreadInternal(device.getId(),
                     new ThermometerThread(TemperatureUnit.FAHRENHEIT,
                             mqttService, device.getId()).getNewSimulatorThread());
         }
     }
 
-    private void addDeviceThread(Integer deviceId, Thread thread) {
+    private void addDeviceThreadInternal(Integer deviceId, Thread thread) {
         deviceThreadMap.put(deviceId, thread);
     }
 
@@ -52,28 +58,8 @@ public class DeviceThreadManager {
         return deviceThreadMap.get(deviceId);
     }
 
-    private void removeDeviceThread(Integer deviceId) {
-        getDeviceThread(deviceId).interrupt();
-        deviceThreadMap.remove(deviceId);
-    }
-
-    public void reloadDeviceThread(int id) {
-        removeDeviceThread(id);
-        deviceService.findById(id).ifPresent(this::addDeviceThread);
-    }
-
-    public void addNonSimulatedDevice(Integer deviceId) {
-        nonSimulatedDevices.add(deviceId);
-    }
-
     public boolean isSimulatedDevice(Integer deviceId) {
         return !nonSimulatedDevices.contains(deviceId);
     }
 
-    public void shutOffDevice(Integer deviceId) {
-        if (deviceThreadMap.containsKey(deviceId)) {
-            addNonSimulatedDevice(deviceId);
-            removeDeviceThread(deviceId);
-        }
-    }
 }

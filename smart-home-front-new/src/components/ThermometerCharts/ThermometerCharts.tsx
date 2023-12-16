@@ -160,6 +160,7 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
             measurementName: measurement
         }
         deviceService.getDeviceMeasurements(request).then((response => {
+            console.log(response)
             if (response.length == 0) {
                 return;
             }
