@@ -34,6 +34,7 @@ public class DeviceController {
     private final IWashingMachineService washingMachineService;
     private final ISolarPanelSystemService solarPanelSystemService;
     private final IBatteryService batteryService;
+    private final IChargerService chargerService;
 
     public DeviceController(IDeviceService deviceService,
                             MessageSource messageSource,
@@ -41,7 +42,8 @@ public class DeviceController {
                             IAirConditionerService airConditionerService,
                             IWashingMachineService washingMachineService,
                             ISolarPanelSystemService solarPanelSystemService,
-                            IBatteryService batteryService) {
+                            IBatteryService batteryService,
+                            IChargerService chargerService) {
         this.deviceService = deviceService;
         this.messageSource = messageSource;
         this.thermometerService = thermometerService;
@@ -49,6 +51,7 @@ public class DeviceController {
         this.washingMachineService = washingMachineService;
         this.solarPanelSystemService = solarPanelSystemService;
         this.batteryService = batteryService;
+        this.chargerService = chargerService;
     }
 
     @PostMapping(value = "/registerThermometer", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -103,6 +106,18 @@ public class DeviceController {
     public ResponseEntity<?> registerBattery(@Valid @ModelAttribute BatteryDTO batteryDTO) {
         try {
             this.batteryService.register(batteryDTO);
+            return new ResponseEntity<>(messageSource.getMessage("device.registration.success", null, Locale.getDefault()), HttpStatus.OK);
+        } catch(ResponseStatusException ex) {
+            return new ResponseEntity<>(ex.getReason(), ex.getStatus());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PostMapping(value = "/registerCharger", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> registerCharger(@Valid @ModelAttribute ChargerDTO chargerDTO) {
+        try {
+            this.chargerService.register(chargerDTO);
             return new ResponseEntity<>(messageSource.getMessage("device.registration.success", null, Locale.getDefault()), HttpStatus.OK);
         } catch(ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());

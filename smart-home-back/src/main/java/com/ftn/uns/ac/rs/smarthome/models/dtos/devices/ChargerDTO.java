@@ -5,15 +5,21 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
+import javax.validation.constraints.*;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BatteryDTO extends DeviceDTO {
+public class ChargerDTO extends DeviceDTO {
     @NotNull(message = "{required}")
     @Positive(message = "{positive}")
-    private Double capacity;
+    private Double power; // kW
+
+    @NotNull(message = "{required}")
+    @Positive(message = "{positive}")
+    private Integer numberOfPorts;
+
+    @NotNull(message = "{required}")
+    private Double chargeUntil; // % (0, 1]
 }
