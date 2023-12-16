@@ -11,6 +11,8 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PropertyDTO {
+    private Integer id;
+    private String name;
     private String address;
     private String city;
     private String size;
@@ -20,7 +22,7 @@ public class PropertyDTO {
     private MultipartFile picture;
     private String owner;
 
-    public PropertyDTO(String address, String name, String size, String floors, PropertyStatus status, PropertyType propertyType, String username) {
+    public PropertyDTO(String address, String name, String size, String floors, PropertyStatus status, PropertyType propertyType, String username, Integer id) {
         this.address = address;
         this.city = name;
         this.size = size;
@@ -29,5 +31,6 @@ public class PropertyDTO {
         this.picture = null;
         this.propertyType = propertyType.toString();
         this.owner = username;
+        this.id = id;
     }
 }

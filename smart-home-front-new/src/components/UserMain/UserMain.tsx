@@ -5,8 +5,6 @@ import {
 } from "@mui/material";
 import {SideNav} from "../Sidenav/SideNav.tsx";
 import BoltIcon from '@mui/icons-material/Bolt';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import AddIcon from '@mui/icons-material/Add';
 import Battery3BarIcon from '@mui/icons-material/Battery3Bar';
 import {PropertyService} from "../../services/PropertyService";
 import HomeIcon from '@mui/icons-material/Home';
@@ -150,51 +148,30 @@ export function UserMain({userService, propertyService} : PropertyProps) {
                                             <Typography component="div" variant="h5" mb={1}>
                                                 {property.name}
                                             </Typography>
-
                                             <Typography variant="subtitle1" alignItems={'center'} color="text.secondary" component="div">
                                                 <span style={{display: 'inline-flex'}}> <HomeIcon/> {property.address} </span>
                                             </Typography>
                                             <Typography variant="subtitle1" alignItems={'center'} color="text.secondary" component="div">
-                                                <span style={{display: 'inline-flex'}}> <BoltIcon/>  {property.propertyType} </span>
+                                                <span style={{display: 'inline-flex'}}>  {property.propertyType} </span>
                                             </Typography>
                                             <Typography variant="subtitle1" alignItems={'center'} color="text.secondary" component="div">
-                                                <span style={{display: 'inline-flex'}}> <Battery3BarIcon/> {property.city} kWh </span>
+                                                <span style={{display: 'inline-flex'}}>{property.city} </span>
                                             </Typography>
                                         </CardContent>
                                         <Box sx={{ display: 'flex', justifyContent:'center', width:'100%', alignItems: 'center', pl: 1, pb: 1 }}>
                                             <Button  color={'secondary'} variant={'contained'} sx={{marginRight:'10px'}}>Share</Button>
-                                            <div>
-                                                <Button
-                                                    id={"button_" + property.id}
-                                                    aria-controls={openMenu ? 'menu_' + property.id : undefined}
-                                                    aria-haspopup="true"
-                                                    aria-expanded={openMenu ? 'true' : undefined}
-                                                    variant="contained"
-                                                    disableElevation
-                                                    //onClick={(evt) => handleMenuClick(evt,property.id)}
-                                                    endIcon={<KeyboardArrowDownIcon />}>
-                                                    More
-                                                </Button>
-                                            </div>
                                         </Box>
                                     </Box>
                                     <CardMedia
                                         component="img"
                                         sx={{ width: 151 }}
                                         image={property.picture}
-                                        alt="Thermo"
+                                        alt="Property"
                                     />
                                 </Card>
                             ))}
                         </ImageList>
                     </Grid>
-                    <Fab variant="extended"
-                         color="primary"
-                         sx={{position: 'absolute', bottom: 16, right: 30}}
-                         onClick={() => navigate("/userRegisterDevice")}>
-                        <AddIcon sx={{ mr: 1 }} />
-                        Add New
-                    </Fab>
                 </Grid>
             </Grid>
             <PopupMessage message={errorMessage} isSuccess={isSuccess} handleClose={handleErrorPopupClose} open={errorPopupOpen}/>
