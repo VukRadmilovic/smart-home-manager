@@ -27,6 +27,8 @@ import {useForm} from "react-hook-form";
 import {useNavigate} from "react-router-dom";
 import {PopupMessage} from "../PopupMessage/PopupMessage";
 import axios from 'axios';
+import TagsInput from 'react-tagsinput';
+import 'react-tagsinput/react-tagsinput.css';
 
 function isInt(value) {
     return !isNaN(value) &&
@@ -72,6 +74,18 @@ export function UserRegisterDevice({userService}: UserMainProps) {
         mode: "onChange"
     });
 
+    const [gateMode, setGateMode] = React.useState('public');
+    const [gatePlates, setGatePlates] = React.useState([]);
+
+    const gatePlatesChanged = (plates) => {
+        setGatePlates(plates);
+    }
+
+    const gateModeChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setGateMode(event.target.value);
+        setValue('gateMode', event.target.value);
+    }
+
     const [energySource, setEnergySource] = React.useState('autonomous');
     const [measuringUnit, setMeasuringUnit] = React.useState('celsius');
 
@@ -99,6 +113,25 @@ export function UserRegisterDevice({userService}: UserMainProps) {
     });
 
     const onSubmit = async (formData: DeviceForm) => {
+        async function submitGateRegistration(deviceFormData: FormData) {
+            if (gateMode === 'private') {
+                deviceFormData.append('publicMode', 'false');
+            } else {
+                deviceFormData.append('publicMode', 'true');
+            }
+
+            deviceFormData.append('allowedRegistrationPlates', gatePlates.join(','));
+
+            await axios.post('http://localhost:80/api/devices/registerGate', deviceFormData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('user')
+                },
+            });
+
+            return true;
+        }
+
         async function submitLampRegistration(deviceFormData: FormData) {
             await axios.post('http://localhost:80/api/devices/registerLamp', deviceFormData, {
                 headers: {
@@ -363,6 +396,8 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                 if (!await submitChargerRegistration(deviceFormData)) return;
             } else if (deviceType == "lamp") {
                 if (!await submitLampRegistration(deviceFormData)) return;
+            } else if (deviceType == "gate") {
+                if (!await submitGateRegistration(deviceFormData)) return;
             }
 
             setErrorMessage('Device registered successfully!');
@@ -399,7 +434,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
         setErrorPopupOpen(false);
     };
 
-    const [deviceType, setDeviceType] = React.useState('charger');
+    const [deviceType, setDeviceType] = React.useState('gate');
 
     /* AC checkboxes */
     const [cooling, setCooling] = React.useState(false);
@@ -703,6 +738,28 @@ export function UserRegisterDevice({userService}: UserMainProps) {
         </div>
     }
 
+    function gateForm() {
+        return <div>
+            <FormControl component="fieldset">
+                <FormLabel component="legend">Initial mode</FormLabel>
+                <RadioGroup
+                    aria-label="gateMode"
+                    value={gateMode}
+                    onChange={gateModeChanged}
+                    style={{flexDirection: 'row'}}>
+                    <FormControlLabel value="public" control={<Radio/>} label="Public"/>
+                    <FormControlLabel value="private" control={<Radio/>}
+                                      label="Private"/>
+                </RadioGroup>
+            </FormControl>
+            <p>Enter registration plates to allow through when private mode is enabled.</p>
+            <p>Type the registration plate below then press enter:</p>
+            <TagsInput value={gatePlates} onChange={gatePlatesChanged} onlyUnique={true} inputProps={{
+                placeholder: 'Add a plate'
+            }}/>
+        </div>
+    }
+
     function washingMachineForm() {
         return <div>
             <p style={{color: 'rgba(0, 0, 0, 0.6)'}}>Centrifuge range:</p><br/>
@@ -885,6 +942,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                             <MenuItem value="battery">Battery</MenuItem>
                             <MenuItem value="charger">Charger</MenuItem>
                             <MenuItem value="lamp">Lamp</MenuItem>
+                            <MenuItem value="gate">Gate</MenuItem>
                         </Select>
                     </FormControl>
                 </Grid>
@@ -1009,6 +1067,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                                                 {deviceType === "solarPanelSystem" && solarPanelSystemForm()}
                                                 {deviceType === "battery" && batteryForm()}
                                                 {deviceType === "charger" && chargerForm()}
+                                                {deviceType === "gate" && gateForm()}
                                             </Grid>
                                         </Grid>
                                     </Grid>
