@@ -69,6 +69,11 @@ public class DeviceThreadManager {
             addDeviceThreadInternal(device.getId(),
                     new ThermometerThread(TemperatureUnit.CELSIUS,
                             mqttService, device.getId()).getNewSimulatorThread());
+        } else if (device.getClass().equals(SprinklerSystem.class)) {
+            SprinklerSystem system = (SprinklerSystem) device;
+            addDeviceThreadInternal(device.getId(),
+                    new ThermometerThread(TemperatureUnit.CELSIUS,
+                            mqttService, device.getId()).getNewSimulatorThread());
         }
     }
 

@@ -37,6 +37,7 @@ public class DeviceController {
     private final IChargerService chargerService;
     private final ILampService lampService;
     private final IGateService gateService;
+    private final ISprinklerSystemService sprinklerSystemService;
 
     public DeviceController(IDeviceService deviceService,
                             MessageSource messageSource,
@@ -47,7 +48,8 @@ public class DeviceController {
                             IBatteryService batteryService,
                             IChargerService chargerService,
                             ILampService lampService,
-                            IGateService gateService) {
+                            IGateService gateService,
+                            ISprinklerSystemService sprinklerSystemService) {
         this.deviceService = deviceService;
         this.messageSource = messageSource;
         this.thermometerService = thermometerService;
@@ -58,6 +60,7 @@ public class DeviceController {
         this.chargerService = chargerService;
         this.lampService = lampService;
         this.gateService = gateService;
+        this.sprinklerSystemService = sprinklerSystemService;
     }
 
     @PostMapping(value = "/registerThermometer", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -148,6 +151,18 @@ public class DeviceController {
     public ResponseEntity<?> registerGate(@Valid @ModelAttribute GateDTO gateDTO) {
         try {
             this.gateService.register(gateDTO);
+            return new ResponseEntity<>(messageSource.getMessage("device.registration.success", null, Locale.getDefault()), HttpStatus.OK);
+        } catch(ResponseStatusException ex) {
+            return new ResponseEntity<>(ex.getReason(), ex.getStatus());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PostMapping(value = "/registerSprinklerSystem", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> registerSprinklerSystem(@Valid @ModelAttribute SprinklerSystemDTO sprinklerSystemDTO) {
+        try {
+            this.sprinklerSystemService.register(sprinklerSystemDTO);
             return new ResponseEntity<>(messageSource.getMessage("device.registration.success", null, Locale.getDefault()), HttpStatus.OK);
         } catch(ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());
