@@ -29,6 +29,9 @@ import {PopupMessage} from "../PopupMessage/PopupMessage";
 import axios from 'axios';
 import TagsInput from 'react-tagsinput';
 import 'react-tagsinput/react-tagsinput.css';
+import {LocalizationProvider, TimeClock, TimeField} from "@mui/x-date-pickers";
+import {Dayjs} from "dayjs";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 
 function isInt(value) {
     return !isNaN(value) &&
@@ -73,6 +76,9 @@ export function UserRegisterDevice({userService}: UserMainProps) {
         },
         mode: "onChange"
     });
+
+    const [startTime, setStartTime] = React.useState<Dayjs | null>(null);
+    const [endTime, setEndTime] = React.useState<Dayjs | null>(null);
 
     const [gateMode, setGateMode] = React.useState('public');
     const [gatePlates, setGatePlates] = React.useState([]);
@@ -185,6 +191,31 @@ export function UserRegisterDevice({userService}: UserMainProps) {
             deviceFormData.append('panelEfficiency', panelEfficiency / 100.0);
 
             await axios.post('http://localhost:80/api/devices/registerSolarPanelSystem', deviceFormData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('user')
+                },
+            });
+
+            return true;
+        }
+
+        async function submitSprinklerSystemRegistration(deviceFormData: FormData) {
+            if (automaticMode && (!startTime || !endTime || !startTime.isValid() || !endTime.isValid())) {
+                setErrorMessage('Start and end time must be set if automatic mode is on!');
+                setErrorPopupOpen(true);
+                setIsSuccess(false);
+                return false;
+            }
+
+            deviceFormData.append('specialMode', automaticMode);
+
+            if (automaticMode) {
+                deviceFormData.append('startTime', startTime?.format('HH:mm:ss'));
+                deviceFormData.append('endTime', endTime?.format('HH:mm:ss'));
+            }
+
+            await axios.post('http://localhost:80/api/devices/registerSprinklerSystem', deviceFormData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Authorization': 'Bearer ' + sessionStorage.getItem('user')
@@ -398,6 +429,8 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                 if (!await submitLampRegistration(deviceFormData)) return;
             } else if (deviceType == "gate") {
                 if (!await submitGateRegistration(deviceFormData)) return;
+            } else if (deviceType == "sprinkler") {
+                if (!await submitSprinklerSystemRegistration(deviceFormData)) return;
             }
 
             setErrorMessage('Device registered successfully!');
@@ -434,7 +467,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
         setErrorPopupOpen(false);
     };
 
-    const [deviceType, setDeviceType] = React.useState('gate');
+    const [deviceType, setDeviceType] = React.useState('sprinkler');
 
     /* AC checkboxes */
     const [cooling, setCooling] = React.useState(false);
@@ -446,6 +479,11 @@ export function UserRegisterDevice({userService}: UserMainProps) {
     const [fungusPrevention, setFungusPrevention] = React.useState(false);
 
 
+    const [automaticMode, setAutomaticMode] = React.useState(false);
+
+    const automaticModeChanged = () => {
+        setAutomaticMode(!automaticMode);
+    }
     /* Washing machine */
 
     /* Checkboxes */
@@ -760,6 +798,22 @@ export function UserRegisterDevice({userService}: UserMainProps) {
         </div>
     }
 
+    function sprinklerForm() {
+        return <div>
+            <FormControl component={"fieldset"}>
+                <FormLabel component={"legend"}>Automatic mode</FormLabel>
+                <Checkbox aria-label={"automaticMode"} value={automaticMode} onChange={automaticModeChanged}></Checkbox>
+            </FormControl>
+            <br/>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <TimeField value={startTime} onChange={(newValue) => setStartTime(newValue)}
+                format="HH:mm" label="Start time" margin={"normal"} disabled={!automaticMode}/>
+                <TimeField value={endTime} onChange={(newValue) => setEndTime(newValue)}
+                           format="HH:mm" label="End time" margin={"normal"} disabled={!automaticMode}/>
+            </LocalizationProvider>
+        </div>
+    }
+
     function washingMachineForm() {
         return <div>
             <p style={{color: 'rgba(0, 0, 0, 0.6)'}}>Centrifuge range:</p><br/>
@@ -943,6 +997,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                             <MenuItem value="charger">Charger</MenuItem>
                             <MenuItem value="lamp">Lamp</MenuItem>
                             <MenuItem value="gate">Gate</MenuItem>
+                            <MenuItem value="sprinkler">Sprinkler System</MenuItem>
                         </Select>
                     </FormControl>
                 </Grid>
@@ -1068,6 +1123,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                                                 {deviceType === "battery" && batteryForm()}
                                                 {deviceType === "charger" && chargerForm()}
                                                 {deviceType === "gate" && gateForm()}
+                                                {deviceType === "sprinkler" && sprinklerForm()}
                                             </Grid>
                                         </Grid>
                                     </Grid>
