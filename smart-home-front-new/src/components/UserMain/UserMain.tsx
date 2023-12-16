@@ -1,11 +1,9 @@
 import {UserService} from "../../services/UserService.ts";
 import {
-    Box, Button, Card, CardContent, CardMedia, CssBaseline, Fab,
+    Box, Button, Card, CardContent, CardMedia, CssBaseline,
     Grid, ImageList, Typography,
 } from "@mui/material";
 import {SideNav} from "../Sidenav/SideNav.tsx";
-import BoltIcon from '@mui/icons-material/Bolt';
-import Battery3BarIcon from '@mui/icons-material/Battery3Bar';
 import {PropertyService} from "../../services/PropertyService";
 import HomeIcon from '@mui/icons-material/Home';
 import React, {useEffect, useRef} from "react";
@@ -46,23 +44,23 @@ export function UserMain({userService, propertyService} : PropertyProps) {
         setErrorPopupOpen(false);
     };
 
-    const getUserDevices = async () => {
+    const getUserProperties = async () => {
         try {
-            const response = await propertyService.getProperty();
+            const response = await propertyService.getAllUserProperty();
             if (response.length > 0) {
                 setProperty(response);
             }
         } catch (err) {
-            setErrorMessage(err.response?.data || "An error occurred while fetching devices.");
+            setErrorMessage(err.response?.data || "An error occurred while fetching properties.");
             setIsSuccess(false);
             setErrorPopupOpen(true);
         }
     };
 
     useEffect(() => {
-        const fetchUserDevices = async () => {
+        const fetchUserProperties = async () => {
             try {
-                await getUserDevices();
+                await getUserProperties();
                 shouldLoad.current = false;
             } catch (err) {
                 console.error("Error fetching devices:", err);
@@ -70,9 +68,9 @@ export function UserMain({userService, propertyService} : PropertyProps) {
         };
 
         if (shouldLoad.current) {
-            fetchUserDevices();
+            fetchUserProperties();
         }
-    }, [propertyService, getUserDevices]);
+    }, [propertyService, getUserProperties]);
 
     useEffect(() => {
         if (sessionStorage.getItem("expiration") != null) {

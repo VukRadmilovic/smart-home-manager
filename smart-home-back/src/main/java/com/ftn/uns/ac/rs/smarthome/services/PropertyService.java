@@ -13,7 +13,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import com.ftn.uns.ac.rs.smarthome.models.User;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
@@ -94,7 +93,7 @@ public class PropertyService implements IPropertyService {
         List<Town> towns = townRepository.findAll();
         for (Property property : properties) {
             for (Town town : towns) {
-                if (town.getProperties().contains(property)) {
+                if (town.getProperties().contains(property) && property.getStatus() == PropertyStatus.APPROVED) {
                     propertyDTOS.add(new PropertyDTO(property.getAddress(), town.getName(), property.getSize(), property.getFloors(), property.getStatus(), property.getPropertyType(), property.getOwner().getUsername(), property.getId()));
                 }
             }
@@ -104,7 +103,7 @@ public class PropertyService implements IPropertyService {
 
     @Override
     public Object getAllProperty() {
-        List<Property> properties = propertyRepository.findAllByStatus(PropertyStatus.UNAPPROVED);
+        List<Property> properties = propertyRepository.findAll();
         List<PropertyDTO> propertyDTOS = new ArrayList<>();
         List<Town> towns = townRepository.findAll();
         for (Property property : properties) {
@@ -118,8 +117,8 @@ public class PropertyService implements IPropertyService {
     }
 
     @Override
-    public void approveProperty(String address) {
-        Optional<Property> property = propertyRepository.findByAddress(address);
+    public void approveProperty(Integer id) {
+        Optional<Property> property = propertyRepository.findById(id);
         if(property.isPresent()){
             property.get().setStatus(PropertyStatus.APPROVED);
             propertyRepository.save(property.get());
@@ -127,11 +126,26 @@ public class PropertyService implements IPropertyService {
     }
 
     @Override
-    public void denyProperty(String address) {
-        Optional<Property> property = propertyRepository.findByAddress(address);
+    public void denyProperty(Integer id) {
+        Optional<Property> property = propertyRepository.findById(id);
         if(property.isPresent()){
             property.get().setStatus(PropertyStatus.DENIED);
             propertyRepository.save(property.get());
         }
+    }
+
+    @Override
+    public Object getAllUnapprovedProperty() {
+        List<Property> properties = propertyRepository.findAllByStatus(PropertyStatus.UNAPPROVED);
+        List<PropertyDTO> propertyDTOS = new ArrayList<>();
+        List<Town> towns = townRepository.findAll();
+        for (Property property : properties) {
+            for (Town town : towns) {
+                if (town.getProperties().contains(property)) {
+                    propertyDTOS.add(new PropertyDTO(property.getAddress(), town.getName(), property.getSize(), property.getFloors(), property.getStatus(), property.getPropertyType(), property.getOwner().getUsername(), property.getId()));
+                }
+            }
+        }
+        return propertyDTOS;
     }
 }
