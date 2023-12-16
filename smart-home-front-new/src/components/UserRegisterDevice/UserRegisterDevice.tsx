@@ -467,7 +467,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
         setErrorPopupOpen(false);
     };
 
-    const [deviceType, setDeviceType] = React.useState('sprinkler');
+    const [deviceType, setDeviceType] = React.useState('thermometer');
 
     /* AC checkboxes */
     const [cooling, setCooling] = React.useState(false);

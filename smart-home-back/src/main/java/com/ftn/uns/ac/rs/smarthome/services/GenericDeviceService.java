@@ -2,6 +2,7 @@ package com.ftn.uns.ac.rs.smarthome.services;
 
 import com.ftn.uns.ac.rs.smarthome.config.MqttConfiguration;
 import com.ftn.uns.ac.rs.smarthome.models.Property;
+import com.ftn.uns.ac.rs.smarthome.models.PropertyStatus;
 import com.ftn.uns.ac.rs.smarthome.models.devices.Device;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.devices.DeviceDTO;
 import com.ftn.uns.ac.rs.smarthome.repositories.DeviceRepository;
@@ -51,6 +52,10 @@ public abstract class GenericDeviceService<D extends Device, DDTO extends Device
         Optional<Property> property = propertyRepository.findById(dto.getPropertyId());
         if (property.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("property.notFound", null, Locale.getDefault()));
+        }
+
+        if (!property.get().getStatus().equals(PropertyStatus.APPROVED)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("property.notApproved", null, Locale.getDefault()));
         }
 
         D device = createDevice(dto, property.get());
