@@ -2,7 +2,7 @@ package com.ftn.uns.ac.rs.smarthomesimulator;
 
 import com.ftn.uns.ac.rs.smarthomesimulator.models.ACCommand;
 import com.ftn.uns.ac.rs.smarthomesimulator.models.Command;
-import com.ftn.uns.ac.rs.smarthomesimulator.models.TemperatureUnit;
+import com.ftn.uns.ac.rs.smarthomesimulator.models.enums.TemperatureUnit;
 import com.ftn.uns.ac.rs.smarthomesimulator.models.devices.*;
 import com.ftn.uns.ac.rs.smarthomesimulator.services.MqttService;
 import com.ftn.uns.ac.rs.smarthomesimulator.services.interfaces.IDeviceService;

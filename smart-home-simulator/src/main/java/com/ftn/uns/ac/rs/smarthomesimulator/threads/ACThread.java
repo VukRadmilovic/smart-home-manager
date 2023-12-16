@@ -8,6 +8,7 @@ import com.ftn.uns.ac.rs.smarthomesimulator.models.devices.AirConditioner;
 import com.ftn.uns.ac.rs.smarthomesimulator.models.enums.ACMode;
 import com.ftn.uns.ac.rs.smarthomesimulator.models.enums.ACState;
 import com.ftn.uns.ac.rs.smarthomesimulator.models.enums.CommandType;
+import com.ftn.uns.ac.rs.smarthomesimulator.models.enums.TemperatureUnit;
 import org.eclipse.paho.mqttv5.client.IMqttToken;
 import org.eclipse.paho.mqttv5.client.MqttCallback;
 import org.eclipse.paho.mqttv5.client.MqttDisconnectResponse;

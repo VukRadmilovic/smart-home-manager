@@ -1,6 +1,6 @@
 package com.ftn.uns.ac.rs.smarthomesimulator.threads;
 
-import com.ftn.uns.ac.rs.smarthomesimulator.models.TemperatureUnit;
+import com.ftn.uns.ac.rs.smarthomesimulator.models.enums.TemperatureUnit;
 import com.ftn.uns.ac.rs.smarthomesimulator.services.MqttService;
 import org.eclipse.paho.mqttv5.common.MqttException;
 
