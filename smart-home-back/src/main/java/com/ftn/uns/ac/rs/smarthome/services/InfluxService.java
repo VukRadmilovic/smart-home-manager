@@ -26,15 +26,15 @@ public class InfluxService {
     }
     private final String bucket;
 
-    public void save(String name, float value, Date timestamp, Map<String, String> tags) {
+    public void save(String name, String value, Date timestamp, Map<String, String> tags) {
         WriteApiBlocking writeApi = this.influxDbClient.getWriteApiBlocking();
-
         Point point = Point.measurement(name)
                 .addTags(tags)
                 .addField("value", value)
                 .time(timestamp.toInstant(), WritePrecision.MS);
         writeApi.writePoint(point);
     }
+
 
     private MeasurementsDTO query(String fluxQuery, int maxData) {
         List<Measurement> result = new ArrayList<>();

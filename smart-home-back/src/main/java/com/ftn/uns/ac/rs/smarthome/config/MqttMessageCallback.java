@@ -1,6 +1,8 @@
 package com.ftn.uns.ac.rs.smarthome.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftn.uns.ac.rs.smarthome.StillThereDevicesManager;
+import com.ftn.uns.ac.rs.smarthome.models.ACStateChange;
 import com.ftn.uns.ac.rs.smarthome.services.InfluxService;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IDeviceService;
 import org.eclipse.paho.mqttv5.client.IMqttToken;
@@ -12,6 +14,7 @@ import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -21,6 +24,7 @@ public class MqttMessageCallback implements MqttCallback {
     private final InfluxService influxService;
     private final IDeviceService deviceService;
     private final StillThereDevicesManager stillThereDevicesManager;
+    private final ObjectMapper jsonMapper = new ObjectMapper();
 
     public MqttMessageCallback(InfluxService influxService,
                                IDeviceService deviceService,
@@ -46,28 +50,39 @@ public class MqttMessageCallback implements MqttCallback {
         System.out.println("MQTT error occurred.");
     }
 
-    /*
-     * Callback in case the app received a message from one of the topics it's subscribed to.
-     * These include the "measurements" and "statuses" topics.
-     */
-    //TODO: Change according to the 4.6 requirement listed in the specification.
     @Override public void messageArrived(String topic, MqttMessage mqttMessage) {
         String message = new String(mqttMessage.getPayload());
-        String[] data = message.split(",");
-        String measurementObject = data[0];
-        String valueWithUnit = data[1];
-        float value = Float.parseFloat(valueWithUnit.substring(0, valueWithUnit.length() - 1));
-        char unit = valueWithUnit.charAt(valueWithUnit.length() - 1);
-        String deviceIdStr = data[2];
-        influxService.save(measurementObject, value, new Date(),
-                Map.of("deviceId", deviceIdStr, "unit", String.valueOf(unit)));
-        System.out.println("Message arrived: " + message + ", ID: " + mqttMessage.getId());
+        if(topic.contains("states")) {
+            try {
+                Map<String,String> map = new HashMap<>();
+                ACStateChange stateChange = jsonMapper.readValue(message, ACStateChange.class);
+                if(stateChange.getExtraInfo() != null)
+                    map = stateChange.getExtraInfo();
+                map.put("userId",stateChange.getUserId().toString());
+                influxService.save("states", stateChange.getChange(), new Date(), map);
+            }
+            catch (Exception ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
+        else {
 
-        int deviceId = Integer.parseInt(deviceIdStr);
-        if (measurementObject.equals("status") && value == 1 &&
-                stillThereDevicesManager.isntThere(deviceId)) {
-            deviceService.setDeviceStillThere(deviceId);
-            stillThereDevicesManager.add(deviceId);
+            String[] data = message.split(",");
+            String measurementObject = data[0];
+            String valueWithUnit = data[1];
+            float value = Float.parseFloat(valueWithUnit.substring(0, valueWithUnit.length() - 1));
+            char unit = valueWithUnit.charAt(valueWithUnit.length() - 1);
+            String deviceIdStr = data[2];
+            influxService.save(measurementObject, String.valueOf(value), new Date(),
+                    Map.of("deviceId", deviceIdStr, "unit", String.valueOf(unit)));
+            System.out.println("Message arrived: " + message + ", ID: " + mqttMessage.getId());
+
+            int deviceId = Integer.parseInt(deviceIdStr);
+            if (measurementObject.equals("status") && value >= 1 &&
+                    stillThereDevicesManager.isntThere(deviceId)) {
+                deviceService.setDeviceStillThere(deviceId);
+                stillThereDevicesManager.add(deviceId);
+            }
         }
     }
 

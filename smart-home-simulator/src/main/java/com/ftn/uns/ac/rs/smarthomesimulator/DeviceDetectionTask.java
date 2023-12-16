@@ -31,7 +31,7 @@ public class DeviceDetectionTask {
             if (deviceThreadManager.getDeviceThread(device.getId()) == null // device is not running
                     && deviceThreadManager.isSimulatedDevice(device.getId())) { // but device should be running
                 log.info("Device {} is not running, starting it", device.getName());
-                deviceThreadManager.addDeviceThread(device);
+                deviceThreadManager.addDeviceThread(device, null);
             }
         }
     }

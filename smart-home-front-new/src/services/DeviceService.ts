@@ -3,6 +3,7 @@ import {DeviceDetailsDto} from "../models/DeviceDetailsDto.ts";
 import {MeasurementRequest} from "../models/MeasurementRequest.ts";
 import {ChartData} from "../models/ChartData.ts";
 import EventSource from "react-native-sse";
+import {DeviceCapabilities} from "../models/DeviceCapabilities.ts";
 
 export class DeviceService {
     private api_host = "http://localhost:80"
@@ -37,6 +38,18 @@ export class DeviceService {
         })
         return promise.then((val) => {
             return val})
+    }
 
+    public getDeviceCapabilities(deviceId: number) : Promise<DeviceCapabilities> {
+        return axios({
+            method: 'GET',
+            url: `${this.api_host}/api/devices/capabilities/` + deviceId,
+            headers: {
+                'Authorization': 'Bearer ' + sessionStorage.getItem('user')
+            },
+        }).then((response) => response.data
+        ).catch((err) => {
+            throw err
+        });
     }
 }
