@@ -99,6 +99,17 @@ export function UserRegisterDevice({userService}: UserMainProps) {
     });
 
     const onSubmit = async (formData: DeviceForm) => {
+        async function submitLampRegistration(deviceFormData: FormData) {
+            await axios.post('http://localhost:80/api/devices/registerLamp', deviceFormData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('user')
+                },
+            });
+
+            return true;
+        }
+
         async function submitChargerRegistration(deviceFormData: FormData) {
             if (!Number(chargerPower)) {
                 setErrorMessage('Power must be a number!');
@@ -350,6 +361,8 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                 if (!await submitBatteryRegistration(deviceFormData)) return;
             } else if (deviceType == "charger") {
                 if (!await submitChargerRegistration(deviceFormData)) return;
+            } else if (deviceType == "lamp") {
+                if (!await submitLampRegistration(deviceFormData)) return;
             }
 
             setErrorMessage('Device registered successfully!');
@@ -871,6 +884,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                             <MenuItem value="solarPanelSystem">Solar Panel System</MenuItem>
                             <MenuItem value="battery">Battery</MenuItem>
                             <MenuItem value="charger">Charger</MenuItem>
+                            <MenuItem value="lamp">Lamp</MenuItem>
                         </Select>
                     </FormControl>
                 </Grid>
