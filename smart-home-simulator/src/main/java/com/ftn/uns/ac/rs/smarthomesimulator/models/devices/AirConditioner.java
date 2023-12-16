@@ -36,9 +36,6 @@ public class AirConditioner extends Device {
     private Boolean dry;
 
     @Column(nullable = false)
-    private Boolean fan;
-
-    @Column(nullable = false)
     private Boolean auto;
 
     @Column(nullable = false)

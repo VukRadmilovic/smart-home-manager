@@ -29,7 +29,7 @@ import {PopupMessage} from "../PopupMessage/PopupMessage";
 import axios from 'axios';
 import TagsInput from 'react-tagsinput';
 import 'react-tagsinput/react-tagsinput.css';
-import {LocalizationProvider, TimeClock, TimeField} from "@mui/x-date-pickers";
+import {LocalizationProvider, TimeField} from "@mui/x-date-pickers";
 import {Dayjs} from "dayjs";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 
@@ -270,6 +270,13 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                 return false;
             }
 
+            if (!heating && !cooling && !dry && !auto) {
+                setErrorMessage('At least one mode (out of heating, cooling, ventilation & automatic) must be selected!');
+                setErrorPopupOpen(true);
+                setIsSuccess(false);
+                return false;
+            }
+
             deviceFormData.append('fanSpeed', formData.fanSpeed);
             deviceFormData.append('temperatureUnit', formData.measuringUnit?.toUpperCase());
             deviceFormData.append('minTemperature', formData.minTemperature?.toString() || '');
@@ -277,7 +284,6 @@ export function UserRegisterDevice({userService}: UserMainProps) {
             deviceFormData.append('cooling', cooling);
             deviceFormData.append('heating', heating);
             deviceFormData.append('dry', dry);
-            deviceFormData.append('fan', fan);
             deviceFormData.append('auto', auto);
             deviceFormData.append('health', health);
             deviceFormData.append('fungusPrevention', fungusPrevention);
@@ -473,7 +479,6 @@ export function UserRegisterDevice({userService}: UserMainProps) {
     const [cooling, setCooling] = React.useState(false);
     const [heating, setHeating] = React.useState(false);
     const [dry, setDry] = React.useState(false);
-    const [fan, setFan] = React.useState(false);
     const [auto, setAuto] = React.useState(false);
     const [health, setHealth] = React.useState(false);
     const [fungusPrevention, setFungusPrevention] = React.useState(false);
@@ -528,10 +533,6 @@ export function UserRegisterDevice({userService}: UserMainProps) {
 
     const dryChanged = () => {
         setDry(!dry);
-    };
-
-    const fanChanged = () => {
-        setFan(!fan);
     };
 
     const autoChanged = () => {
@@ -669,7 +670,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                   justifyContent={'center'} marginBottom={'20px'}>
                 <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
                     <TextField id="fanSpeed"
-                               label="Number of fan speeds"
+                               label="Maximum fan speed"
                                fullWidth={true}
                                type={"number"}
                                {...register("fanSpeed")}
@@ -730,20 +731,15 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                 <Checkbox aria-label={"heating"} value={heating} onChange={heatingChanged}></Checkbox>
             </FormControl>
             <FormControl component={"fieldset"} style={{'marginRight': '20px'}}>
-                <FormLabel component={"legend"}>Dry</FormLabel>
+                <FormLabel component={"legend"}>Ventilation</FormLabel>
                 <Checkbox aria-label={"dry"} value={dry} onChange={dryChanged}></Checkbox>
             </FormControl>
-            <FormControl component={"fieldset"}>
-                <FormLabel component={"legend"}>Fan</FormLabel>
-                <Checkbox aria-label={"fan"} value={fan} onChange={fanChanged}></Checkbox>
-            </FormControl>
-            <br/>
             <FormControl component={"fieldset"} style={{'marginRight': '20px'}}>
-                <FormLabel component={"legend"}>Auto</FormLabel>
+                <FormLabel component={"legend"}>Automatic</FormLabel>
                 <Checkbox aria-label={"auto"} value={auto} onChange={autoChanged}></Checkbox>
             </FormControl>
             <FormControl component={"fieldset"} style={{'marginRight': '20px'}}>
-                <FormLabel component={"legend"}>Health</FormLabel>
+                <FormLabel component={"legend"}>Health/Air Ionizer</FormLabel>
                 <Checkbox aria-label={"health"} value={health} onChange={healthChanged}></Checkbox>
             </FormControl>
             <FormControl component={"fieldset"}>

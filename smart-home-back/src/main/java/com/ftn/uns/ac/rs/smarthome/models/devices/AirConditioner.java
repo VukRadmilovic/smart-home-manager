@@ -38,9 +38,6 @@ public class AirConditioner extends Device {
     private Boolean dry;
 
     @Column(nullable = false)
-    private Boolean fan;
-
-    @Column(nullable = false)
     private Boolean auto;
 
     @Column(nullable = false)
@@ -61,7 +58,6 @@ public class AirConditioner extends Device {
         this.cooling = dto.getCooling();
         this.heating = dto.getHeating();
         this.dry = dto.getDry();
-        this.fan = dto.getFan();
         this.auto = dto.getAuto();
         this.health = dto.getHealth();
         this.fungusPrevention = dto.getFungusPrevention();
