@@ -46,22 +46,22 @@ public class DeviceThreadManager {
                             mqttService, device.getId()).getNewSimulatorThread());
         } else if (device.getClass().equals(SolarPanelSystem.class)) {
             SolarPanelSystem system = (SolarPanelSystem) device;
-            addDeviceThread(device.getId(),
+            addDeviceThreadInternal(device.getId(),
                     new ThermometerThread(TemperatureUnit.CELSIUS,
                             mqttService, device.getId()).getNewSimulatorThread());
         } else if (device.getClass().equals(Battery.class)) {
             Battery battery = (Battery) device;
-            addDeviceThread(device.getId(),
+            addDeviceThreadInternal(device.getId(),
                     new ThermometerThread(TemperatureUnit.CELSIUS,
                             mqttService, device.getId()).getNewSimulatorThread());
         } else if (device.getClass().equals(Charger.class)) {
             Charger charger = (Charger) device;
-            addDeviceThread(device.getId(),
+            addDeviceThreadInternal(device.getId(),
                     new ThermometerThread(TemperatureUnit.CELSIUS,
                             mqttService, device.getId()).getNewSimulatorThread());
         } else if (device.getClass().equals(Lamp.class)) {
             Lamp lamp = (Lamp) device;
-            addDeviceThread(device.getId(),
+            addDeviceThreadInternal(device.getId(),
                     new ThermometerThread(TemperatureUnit.CELSIUS,
                             mqttService, device.getId()).getNewSimulatorThread());
         }
