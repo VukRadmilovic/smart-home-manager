@@ -22,4 +22,7 @@ public class SolarPanelSystem extends Device {
 
     @Column(nullable = false)
     private Double panelEfficiency; // % in range [0, 1] (0% - 100%) - how much of the sun's energy is converted to electricity
+
+    @Column(nullable = false)
+    private Boolean isOn;
 }

@@ -1,0 +1,132 @@
+package com.ftn.uns.ac.rs.smarthomesimulator.threads;
+
+import com.ftn.uns.ac.rs.smarthomesimulator.config.MqttConfiguration;
+import com.ftn.uns.ac.rs.smarthomesimulator.models.ACCommand;
+import com.ftn.uns.ac.rs.smarthomesimulator.models.ACStateChange;
+import com.ftn.uns.ac.rs.smarthomesimulator.models.devices.SolarPanelSystem;
+import com.ftn.uns.ac.rs.smarthomesimulator.models.enums.ACState;
+import com.ftn.uns.ac.rs.smarthomesimulator.models.enums.CommandType;
+import com.ftn.uns.ac.rs.smarthomesimulator.services.MqttService;
+import com.ftn.uns.ac.rs.smarthomesimulator.services.ThreadMqttService;
+import org.eclipse.paho.mqttv5.client.IMqttToken;
+import org.eclipse.paho.mqttv5.client.MqttCallback;
+import org.eclipse.paho.mqttv5.client.MqttDisconnectResponse;
+import org.eclipse.paho.mqttv5.common.MqttException;
+import org.eclipse.paho.mqttv5.common.MqttMessage;
+import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+public class SolarPanelSystemThread implements Runnable {
+    private static final Logger logger = LoggerFactory.getLogger(SolarPanelSystemThread.class);
+    private final Integer deviceId;
+    private final SolarPanelSystem system;
+    private MqttConfiguration mqttConfiguration;
+    private ThreadMqttService mqttService;
+    private boolean isOff = true;
+    private int count = 1;
+
+    private class MqttSPSMessageCallback implements MqttCallback {
+        @Override
+        public void disconnected(MqttDisconnectResponse mqttDisconnectResponse) {}
+
+        @Override
+        public void mqttErrorOccurred(MqttException e) {System.err.println(e.getMessage());}
+
+        @Override
+        public void messageArrived(String s, MqttMessage mqttMessage) {
+            try {
+                String message = new String(mqttMessage.getPayload());
+            } catch(Exception ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
+
+        @Override
+        public void deliveryComplete(IMqttToken iMqttToken) {}
+
+        @Override
+        public void connectComplete(boolean b, String s) {}
+
+        @Override
+        public void authPacketArrived(int i, MqttProperties mqttProperties) {}
+    }
+
+    public SolarPanelSystemThread(SolarPanelSystem system) {
+        try {
+            this.mqttConfiguration = new MqttConfiguration(new MqttSPSMessageCallback());
+            this.mqttService = new ThreadMqttService(this.mqttConfiguration);
+        } catch (Exception e) {
+            logger.error("Error while creating mqtt configuration: " + e.getMessage());
+        }
+        this.system = system;
+        this.deviceId = system.getId();
+    }
+
+    @Override
+    public void run() {
+        try {
+            mqttConfiguration.getClient().subscribe("commands/sps/" + system.getId(), 2);
+            generatePower();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            logger.error("Thread interrupted: " + e.getMessage());
+        } catch (MqttException ex) {
+            logger.error("Error while subscribing to topic: " + "commands/sps/" + system.getId());
+        }
+    }
+
+    public void generatePower() throws InterruptedException {
+        while (true) {
+            sendInternalState();
+            sendAndDisplayPower(system.getNumberOfPanels() * system.getPanelSize() * system.getPanelEfficiency());
+            Thread.sleep(5 * 1000);
+        }
+    }
+
+    public void sendInternalState() {
+        try {
+            String status = isOff? "OFF" : "ON";
+            String message = status + "," + deviceId;
+            mqttService.publishOnOff(message, "sps");
+            logger.info("Sending message: " + message);
+        } catch(Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    private void sendAndDisplayPower(double kWProduced) {
+        DecimalFormat df = new DecimalFormat("#.###", new DecimalFormatSymbols(Locale.ENGLISH));
+        df.setRoundingMode(RoundingMode.CEILING);
+        String msg = "produced," + df.format(kWProduced) + "p," + deviceId;
+
+        logger.info("Sending message: " + msg);
+
+        try {
+            this.mqttService.publishMessageLite(msg,"measurements");
+
+            if (count % 2 == 0) {
+                count = 1;
+                logger.info("Sending status message");
+                this.mqttService.publishStatusMessageLite("status,1T," + deviceId);
+            } else {
+                count++;
+            }
+        } catch (MqttException e) {
+            logger.error("Error while sending message: " + msg);
+        }
+    }
+
+    public Thread getNewSimulatorThread() {
+        Thread simulatorThread = new Thread(this);
+        simulatorThread.start();
+        return simulatorThread;
+    }
+}

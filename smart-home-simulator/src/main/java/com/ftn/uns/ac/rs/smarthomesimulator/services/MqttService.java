@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 @Getter
 @Service
 public class MqttService {
-
     private final MqttConfiguration mqttConfiguration;
     private final MqttMessageCallback mqttMessageCallback;
 
@@ -26,5 +25,9 @@ public class MqttService {
 
     public void publishStatusMessageLite(String message) throws MqttException {
         this.mqttConfiguration.getClient().publish("statuses", new MqttMessage(message.getBytes()));
+    }
+
+    public void publishPowerConsumptionMessage(String message) throws MqttException {
+        this.mqttConfiguration.getClient().publish("consumed", new MqttMessage(message.getBytes()));
     }
 }

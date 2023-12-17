@@ -1,8 +1,11 @@
 package com.ftn.uns.ac.rs.smarthomesimulator.threads;
 
+import com.ftn.uns.ac.rs.smarthomesimulator.models.devices.Thermometer;
+import com.ftn.uns.ac.rs.smarthomesimulator.models.enums.PowerSource;
 import com.ftn.uns.ac.rs.smarthomesimulator.models.enums.TemperatureUnit;
 import com.ftn.uns.ac.rs.smarthomesimulator.services.MqttService;
 import org.eclipse.paho.mqttv5.common.MqttException;
+import org.slf4j.Logger;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -11,18 +14,22 @@ import java.time.LocalDateTime;
 import java.util.Locale;
 
 public class ThermometerThread implements Runnable {
-
+    private final Logger logger = org.slf4j.LoggerFactory.getLogger(ThermometerThread.class);
+    private final Thermometer thermometer;
     private final TemperatureUnit unit;
     private final MqttService mqttService;
     private final Integer deviceId;
     private int count = 1;
+    private final int INTERVAL = 5;
+    private double powerConsumption = -1;
 
-    public ThermometerThread(TemperatureUnit unit,
-                             MqttService mqttService,
-                             Integer deviceId) {
-        this.unit = unit;
+    public ThermometerThread(Thermometer thermometer,
+                             MqttService mqttService) {
+        this.thermometer = thermometer;
         this.mqttService = mqttService;
-        this.deviceId = deviceId;
+        this.unit = thermometer.getTemperatureUnit();
+        this.deviceId = thermometer.getId();
+        this.powerConsumption = INTERVAL * 2.0 * thermometer.getEnergyConsumption() / (60 * 60);
     }
 
     @Override
@@ -47,7 +54,6 @@ public class ThermometerThread implements Runnable {
         int[][][] typicalDayNightTemps = new int[][][]{{{0, 10}, {-5, 0}}, {{15, 25}, {5, 15}},
                 {{25, 35}, {15, 25}}, {{15, 25}, {5, 15}}};
 
-        int interval = 5;
         int[][] typicalDayNightHumidity = new int[][]{{40, 50}, {35, 40}, {30, 35}, {35, 50}};
         double tempValue, humValue;
         while (true) {
@@ -123,7 +129,7 @@ public class ThermometerThread implements Runnable {
                 sendAndDisplayMeasurements(tempValue, humValue);
             }
 
-            Thread.sleep(interval * 1000);
+            Thread.sleep(INTERVAL * 1000);
         }
     }
 
@@ -148,6 +154,11 @@ public class ThermometerThread implements Runnable {
                 count = 1;
                 System.out.println("Sending status message");
                 this.mqttService.publishStatusMessageLite("status,1T," + deviceId);
+                if (thermometer.getPowerSource().equals(PowerSource.HOUSE)) {
+                    String message = "consumed," + powerConsumption + "p," + deviceId;
+                    this.mqttService.publishPowerConsumptionMessage(message);
+                    logger.info("Sending power consumption: " + message);
+                }
             } else {
                 count++;
             }

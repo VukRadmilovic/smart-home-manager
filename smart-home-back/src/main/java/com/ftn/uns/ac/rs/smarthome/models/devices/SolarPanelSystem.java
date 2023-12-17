@@ -25,10 +25,14 @@ public class SolarPanelSystem extends Device {
     @Column(nullable = false)
     private Double panelEfficiency; // % in range [0, 1] (0% - 100%) - how much of the sun's energy is converted to electricity
 
+    @Column(nullable = false)
+    private Boolean isOn;
+
     public SolarPanelSystem(SolarPanelSystemDTO dto, Property property) {
         super(-1, property, dto.getName(), null, dto.getPowerSource(), dto.getEnergyConsumption(), false, false);
         this.numberOfPanels = dto.getNumberOfPanels();
         this.panelSize = dto.getPanelSize();
         this.panelEfficiency = dto.getPanelEfficiency();
+        this.isOn = false;
     }
 }
