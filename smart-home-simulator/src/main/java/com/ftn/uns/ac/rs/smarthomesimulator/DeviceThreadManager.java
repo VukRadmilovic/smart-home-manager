@@ -30,9 +30,9 @@ public class DeviceThreadManager {
     public void addDeviceThread(Device device, Command command) {
         switch (device.getClass().getSimpleName()) {
             case "Thermometer":
+                Thermometer thermometer = (Thermometer) device;
                 addDeviceThreadInternal(device.getId(),
-                        new ThermometerThread(((Thermometer) device).getTemperatureUnit(),
-                                mqttService, device.getId()).getNewSimulatorThread());
+                        new ThermometerThread(thermometer, mqttService).getNewSimulatorThread());
                 break;
             case "AirConditioner":
                 AirConditioner ac = (AirConditioner) device;

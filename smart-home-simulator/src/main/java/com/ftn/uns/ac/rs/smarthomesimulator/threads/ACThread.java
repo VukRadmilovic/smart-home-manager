@@ -5,16 +5,14 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.ftn.uns.ac.rs.smarthomesimulator.config.MqttConfiguration;
 import com.ftn.uns.ac.rs.smarthomesimulator.models.*;
 import com.ftn.uns.ac.rs.smarthomesimulator.models.devices.AirConditioner;
-import com.ftn.uns.ac.rs.smarthomesimulator.models.enums.ACMode;
-import com.ftn.uns.ac.rs.smarthomesimulator.models.enums.ACState;
-import com.ftn.uns.ac.rs.smarthomesimulator.models.enums.CommandType;
-import com.ftn.uns.ac.rs.smarthomesimulator.models.enums.TemperatureUnit;
+import com.ftn.uns.ac.rs.smarthomesimulator.models.enums.*;
 import org.eclipse.paho.mqttv5.client.IMqttToken;
 import org.eclipse.paho.mqttv5.client.MqttCallback;
 import org.eclipse.paho.mqttv5.client.MqttDisconnectResponse;
 import org.eclipse.paho.mqttv5.common.MqttException;
 import org.eclipse.paho.mqttv5.common.MqttMessage;
 import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
+import org.slf4j.Logger;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -22,7 +20,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class ACThread implements Runnable {
-
+    private final Logger log = org.slf4j.LoggerFactory.getLogger(ACThread.class);
     private double currentTemp;
     private final AirConditioner ac;
     private final ObjectMapper mapper = new ObjectMapper();
@@ -34,6 +32,8 @@ public class ACThread implements Runnable {
     private final Map<Long, ScheduledFuture<?>> scheduledThread = new ConcurrentHashMap<>();
     private final ScheduledExecutorService scheduler =  Executors.newScheduledThreadPool(5);
     private final AtomicLong scheduledThreadCount = new AtomicLong(0);
+    private final int INTERVAL = 5;
+    private double powerConsumption = -1;
 
     private class MqttACMessageCallback implements MqttCallback {
 
@@ -108,6 +108,7 @@ public class ACThread implements Runnable {
         this.ac = ac;
         this.settings = settings;
         currentTemp = 0;
+        this.powerConsumption = INTERVAL * 2.0 * ac.getEnergyConsumption() / (60 * 60);
     }
 
     @Override
@@ -124,7 +125,6 @@ public class ACThread implements Runnable {
         }
     }
     public void generateValues() throws InterruptedException {
-        int interval = 5;
         String[] seasons = {
                 "WIN", "WIN", "SPR", "SPR", "SPR", "SUM",
                 "SUM", "SUM", "FAL", "FAL", "FAL", "WIN"
@@ -132,6 +132,7 @@ public class ACThread implements Runnable {
 
         //WIN,SPR,SUM,FAL
         int[][] typicalTempRange = new int[][]{{16, 20}, {18, 23}, {21, 27}, {19, 24}};
+        int count = 1;
         while(true) {
             sendInternalState();
             LocalDateTime now = LocalDateTime.now();
@@ -160,13 +161,31 @@ public class ACThread implements Runnable {
                             settings.getCommandParams().isHealth(),
                             settings.getCommandParams().isFungus());
                     sendStateAndStatus(value);
+                    if (ac.getPowerSource().equals(PowerSource.HOUSE)) {
+                        if (count % 2 == 0) {
+                            sendPowerConsumption();
+                        }
+                        count++;
+                    }
                 }
                 hasConfigChanged = false;
             }
-            Thread.sleep(interval * 1000);
+            Thread.sleep(INTERVAL * 1000);
         }
 
     }
+
+    private void sendPowerConsumption() {
+        String message = "consumed," + powerConsumption + "p," + ac.getId();
+        log.info("Sending power consumption: " + message);
+        try {
+            this.mqttConfiguration.getClient().publish("consumed", new MqttMessage(message.getBytes()));
+        } catch (MqttException e) {
+            e.printStackTrace();
+            log.error("Error while sending power consumption: " + e.getMessage());
+        }
+    }
+
     public Thread getNewSimulatorThread() {
         Thread simulatorThread = new Thread(this);
         simulatorThread.start();

@@ -26,4 +26,8 @@ public class MqttService {
     public void publishStatusMessageLite(String message) throws MqttException {
         this.mqttConfiguration.getClient().publish("statuses", new MqttMessage(message.getBytes()));
     }
+
+    public void publishPowerConsumptionMessage(String message) throws MqttException {
+        this.mqttConfiguration.getClient().publish("consumed", new MqttMessage(message.getBytes()));
+    }
 }

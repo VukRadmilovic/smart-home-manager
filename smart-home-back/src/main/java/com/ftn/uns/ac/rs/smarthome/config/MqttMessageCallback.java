@@ -12,6 +12,7 @@ import org.eclipse.paho.mqttv5.client.MqttDisconnectResponse;
 import org.eclipse.paho.mqttv5.common.MqttException;
 import org.eclipse.paho.mqttv5.common.MqttMessage;
 import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -21,7 +22,7 @@ import java.util.Map;
 
 @Service
 public class MqttMessageCallback implements MqttCallback {
-
+    private Logger log = org.slf4j.LoggerFactory.getLogger(MqttMessageCallback.class);
     private final InfluxService influxService;
     private final IDeviceService deviceService;
     private final StillThereDevicesManager stillThereDevicesManager;
@@ -56,6 +57,7 @@ public class MqttMessageCallback implements MqttCallback {
 
     @Override public void messageArrived(String topic, MqttMessage mqttMessage) {
         String message = new String(mqttMessage.getPayload());
+        log.info("Message arrived: " + message + ", ID: " + mqttMessage.getId());
         if (topic.contains("states")) {
             try {
                 Map<String,String> map = new HashMap<>();
@@ -79,7 +81,6 @@ public class MqttMessageCallback implements MqttCallback {
             String deviceIdStr = data[2];
             influxService.save(measurementObject, String.valueOf(value), new Date(),
                     Map.of("deviceId", deviceIdStr, "unit", String.valueOf(unit)));
-            System.out.println("Message arrived: " + message + ", ID: " + mqttMessage.getId());
 
             int deviceId = Integer.parseInt(deviceIdStr);
             if (measurementObject.equals("status") && value >= 1 &&
@@ -90,6 +91,8 @@ public class MqttMessageCallback implements MqttCallback {
 
             if (measurementObject.equals("produced")) {
                 powerManager.addProduction(value);
+            } else if (measurementObject.equals("consumed")) {
+                powerManager.addConsumption(value);
             }
         }
     }
