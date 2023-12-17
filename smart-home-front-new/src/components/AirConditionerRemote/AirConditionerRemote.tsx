@@ -36,7 +36,7 @@ import {CommandParams} from "../../models/CommandParams.ts";
 import {ACCommand} from "../../models/ACCommand.ts";
 import {DataGrid, GridColDef, GridValueGetterParams} from "@mui/x-data-grid";
 import {Scheduled} from "../../models/Scheduled.ts";
-
+import CheckIcon from '@mui/icons-material/Check';
 interface AirConditionerRemoteProps {
     open: boolean,
     handleClose: () => void,
@@ -151,6 +151,8 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
     const [seeScheduled, setSeeScheduled] = React.useState<boolean>(false);
     const [schedules, setSchedules] = React.useState<Scheduled[]>([]);
     const [checked, setChecked] = React.useState<number[]>([]);
+    const [isCommandSuccess, setIsCommandSuccess] = React.useState<number>(0);
+    const [isScheduleSuccess, setIsScheduleSuccess] = React.useState<number>(0);
     const defaultParams : CommandParams = {
         userId: -1,
         unit: 'C',
@@ -437,6 +439,7 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
         }
         client.current!.send("/app/command/ac", {}, JSON.stringify(command));
         currentConfig.commandType = commandType;
+        setIsCommandSuccess(1);
     }
 
     const schedule = () => {
@@ -444,6 +447,7 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
             setErrorMessage("Specify the scheduled time span!");
             setIsSuccess(false);
             setErrorPopupOpen(true);
+            setIsScheduleSuccess(2);
             return;
         }
         const fromLocal : number = from!.valueOf();
@@ -459,6 +463,7 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
                 setErrorMessage("You already have scheduled cycle at this time span!");
                 setIsSuccess(false);
                 setErrorPopupOpen(true);
+                setIsScheduleSuccess(2);
                 valid = false;
             }
         })
@@ -486,7 +491,7 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
             commandParams: params
         }
         client.current!.send("/app/command/ac", {}, JSON.stringify(command));
-
+        setIsScheduleSuccess(1);
     }
 
     return (
@@ -606,12 +611,15 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
                                     <Typography>On</Typography>
                                 </Stack>
                             </Grid>
-                            <Grid item xs={12} sm={12} md={12} lg={12} xl={3} ml={5}>
+                            <Grid item xs={12} sm={12} md={12} lg={12} xl={3} ml={5} direction={'column'} alignItems={'center'}>
                                 <Button color={'secondary'}
                                         disabled={disableForm}
                                         variant={'contained'}
                                         onClick={sendCommand}>Send</Button>
                             </Grid>
+
+                            <CheckIcon color={'success'} visibility={isCommandSuccess != 1 || isCommandSuccess == 0 ? 'hidden' : 'visible'}/>
+                            <CloseIcon color={'error'} visibility={isCommandSuccess != 2 || isCommandSuccess == 0 ? 'hidden' : 'visible'}/>
                         </Grid>
                         <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} alignItems={'center'}
                         columnSpacing={2}>
@@ -646,17 +654,23 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
                                 onChange={handleRepeatCheckedChange}
                             />} label="Repeat Daily" />
                         </Grid>
-                        <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} mb={1}  justifyContent={'center'}>
+                        <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} mb={1}  justifyContent={'center'} alignItems={'center'}>
                             <Button variant={'contained'}
                                     onClick={schedule}
+                                    sx={{marginRight:5}}
                                     disabled={!scheduledChecked || disableForm}
                                     color={'primary'}>Schedule Cycle</Button>
+                            <CheckIcon color={'success'} visibility={isScheduleSuccess != 1 || isScheduleSuccess == 0 ? 'hidden' : 'visible'}/>
+                            <CloseIcon color={'error'} visibility={isScheduleSuccess != 2 || isScheduleSuccess == 0 ? 'hidden' : 'visible'}/>
                         </Grid>
+                       
+
                         <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} mb={1}  justifyContent={'center'}>
                             <Button variant="text"
                                     sx={{color:'blue'}}
                                     onClick={() => {setSeeScheduled(true);}}>See Schedules</Button>
                         </Grid>
+
                 </Grid>
                     :
                 <Grid rowSpacing={3} height={600} justifyContent={'center'}>

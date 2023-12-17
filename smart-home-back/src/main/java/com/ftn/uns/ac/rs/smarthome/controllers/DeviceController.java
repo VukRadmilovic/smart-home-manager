@@ -110,6 +110,7 @@ public class DeviceController {
         try {
             MeasurementsStreamRequestDTO dto = new MeasurementsStreamRequestDTO(from, to, 5000,0,deviceId,measurement);
             List<List<Measurement>> measurements = this.deviceService.getStreamByMeasurementNameAndDeviceIdInTimeRange(dto);
+            System.out.println(measurements);
             return Flux.fromIterable(measurements);
         } catch(ResponseStatusException ex) {
             return Flux.error(new ResponseStatusException(ex.getStatus(), ex.getMessage()));

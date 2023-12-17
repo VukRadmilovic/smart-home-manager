@@ -1,4 +1,5 @@
 import {
+    CircularProgress,
     CssBaseline,
     FormControl,
     FormControlLabel,
@@ -45,6 +46,7 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
     const [unitA, setUnitA] = React.useState<string>("C");
     const [latestTemp, setLatestTemp] = React.useState<string>("Latest Value: ");
     const [latestHum, setLatestHum] = React.useState<string>("Latest Value: ");
+    const [isLoading, setIsLoading] = React.useState<boolean>(true);
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         changeUnit((event.target as HTMLInputElement).value);
         units.current = (event.target as HTMLInputElement).value;
@@ -151,6 +153,7 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
     }
 
     const getMeasurement = (measurement: string) => {
+        setIsLoading(true);
         const now = new Date()
         const from = now.getTime() - 1000 * 60 * 60;
         const request : MeasurementRequest = {
@@ -185,6 +188,7 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
                setHumidityData(downsampled);
                setLatestHum("Latest Value: " + downsampled[downsampled.length - 1].value.toFixed(3) + "%")
             }
+            setIsLoading(false);
         })).catch((err) => {
             console.log(err);
             setErrorMessage(err.response);
@@ -232,15 +236,16 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
                 if(prevTempData.length > 0 ) {
                     if (newVal.timestamp.getTime() - prevTempData[0].timestamp.getTime() > 3900000)
                         prevTempData.shift();
-                }
-                if (newVal.timestamp.getTime() - prevTempData[prevTempData.length - 1].timestamp.getTime() > 60000)
-                {
-                    const nullVal : ChartDataShort = {
-                        timestamp: new Date(val.timestamp),
-                        value: null
+
+                    if (prevTempData.length == 0 || newVal.timestamp.getTime() - prevTempData[prevTempData.length - 1].timestamp.getTime() > 60000) {
+                        const nullVal: ChartDataShort = {
+                            timestamp: new Date(val.timestamp),
+                            value: null
+                        }
+                        prevTempData.push(nullVal)
                     }
-                    prevTempData.push(nullVal)
                 }
+
                 return [...prevTempData, newVal];
             });
         }
@@ -259,6 +264,7 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
                         prevHumData.push(nullVal)
                     }
                 }
+
                 return [...prevHumData, newVal];
             });
         }
@@ -317,7 +323,11 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
                                     <FormControlLabel value="F" control={<Radio />} label="F" />
                                 </RadioGroup>
                             </FormControl>
+
                         </Grid>
+                        {!isLoading? null :
+                            <CircularProgress sx={{position:'absolute',right:'20px'}} />
+                        }
                         <Grid container item xs={12} sm={12} md={12} lg={12} xl={12}>
                             <ResizableBox height={300} width={1100}>
                                 <LineChart
