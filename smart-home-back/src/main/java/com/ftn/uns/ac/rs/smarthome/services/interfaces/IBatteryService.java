@@ -1,9 +1,18 @@
 package com.ftn.uns.ac.rs.smarthome.services.interfaces;
 
+import com.ftn.uns.ac.rs.smarthome.models.devices.Battery;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.devices.BatteryDTO;
 
 import java.io.IOException;
+import java.util.List;
 
 public interface IBatteryService {
     void register(BatteryDTO batteryDTO) throws IOException;
+
+    List<Battery> getAll();
+
+    List<Battery> getAllNonFull();
+
+    void update(Battery battery);
 }
+

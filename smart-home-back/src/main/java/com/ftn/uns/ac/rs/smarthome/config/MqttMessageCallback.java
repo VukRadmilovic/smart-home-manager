@@ -80,7 +80,6 @@ public class MqttMessageCallback implements MqttCallback {
             String deviceIdStr = data[2];
             influxService.save(measurementObject, value, new Date(),
                     Map.of("deviceId", deviceIdStr, "unit", String.valueOf(unit)));
-
             int deviceId = Integer.parseInt(deviceIdStr);
             if (measurementObject.equals("status") && value >= 1 &&
                     stillThereDevicesManager.isntThere(deviceId)) {

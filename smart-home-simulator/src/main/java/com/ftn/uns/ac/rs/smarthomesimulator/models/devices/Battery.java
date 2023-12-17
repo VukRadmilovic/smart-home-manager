@@ -16,4 +16,7 @@ import javax.persistence.Table;
 public class Battery extends Device {
     @Column(nullable = false)
     private Double capacity;
+
+    @Column(nullable = false)
+    private Double occupiedCapacity;
 }
