@@ -38,6 +38,7 @@
     "react-router": "^6.20.1",
     "react-router-dom": "^6.20.1",
     "react-stomp": "^5.1.0",
+    "react-tagsinput": "^3.20.3",
     "react-use-websocket": "^4.5.0",
     "sockjs-client": "^1.6.1",
     "stompjs": "^2.3.3",
@@ -46,6 +47,7 @@
   "devDependencies": {
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
+    "@types/react-tagsinput": "^3.20.5",
     "@types/sockjs-client": "^1.5.4",
     "@types/stompjs": "^2.3.9",
     "@typescript-eslint/eslint-plugin": "^6.10.0",

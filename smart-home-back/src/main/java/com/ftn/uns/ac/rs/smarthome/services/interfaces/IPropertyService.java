@@ -11,7 +11,9 @@ public interface IPropertyService {
 
     Object getAllProperty();
 
-    void approveProperty(String address);
+    void approveProperty(Integer id);
 
-    void denyProperty(String address);
+    void denyProperty(Integer id);
+
+    Object getAllUnapprovedProperty();
 }

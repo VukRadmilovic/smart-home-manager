@@ -36,9 +36,6 @@ public class AirConditionerDTO extends DeviceDTO {
     private Boolean dry;
 
     @NotNull(message = "{required}")
-    private Boolean fan;
-
-    @NotNull(message = "{required}")
     private Boolean auto;
 
     @NotNull(message = "{required}")

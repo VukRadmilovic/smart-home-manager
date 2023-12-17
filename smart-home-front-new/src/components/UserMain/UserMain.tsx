@@ -1,13 +1,9 @@
 import {UserService} from "../../services/UserService.ts";
 import {
-    Box, Button, Card, CardContent, CardMedia, CssBaseline, Fab,
+    Box, Button, Card, CardContent, CardMedia, CssBaseline,
     Grid, ImageList, Typography,
 } from "@mui/material";
 import {SideNav} from "../Sidenav/SideNav.tsx";
-import BoltIcon from '@mui/icons-material/Bolt';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import AddIcon from '@mui/icons-material/Add';
-import Battery3BarIcon from '@mui/icons-material/Battery3Bar';
 import {PropertyService} from "../../services/PropertyService";
 import HomeIcon from '@mui/icons-material/Home';
 import React, {useEffect, useRef} from "react";
@@ -48,23 +44,23 @@ export function UserMain({userService, propertyService} : PropertyProps) {
         setErrorPopupOpen(false);
     };
 
-    const getUserDevices = async () => {
+    const getUserProperties = async () => {
         try {
-            const response = await propertyService.getProperty();
+            const response = await propertyService.getAllUserProperty();
             if (response.length > 0) {
                 setProperty(response);
             }
         } catch (err) {
-            setErrorMessage(err.response?.data || "An error occurred while fetching devices.");
+            setErrorMessage(err.response?.data || "An error occurred while fetching properties.");
             setIsSuccess(false);
             setErrorPopupOpen(true);
         }
     };
 
     useEffect(() => {
-        const fetchUserDevices = async () => {
+        const fetchUserProperties = async () => {
             try {
-                await getUserDevices();
+                await getUserProperties();
                 shouldLoad.current = false;
             } catch (err) {
                 console.error("Error fetching devices:", err);
@@ -72,9 +68,9 @@ export function UserMain({userService, propertyService} : PropertyProps) {
         };
 
         if (shouldLoad.current) {
-            fetchUserDevices();
+            fetchUserProperties();
         }
-    }, [propertyService, getUserDevices]);
+    }, [propertyService, getUserProperties]);
 
     useEffect(() => {
         if (sessionStorage.getItem("expiration") != null) {
@@ -150,51 +146,30 @@ export function UserMain({userService, propertyService} : PropertyProps) {
                                             <Typography component="div" variant="h5" mb={1}>
                                                 {property.name}
                                             </Typography>
-
                                             <Typography variant="subtitle1" alignItems={'center'} color="text.secondary" component="div">
                                                 <span style={{display: 'inline-flex'}}> <HomeIcon/> {property.address} </span>
                                             </Typography>
                                             <Typography variant="subtitle1" alignItems={'center'} color="text.secondary" component="div">
-                                                <span style={{display: 'inline-flex'}}> <BoltIcon/>  {property.propertyType} </span>
+                                                <span style={{display: 'inline-flex'}}>  {property.propertyType} </span>
                                             </Typography>
                                             <Typography variant="subtitle1" alignItems={'center'} color="text.secondary" component="div">
-                                                <span style={{display: 'inline-flex'}}> <Battery3BarIcon/> {property.city} kWh </span>
+                                                <span style={{display: 'inline-flex'}}>{property.city} </span>
                                             </Typography>
                                         </CardContent>
                                         <Box sx={{ display: 'flex', justifyContent:'center', width:'100%', alignItems: 'center', pl: 1, pb: 1 }}>
                                             <Button  color={'secondary'} variant={'contained'} sx={{marginRight:'10px'}}>Share</Button>
-                                            <div>
-                                                <Button
-                                                    id={"button_" + property.id}
-                                                    aria-controls={openMenu ? 'menu_' + property.id : undefined}
-                                                    aria-haspopup="true"
-                                                    aria-expanded={openMenu ? 'true' : undefined}
-                                                    variant="contained"
-                                                    disableElevation
-                                                    //onClick={(evt) => handleMenuClick(evt,property.id)}
-                                                    endIcon={<KeyboardArrowDownIcon />}>
-                                                    More
-                                                </Button>
-                                            </div>
                                         </Box>
                                     </Box>
                                     <CardMedia
                                         component="img"
                                         sx={{ width: 151 }}
                                         image={property.picture}
-                                        alt="Thermo"
+                                        alt="Property"
                                     />
                                 </Card>
                             ))}
                         </ImageList>
                     </Grid>
-                    <Fab variant="extended"
-                         color="primary"
-                         sx={{position: 'absolute', bottom: 16, right: 30}}
-                         onClick={() => navigate("/userRegisterDevice")}>
-                        <AddIcon sx={{ mr: 1 }} />
-                        Add New
-                    </Fab>
                 </Grid>
             </Grid>
             <PopupMessage message={errorMessage} isSuccess={isSuccess} handleClose={handleErrorPopupClose} open={errorPopupOpen}/>

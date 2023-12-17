@@ -2,11 +2,8 @@ package com.ftn.uns.ac.rs.smarthomesimulator;
 
 import com.ftn.uns.ac.rs.smarthomesimulator.models.ACCommand;
 import com.ftn.uns.ac.rs.smarthomesimulator.models.Command;
-import com.ftn.uns.ac.rs.smarthomesimulator.models.TemperatureUnit;
-import com.ftn.uns.ac.rs.smarthomesimulator.models.devices.AirConditioner;
-import com.ftn.uns.ac.rs.smarthomesimulator.models.devices.Device;
-import com.ftn.uns.ac.rs.smarthomesimulator.models.devices.Thermometer;
-import com.ftn.uns.ac.rs.smarthomesimulator.models.devices.WashingMachine;
+import com.ftn.uns.ac.rs.smarthomesimulator.models.enums.TemperatureUnit;
+import com.ftn.uns.ac.rs.smarthomesimulator.models.devices.*;
 import com.ftn.uns.ac.rs.smarthomesimulator.services.MqttService;
 import com.ftn.uns.ac.rs.smarthomesimulator.services.interfaces.IDeviceService;
 import com.ftn.uns.ac.rs.smarthomesimulator.threads.ACThread;
@@ -46,6 +43,36 @@ public class DeviceThreadManager {
             WashingMachine machine = (WashingMachine) device;
             addDeviceThreadInternal(device.getId(),
                     new ThermometerThread(TemperatureUnit.FAHRENHEIT,
+                            mqttService, device.getId()).getNewSimulatorThread());
+        } else if (device.getClass().equals(SolarPanelSystem.class)) {
+            SolarPanelSystem system = (SolarPanelSystem) device;
+            addDeviceThreadInternal(device.getId(),
+                    new ThermometerThread(TemperatureUnit.CELSIUS,
+                            mqttService, device.getId()).getNewSimulatorThread());
+        } else if (device.getClass().equals(Battery.class)) {
+            Battery battery = (Battery) device;
+            addDeviceThreadInternal(device.getId(),
+                    new ThermometerThread(TemperatureUnit.CELSIUS,
+                            mqttService, device.getId()).getNewSimulatorThread());
+        } else if (device.getClass().equals(Charger.class)) {
+            Charger charger = (Charger) device;
+            addDeviceThreadInternal(device.getId(),
+                    new ThermometerThread(TemperatureUnit.CELSIUS,
+                            mqttService, device.getId()).getNewSimulatorThread());
+        } else if (device.getClass().equals(Lamp.class)) {
+            Lamp lamp = (Lamp) device;
+            addDeviceThreadInternal(device.getId(),
+                    new ThermometerThread(TemperatureUnit.CELSIUS,
+                            mqttService, device.getId()).getNewSimulatorThread());
+        } else if (device.getClass().equals(Gate.class)) {
+            Gate gate = (Gate) device;
+            addDeviceThreadInternal(device.getId(),
+                    new ThermometerThread(TemperatureUnit.CELSIUS,
+                            mqttService, device.getId()).getNewSimulatorThread());
+        } else if (device.getClass().equals(SprinklerSystem.class)) {
+            SprinklerSystem system = (SprinklerSystem) device;
+            addDeviceThreadInternal(device.getId(),
+                    new ThermometerThread(TemperatureUnit.CELSIUS,
                             mqttService, device.getId()).getNewSimulatorThread());
         }
     }

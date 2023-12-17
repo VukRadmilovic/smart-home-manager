@@ -1,6 +1,6 @@
 package com.ftn.uns.ac.rs.smarthomesimulator.models.devices;
 
-import com.ftn.uns.ac.rs.smarthomesimulator.models.PowerSource;
+import com.ftn.uns.ac.rs.smarthomesimulator.models.enums.PowerSource;
 import com.ftn.uns.ac.rs.smarthomesimulator.models.Property;
 import lombok.*;
 

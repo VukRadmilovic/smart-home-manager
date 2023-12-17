@@ -2,9 +2,24 @@
 
 import {UserService} from "../../services/UserService.ts";
 import {
-    Button, Checkbox,
-    CssBaseline, FormControl, FormControlLabel, FormLabel,
-    Grid, InputLabel, MenuItem, Radio, RadioGroup, Select, SelectChangeEvent, Slider, Stack, TextField, Typography
+    Button,
+    Checkbox,
+    CssBaseline,
+    FormControl,
+    FormControlLabel, FormHelperText,
+    FormLabel,
+    Grid, InputAdornment,
+    InputLabel,
+    MenuItem,
+    OutlinedInput,
+    Radio,
+    RadioGroup,
+    Select,
+    SelectChangeEvent,
+    Slider,
+    Stack,
+    TextField,
+    Typography
 } from "@mui/material";
 import {SideNav} from "../Sidenav/SideNav.tsx";
 import React, {useEffect, useState} from "react";
@@ -12,7 +27,17 @@ import {useForm} from "react-hook-form";
 import {useNavigate} from "react-router-dom";
 import {PopupMessage} from "../PopupMessage/PopupMessage";
 import axios from 'axios';
-import {color} from "chart.js/helpers";
+import TagsInput from 'react-tagsinput';
+import 'react-tagsinput/react-tagsinput.css';
+import {LocalizationProvider, TimeField} from "@mui/x-date-pickers";
+import {Dayjs} from "dayjs";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+
+function isInt(value) {
+    return !isNaN(value) &&
+        parseInt(Number(value)) == value &&
+        !isNaN(parseInt(value, 10));
+}
 
 interface UserMainProps {
     userService: UserService,
@@ -52,6 +77,21 @@ export function UserRegisterDevice({userService}: UserMainProps) {
         mode: "onChange"
     });
 
+    const [startTime, setStartTime] = React.useState<Dayjs | null>(null);
+    const [endTime, setEndTime] = React.useState<Dayjs | null>(null);
+
+    const [gateMode, setGateMode] = React.useState('public');
+    const [gatePlates, setGatePlates] = React.useState([]);
+
+    const gatePlatesChanged = (plates) => {
+        setGatePlates(plates);
+    }
+
+    const gateModeChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setGateMode(event.target.value);
+        setValue('gateMode', event.target.value);
+    }
+
     const [energySource, setEnergySource] = React.useState('autonomous');
     const [measuringUnit, setMeasuringUnit] = React.useState('celsius');
 
@@ -79,7 +119,113 @@ export function UserRegisterDevice({userService}: UserMainProps) {
     });
 
     const onSubmit = async (formData: DeviceForm) => {
-        async function submitACRegistration(deviceFormData: FormData) {
+        async function submitGateRegistration(deviceFormData: FormData) {
+            if (gateMode === 'private') {
+                deviceFormData.append('publicMode', 'false');
+            } else {
+                deviceFormData.append('publicMode', 'true');
+            }
+
+            deviceFormData.append('allowedRegistrationPlates', gatePlates.join(','));
+
+            await axios.post('http://localhost:80/api/devices/registerGate', deviceFormData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('user')
+                },
+            });
+
+            return true;
+        }
+
+        async function submitLampRegistration(deviceFormData: FormData) {
+            await axios.post('http://localhost:80/api/devices/registerLamp', deviceFormData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('user')
+                },
+            });
+
+            return true;
+        }
+
+        async function submitChargerRegistration(deviceFormData: FormData) {
+            if (!Number(chargerPower)) {
+                setErrorMessage('Power must be a number!');
+                setErrorPopupOpen(true);
+                setIsSuccess(false);
+                return false;
+            }
+
+            deviceFormData.append('power', chargerPower);
+            deviceFormData.append('numberOfPorts', numberOfPorts);
+            deviceFormData.append('chargeUntil', chargeUntil / 100.0);
+
+            await axios.post('http://localhost:80/api/devices/registerCharger', deviceFormData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('user')
+                },
+            });
+
+            return true;
+        }
+
+        async function submitSolarPanelSystemRegistration(deviceFormData: FormData) {
+            if (!isInt(numberOfPanels) || parseInt(numberOfPanels) <= 0) {
+                setErrorMessage('Number of panels must be a positive whole number!');
+                setErrorPopupOpen(true);
+                setIsSuccess(false);
+                return false;
+            }
+
+            if (!Number(panelSize) || parseFloat(panelSize) <= 0) {
+                setErrorMessage('Panel size must be a positive number!');
+                setErrorPopupOpen(true);
+                setIsSuccess(false);
+                return false;
+            }
+
+            deviceFormData.append('numberOfPanels', numberOfPanels);
+            deviceFormData.append('panelSize', panelSize);
+            deviceFormData.append('panelEfficiency', panelEfficiency / 100.0);
+
+            await axios.post('http://localhost:80/api/devices/registerSolarPanelSystem', deviceFormData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('user')
+                },
+            });
+
+            return true;
+        }
+
+        async function submitSprinklerSystemRegistration(deviceFormData: FormData) {
+            if (automaticMode && (!startTime || !endTime || !startTime.isValid() || !endTime.isValid())) {
+                setErrorMessage('Start and end time must be set if automatic mode is on!');
+                setErrorPopupOpen(true);
+                setIsSuccess(false);
+                return false;
+            }
+
+            deviceFormData.append('specialMode', automaticMode);
+
+            if (automaticMode) {
+                deviceFormData.append('startTime', startTime?.format('HH:mm:ss'));
+                deviceFormData.append('endTime', endTime?.format('HH:mm:ss'));
+            }
+
+            await axios.post('http://localhost:80/api/devices/registerSprinklerSystem', deviceFormData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('user')
+                },
+            });
+
+            return true;
+        }
+
+        async function submitAirConditionerRegistration(deviceFormData: FormData) {
             if (formData.minTemperature && formData.maxTemperature && parseInt(formData.minTemperature) > parseInt(formData.maxTemperature)) {
                 setErrorMessage('Min temperature cannot be greater than max temperature!');
                 setErrorPopupOpen(true);
@@ -124,6 +270,13 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                 return false;
             }
 
+            if (!heating && !cooling && !dry && !auto) {
+                setErrorMessage('At least one mode (out of heating, cooling, ventilation & automatic) must be selected!');
+                setErrorPopupOpen(true);
+                setIsSuccess(false);
+                return false;
+            }
+
             deviceFormData.append('fanSpeed', formData.fanSpeed);
             deviceFormData.append('temperatureUnit', formData.measuringUnit?.toUpperCase());
             deviceFormData.append('minTemperature', formData.minTemperature?.toString() || '');
@@ -131,12 +284,11 @@ export function UserRegisterDevice({userService}: UserMainProps) {
             deviceFormData.append('cooling', cooling);
             deviceFormData.append('heating', heating);
             deviceFormData.append('dry', dry);
-            deviceFormData.append('fan', fan);
             deviceFormData.append('auto', auto);
             deviceFormData.append('health', health);
             deviceFormData.append('fungusPrevention', fungusPrevention);
 
-            await axios.post('http://localhost:80/api/devices/registerAC', deviceFormData, {
+            await axios.post('http://localhost:80/api/devices/registerAirConditioner', deviceFormData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Authorization': 'Bearer ' + sessionStorage.getItem('user')
@@ -145,7 +297,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
             return true;
         }
 
-        async function submitWMRegistration(deviceFormData: FormData) {
+        async function submitWashingMachineRegistration(deviceFormData: FormData) {
             if (formData.minTemperature && formData.maxTemperature && parseInt(formData.minTemperature) > parseInt(formData.maxTemperature)) {
                 setErrorMessage('Min temperature cannot be greater than max temperature!');
                 setErrorPopupOpen(true);
@@ -201,7 +353,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
             deviceFormData.append('spinOnly', spinOnly);
             deviceFormData.append('hygiene', hygiene);
 
-            await axios.post('http://localhost:80/api/devices/registerWM', deviceFormData, {
+            await axios.post('http://localhost:80/api/devices/registerWashingMachine', deviceFormData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Authorization': 'Bearer ' + sessionStorage.getItem('user')
@@ -214,7 +366,26 @@ export function UserRegisterDevice({userService}: UserMainProps) {
         async function submitThermometerRegistration(deviceFormData: FormData) {
             deviceFormData.append('temperatureUnit', formData.measuringUnit?.toUpperCase());
 
-            await axios.post('http://localhost:80/api/devices/registerThermo', deviceFormData, {
+            await axios.post('http://localhost:80/api/devices/registerThermometer', deviceFormData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('user')
+                },
+            });
+            return true;
+        }
+
+        async function submitBatteryRegistration(deviceFormData: FormData) {
+            if (!Number(batteryCapacity)) {
+                setErrorMessage('Battery capacity must be a number!');
+                setErrorPopupOpen(true);
+                setIsSuccess(false);
+                return false;
+            }
+
+            deviceFormData.append('capacity', batteryCapacity);
+
+            await axios.post('http://localhost:80/api/devices/registerBattery', deviceFormData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Authorization': 'Bearer ' + sessionStorage.getItem('user')
@@ -250,10 +421,22 @@ export function UserRegisterDevice({userService}: UserMainProps) {
 
             if (deviceType == 'thermometer') {
                 if (!await submitThermometerRegistration(deviceFormData)) return;
-            } else if (deviceType == 'ac') {
-                if (!await submitACRegistration(deviceFormData)) return;
-            } else if (deviceType == 'wm') {
-                if (!await submitWMRegistration(deviceFormData)) return;
+            } else if (deviceType == 'airConditioner') {
+                if (!await submitAirConditionerRegistration(deviceFormData)) return;
+            } else if (deviceType == 'washingMachine') {
+                if (!await submitWashingMachineRegistration(deviceFormData)) return;
+            } else if (deviceType == "solarPanelSystem") {
+                if (!await submitSolarPanelSystemRegistration(deviceFormData)) return;
+            } else if (deviceType == "battery") {
+                if (!await submitBatteryRegistration(deviceFormData)) return;
+            } else if (deviceType == "charger") {
+                if (!await submitChargerRegistration(deviceFormData)) return;
+            } else if (deviceType == "lamp") {
+                if (!await submitLampRegistration(deviceFormData)) return;
+            } else if (deviceType == "gate") {
+                if (!await submitGateRegistration(deviceFormData)) return;
+            } else if (deviceType == "sprinkler") {
+                if (!await submitSprinklerSystemRegistration(deviceFormData)) return;
             }
 
             setErrorMessage('Device registered successfully!');
@@ -290,18 +473,22 @@ export function UserRegisterDevice({userService}: UserMainProps) {
         setErrorPopupOpen(false);
     };
 
-    const [deviceType, setDeviceType] = React.useState('ac');
+    const [deviceType, setDeviceType] = React.useState('thermometer');
 
     /* AC checkboxes */
     const [cooling, setCooling] = React.useState(false);
     const [heating, setHeating] = React.useState(false);
     const [dry, setDry] = React.useState(false);
-    const [fan, setFan] = React.useState(false);
     const [auto, setAuto] = React.useState(false);
     const [health, setHealth] = React.useState(false);
     const [fungusPrevention, setFungusPrevention] = React.useState(false);
 
 
+    const [automaticMode, setAutomaticMode] = React.useState(false);
+
+    const automaticModeChanged = () => {
+        setAutomaticMode(!automaticMode);
+    }
     /* Washing machine */
 
     /* Checkboxes */
@@ -320,6 +507,12 @@ export function UserRegisterDevice({userService}: UserMainProps) {
     const [hygiene, setHygiene] = React.useState(false);
 
     const [centrifuge, setCentrifuge] = React.useState<number[]>([400, 1600]);
+
+    const [panelEfficiency, setPanelEfficiency] = React.useState<number>(20);
+
+    const panelEfficiencyChanged = (event: Event, newValue: number) => {
+        setPanelEfficiency(newValue as number);
+    }
 
     const centrifugeChanged = (event: Event, newValue: number | number[]) => {
         setCentrifuge(newValue as number[]);
@@ -340,10 +533,6 @@ export function UserRegisterDevice({userService}: UserMainProps) {
 
     const dryChanged = () => {
         setDry(!dry);
-    };
-
-    const fanChanged = () => {
-        setFan(!fan);
     };
 
     const autoChanged = () => {
@@ -411,14 +600,77 @@ export function UserRegisterDevice({userService}: UserMainProps) {
         setHygiene(!hygiene);
     }
 
-    function acForm() {
+    const [numberOfPanels, setNumberOfPanels] = React.useState<number>(0);
+    const [panelSize, setPanelSize] = React.useState<number>(0);
+
+    const numberOfPanelsChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = event.target.value as number;
+        setNumberOfPanels(newValue);
+    }
+
+    const panelSizeChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = event.target.value as number;
+        setPanelSize(newValue);
+    }
+
+    const [batteryCapacity, setBatteryCapacity] = React.useState<number>(1);
+
+    const batteryCapacityChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = event.target.value as number;
+        setBatteryCapacity(newValue);
+    }
+
+    const [chargerPower, setChargerPower] = React.useState<number>(1);
+
+    const chargerPowerChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = event.target.value as number;
+        setChargerPower(newValue);
+    }
+
+    const [numberOfPorts, setNumberOfPorts] = React.useState<number>(1);
+
+    const numberOfPortsChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = event.target.value as number;
+        setNumberOfPorts(newValue);
+    }
+
+    const [chargeUntil, setChargeUntil] = React.useState<number>(100);
+
+    const chargeUntilChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = event.target.value as number;
+        setChargeUntil(newValue);
+    }
+
+    function solarPanelSystemForm() {
+        return <div>
+            <TextField id="numberOfPanels" label="Number of panels" fullWidth={true} type={"number"} variant="outlined"
+                       margin={"normal"} value={numberOfPanels} onChange={numberOfPanelsChanged}/>
+            <FormControl sx={{m: 1, width: '25ch'}} variant="outlined">
+                <OutlinedInput id="panelSize" aria-describedby={"panelSize-helper-text"} inputProps={{
+                    'aria-label': 'panel size',
+                }} endAdornment={<InputAdornment position={"end"}>m&sup2;</InputAdornment>}
+                               value={panelSize} onChange={panelSizeChanged}/>
+                <FormHelperText id="panelSize-helper-text">Panel size in m&sup2;</FormHelperText>
+            </FormControl>
+            <p style={{color: 'rgba(0, 0, 0, 0.6)'}}>Panel efficiency (%):</p><br/>
+            <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
+                  justifyContent={'center'}>
+                <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
+                    <Slider defaultValue={20} getAriaLabel={() => 'Panel efficiency'} valueLabelDisplay="on"
+                            min={1} max={100} value={panelEfficiency} onChange={panelEfficiencyChanged}/>
+                </Grid>
+            </Grid>
+        </div>;
+    }
+
+    function airConditionerForm() {
         return <div>
             {/*fan speed text field*/}
             <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
                   justifyContent={'center'} marginBottom={'20px'}>
                 <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
                     <TextField id="fanSpeed"
-                               label="Num. of fan speeds"
+                               label="Maximum fan speed"
                                fullWidth={true}
                                type={"number"}
                                {...register("fanSpeed")}
@@ -479,20 +731,15 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                 <Checkbox aria-label={"heating"} value={heating} onChange={heatingChanged}></Checkbox>
             </FormControl>
             <FormControl component={"fieldset"} style={{'marginRight': '20px'}}>
-                <FormLabel component={"legend"}>Dry</FormLabel>
+                <FormLabel component={"legend"}>Ventilation</FormLabel>
                 <Checkbox aria-label={"dry"} value={dry} onChange={dryChanged}></Checkbox>
             </FormControl>
-            <FormControl component={"fieldset"}>
-                <FormLabel component={"legend"}>Fan</FormLabel>
-                <Checkbox aria-label={"fan"} value={fan} onChange={fanChanged}></Checkbox>
-            </FormControl>
-            <br/>
             <FormControl component={"fieldset"} style={{'marginRight': '20px'}}>
-                <FormLabel component={"legend"}>Auto</FormLabel>
+                <FormLabel component={"legend"}>Automatic</FormLabel>
                 <Checkbox aria-label={"auto"} value={auto} onChange={autoChanged}></Checkbox>
             </FormControl>
             <FormControl component={"fieldset"} style={{'marginRight': '20px'}}>
-                <FormLabel component={"legend"}>Health</FormLabel>
+                <FormLabel component={"legend"}>Health/Air Ionizer</FormLabel>
                 <Checkbox aria-label={"health"} value={health} onChange={healthChanged}></Checkbox>
             </FormControl>
             <FormControl component={"fieldset"}>
@@ -503,15 +750,75 @@ export function UserRegisterDevice({userService}: UserMainProps) {
         </div>;
     }
 
-    function wmForm() {
+    function chargerForm() {
+        return <div>
+            <p style={{color: 'rgba(0, 0, 0, 0.6)'}}>Charge until what % of car battery filled:</p><br/>
+            <Grid item container xs={12} sm={12} md={12} lg={12} xl={12} justifyContent={'center'}>
+                <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
+                    <Slider defaultValue={100} getAriaLabel={() => 'Charge until what % of car battery is filled'}
+                            min={1} max={100} value={chargeUntil} onChange={chargeUntilChanged}
+                            valueLabelDisplay="on"/>
+                </Grid>
+            </Grid>
+            <FormControl sx={{m: 1, width: '25ch'}} variant="outlined">
+                <OutlinedInput id="chargerPower" aria-describedby={"chargerPower-helper-text"} inputProps={{
+                    'aria-label': 'charger power',
+                }} endAdornment={<InputAdornment position={"end"}>kW</InputAdornment>}
+                               value={chargerPower} onChange={chargerPowerChanged}/>
+                <FormHelperText id="chargerPower-helper-text">Charger power in kW</FormHelperText>
+            </FormControl>
+            <TextField id="numberOfPorts" label="Number of charging ports" fullWidth={true} type={"number"}
+                       variant="outlined" margin={"normal"} value={numberOfPorts} onChange={numberOfPortsChanged}/>
+        </div>
+    }
+
+    function gateForm() {
+        return <div>
+            <FormControl component="fieldset">
+                <FormLabel component="legend">Initial mode</FormLabel>
+                <RadioGroup
+                    aria-label="gateMode"
+                    value={gateMode}
+                    onChange={gateModeChanged}
+                    style={{flexDirection: 'row'}}>
+                    <FormControlLabel value="public" control={<Radio/>} label="Public"/>
+                    <FormControlLabel value="private" control={<Radio/>}
+                                      label="Private"/>
+                </RadioGroup>
+            </FormControl>
+            <p>Enter registration plates to allow through when private mode is enabled.</p>
+            <p>Type the registration plate below then press enter:</p>
+            <TagsInput value={gatePlates} onChange={gatePlatesChanged} onlyUnique={true} inputProps={{
+                placeholder: 'Add a plate'
+            }}/>
+        </div>
+    }
+
+    function sprinklerForm() {
+        return <div>
+            <FormControl component={"fieldset"}>
+                <FormLabel component={"legend"}>Automatic mode</FormLabel>
+                <Checkbox aria-label={"automaticMode"} value={automaticMode} onChange={automaticModeChanged}></Checkbox>
+            </FormControl>
+            <br/>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <TimeField value={startTime} onChange={(newValue) => setStartTime(newValue)}
+                format="HH:mm" label="Start time" margin={"normal"} disabled={!automaticMode}/>
+                <TimeField value={endTime} onChange={(newValue) => setEndTime(newValue)}
+                           format="HH:mm" label="End time" margin={"normal"} disabled={!automaticMode}/>
+            </LocalizationProvider>
+        </div>
+    }
+
+    function washingMachineForm() {
         return <div>
             <p style={{color: 'rgba(0, 0, 0, 0.6)'}}>Centrifuge range:</p><br/>
             <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}
                   justifyContent={'center'}>
                 <Grid item xs={12} sm={12} md={8} lg={8} xl={6}>
                     <Slider defaultValue={400} getAriaLabel={() => 'Centrifuge range'} valueLabelDisplay="on"
-                    step={200} marks min={400} max={1600} value={centrifuge} onChange={centrifugeChanged}
-                    disableSwap/>
+                            step={200} marks min={400} max={1600} value={centrifuge} onChange={centrifugeChanged}
+                            disableSwap/>
                 </Grid>
             </Grid>
             <p style={{color: 'rgba(0, 0, 0, 0.6)'}}>Washing temperature</p>
@@ -634,6 +941,16 @@ export function UserRegisterDevice({userService}: UserMainProps) {
         </FormControl>;
     }
 
+    function batteryForm() {
+        return <FormControl sx={{m: 1, width: '25ch'}} variant="outlined">
+            <OutlinedInput id="batteryCapacity" aria-describedby={"batteryCapacity-helper-text"} inputProps={{
+                'aria-label': 'battery capacity',
+            }} endAdornment={<InputAdornment position={"end"}>kWh</InputAdornment>}
+                           value={batteryCapacity} onChange={batteryCapacityChanged}/>
+            <FormHelperText id="batteryCapacity-helper-text">Battery capacity in kWh</FormHelperText>
+        </FormControl>
+    }
+
     function genericDeviceForm() {
         return <>
             <Grid item container rowSpacing={0}>
@@ -669,8 +986,14 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                             onChange={deviceTypeChanged}
                         >
                             <MenuItem value="thermometer">Thermometer</MenuItem>
-                            <MenuItem value="ac">Air Conditioner</MenuItem>
-                            <MenuItem value="wm">Washing Machine</MenuItem>
+                            <MenuItem value="airConditioner">Air Conditioner</MenuItem>
+                            <MenuItem value="washingMachine">Washing Machine</MenuItem>
+                            <MenuItem value="solarPanelSystem">Solar Panel System</MenuItem>
+                            <MenuItem value="battery">Battery</MenuItem>
+                            <MenuItem value="charger">Charger</MenuItem>
+                            <MenuItem value="lamp">Lamp</MenuItem>
+                            <MenuItem value="gate">Gate</MenuItem>
+                            <MenuItem value="sprinkler">Sprinkler System</MenuItem>
                         </Select>
                     </FormControl>
                 </Grid>
@@ -790,8 +1113,13 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                                                       alignItems: 'center'
                                                   }}>
                                                 {deviceType === "thermometer" && thermometerForm()}
-                                                {deviceType === "ac" && acForm()}
-                                                {deviceType === "wm" && wmForm()}
+                                                {deviceType === "airConditioner" && airConditionerForm()}
+                                                {deviceType === "washingMachine" && washingMachineForm()}
+                                                {deviceType === "solarPanelSystem" && solarPanelSystemForm()}
+                                                {deviceType === "battery" && batteryForm()}
+                                                {deviceType === "charger" && chargerForm()}
+                                                {deviceType === "gate" && gateForm()}
+                                                {deviceType === "sprinkler" && sprinklerForm()}
                                             </Grid>
                                         </Grid>
                                     </Grid>

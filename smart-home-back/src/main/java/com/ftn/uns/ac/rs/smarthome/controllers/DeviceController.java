@@ -7,13 +7,8 @@ import com.ftn.uns.ac.rs.smarthome.models.dtos.CommandsDTO;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.CommandsRequestDTO;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.DeviceDetailsDTO;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.MeasurementsStreamRequestDTO;
-import com.ftn.uns.ac.rs.smarthome.models.dtos.devices.AirConditionerDTO;
-import com.ftn.uns.ac.rs.smarthome.models.dtos.devices.ThermometerDTO;
-import com.ftn.uns.ac.rs.smarthome.models.dtos.devices.WashingMachineDTO;
-import com.ftn.uns.ac.rs.smarthome.services.interfaces.IAirConditionerService;
-import com.ftn.uns.ac.rs.smarthome.services.interfaces.IDeviceService;
-import com.ftn.uns.ac.rs.smarthome.services.interfaces.IThermometerService;
-import com.ftn.uns.ac.rs.smarthome.services.interfaces.IWashingMachineService;
+import com.ftn.uns.ac.rs.smarthome.models.dtos.devices.*;
+import com.ftn.uns.ac.rs.smarthome.services.interfaces.*;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -39,20 +34,38 @@ public class DeviceController {
     private final IThermometerService thermometerService;
     private final IAirConditionerService airConditionerService;
     private final IWashingMachineService washingMachineService;
+    private final ISolarPanelSystemService solarPanelSystemService;
+    private final IBatteryService batteryService;
+    private final IChargerService chargerService;
+    private final ILampService lampService;
+    private final IGateService gateService;
+    private final ISprinklerSystemService sprinklerSystemService;
 
     public DeviceController(IDeviceService deviceService,
                             MessageSource messageSource,
                             IThermometerService thermometerService,
                             IAirConditionerService airConditionerService,
-                            IWashingMachineService washingMachineService) {
+                            IWashingMachineService washingMachineService,
+                            ISolarPanelSystemService solarPanelSystemService,
+                            IBatteryService batteryService,
+                            IChargerService chargerService,
+                            ILampService lampService,
+                            IGateService gateService,
+                            ISprinklerSystemService sprinklerSystemService) {
         this.deviceService = deviceService;
         this.messageSource = messageSource;
         this.thermometerService = thermometerService;
         this.airConditionerService = airConditionerService;
         this.washingMachineService = washingMachineService;
+        this.solarPanelSystemService = solarPanelSystemService;
+        this.batteryService = batteryService;
+        this.chargerService = chargerService;
+        this.lampService = lampService;
+        this.gateService = gateService;
+        this.sprinklerSystemService = sprinklerSystemService;
     }
 
-    @PostMapping(value = "/registerThermo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/registerThermometer", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> registerThermometer(@Valid @ModelAttribute ThermometerDTO thermometerDTO) {
         try {
             this.thermometerService.register(thermometerDTO);
@@ -64,7 +77,7 @@ public class DeviceController {
         }
     }
 
-    @PostMapping(value = "/registerAC", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/registerAirConditioner", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> registerAirConditioner(@Valid @ModelAttribute AirConditionerDTO airConditionerDTO) {
         try {
             this.airConditionerService.register(airConditionerDTO);
@@ -76,10 +89,82 @@ public class DeviceController {
         }
     }
 
-    @PostMapping(value = "/registerWM", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/registerWashingMachine", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> registerWashingMachine(@Valid @ModelAttribute WashingMachineDTO washingMachineDTO) {
         try {
             this.washingMachineService.register(washingMachineDTO);
+            return new ResponseEntity<>(messageSource.getMessage("device.registration.success", null, Locale.getDefault()), HttpStatus.OK);
+        } catch(ResponseStatusException ex) {
+            return new ResponseEntity<>(ex.getReason(), ex.getStatus());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PostMapping(value = "/registerSolarPanelSystem", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> registerSolarPanelSystem(@Valid @ModelAttribute SolarPanelSystemDTO solarPanelSystemDTO) {
+        try {
+            this.solarPanelSystemService.register(solarPanelSystemDTO);
+            return new ResponseEntity<>(messageSource.getMessage("device.registration.success", null, Locale.getDefault()), HttpStatus.OK);
+        } catch(ResponseStatusException ex) {
+            return new ResponseEntity<>(ex.getReason(), ex.getStatus());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PostMapping(value = "/registerBattery", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> registerBattery(@Valid @ModelAttribute BatteryDTO batteryDTO) {
+        try {
+            this.batteryService.register(batteryDTO);
+            return new ResponseEntity<>(messageSource.getMessage("device.registration.success", null, Locale.getDefault()), HttpStatus.OK);
+        } catch(ResponseStatusException ex) {
+            return new ResponseEntity<>(ex.getReason(), ex.getStatus());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PostMapping(value = "/registerCharger", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> registerCharger(@Valid @ModelAttribute ChargerDTO chargerDTO) {
+        try {
+            this.chargerService.register(chargerDTO);
+            return new ResponseEntity<>(messageSource.getMessage("device.registration.success", null, Locale.getDefault()), HttpStatus.OK);
+        } catch(ResponseStatusException ex) {
+            return new ResponseEntity<>(ex.getReason(), ex.getStatus());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PostMapping(value = "/registerLamp", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> registerLamp(@Valid @ModelAttribute DeviceDTO lampDTO) {
+        try {
+            this.lampService.register(lampDTO);
+            return new ResponseEntity<>(messageSource.getMessage("device.registration.success", null, Locale.getDefault()), HttpStatus.OK);
+        } catch(ResponseStatusException ex) {
+            return new ResponseEntity<>(ex.getReason(), ex.getStatus());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PostMapping(value = "/registerGate", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> registerGate(@Valid @ModelAttribute GateDTO gateDTO) {
+        try {
+            this.gateService.register(gateDTO);
+            return new ResponseEntity<>(messageSource.getMessage("device.registration.success", null, Locale.getDefault()), HttpStatus.OK);
+        } catch(ResponseStatusException ex) {
+            return new ResponseEntity<>(ex.getReason(), ex.getStatus());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PostMapping(value = "/registerSprinklerSystem", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> registerSprinklerSystem(@Valid @ModelAttribute SprinklerSystemDTO sprinklerSystemDTO) {
+        try {
+            this.sprinklerSystemService.register(sprinklerSystemDTO);
             return new ResponseEntity<>(messageSource.getMessage("device.registration.success", null, Locale.getDefault()), HttpStatus.OK);
         } catch(ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());

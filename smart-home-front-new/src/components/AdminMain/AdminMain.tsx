@@ -14,8 +14,12 @@ import {SideNav} from "../Sidenav/SideNav.tsx";
 import {UserService} from "../../services/UserService.ts";
 import {RoleEnum} from "../../models/enums/RoleEnum.ts";
 import {PropertyService} from "../../services/PropertyService";
+import React, {useEffect, useRef} from "react";
+import {Property} from "../../models/Property";
+import {useNavigate} from "react-router";
+import {PopupMessage} from "../PopupMessage/PopupMessage";
 
-interface AdminMainProps {
+/*interface AdminMainProps {
     userService: UserService,
 }
 function createData(
@@ -26,22 +30,102 @@ function createData(
     status: string,
 ) {
     return { address, city, size, floors, status };
-}
+}*/
 interface PropertyProps {
     userService: UserService,
     propertyService: PropertyService
 }
-const rows = [
-];
 
 export function AdminMain({userService, propertyService} : PropertyProps) {
-    const properties = propertyService.getAllPoperty().then()
-    properties.then(value => {
-        value.forEach(function (value){
-            console.log(value.address)
-            rows.push(createData(value.address, value.floors, value.size, value.city, "Unapproved"))
-        });
-    })
+    const navigate = useNavigate();
+    const [errorMessage, setErrorMessage] = React.useState<string>("");
+    const [errorPopupOpen, setErrorPopupOpen] = React.useState<boolean>(false);
+    const [isSuccess, setIsSuccess] = React.useState(true);
+    const shouldLoad = useRef(true);
+    const [properties, setProperty] = React.useState<Property[]>([]);
+
+    const handleErrorPopupClose = (reason?: string) => {
+        if (reason === 'clickaway') return;
+        setErrorPopupOpen(false);
+    };
+
+    const getUserProperties = async () => {
+        try {
+            const response = await propertyService.getAllUnapprovedProperty();
+            if (response.length > 0) {
+                setProperty(response);
+            }
+        } catch (err) {
+            setErrorMessage(err.response?.data || "An error occurred while fetching properties.");
+            setIsSuccess(false);
+            setErrorPopupOpen(true);
+        }
+    };
+    useEffect(() => {
+        const fetchUserProperties = async () => {
+            try {
+                await getUserProperties();
+                shouldLoad.current = false;
+            } catch (err) {
+                console.error("Error fetching properties:", err);
+            }
+        };
+
+        if (shouldLoad.current) {
+            fetchUserProperties();
+        }
+    }, [propertyService, getUserProperties]);
+
+    useEffect(() => {
+        if (sessionStorage.getItem("expiration") != null) {
+            setTimeout(() => {
+                setErrorMessage("Session expired. Please log in again.");
+                setIsSuccess(false);
+                setErrorPopupOpen(true);
+                setTimeout(() => navigate("/"), 5000);
+            }, Number(sessionStorage.getItem("expiration")) - Date.now())
+        } else {
+            navigate("/")
+        }
+    });
+
+    const approveProperty = async (propertyId: number) => {
+        try {
+            await propertyService.approveProperty(propertyId);
+            window.location.reload();
+            setErrorMessage("Property approved!");
+            setIsSuccess(true);
+            setErrorPopupOpen(true);
+        } catch (err) {
+            setErrorMessage(err.response?.data || "An error occurred while approving property.");
+            setIsSuccess(false);
+            setErrorPopupOpen(true);
+        }
+    };
+
+
+    const handleApprovedClick = (event: React.MouseEvent<HTMLElement>,propertyId: number) => {
+        approveProperty(propertyId);
+    };
+
+    const denyProperty = async (propertyId: number) => {
+        try {
+            await propertyService.denyProperty(propertyId);
+            window.location.reload();
+            setErrorMessage("Property denied!");
+            setIsSuccess(true);
+            setErrorPopupOpen(true);
+        } catch (err) {
+            setErrorMessage(err.response?.data || "An error occurred while denying property.");
+            setIsSuccess(false);
+            setErrorPopupOpen(true);
+        }
+    };
+
+    const handleDeniedClick = (event: React.MouseEvent<HTMLElement>,propertyId: number) => {
+        denyProperty(propertyId);
+    };
+
     return (
         <>
             <CssBaseline/>
@@ -69,9 +153,9 @@ export function AdminMain({userService, propertyService} : PropertyProps) {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {rows.map((row) => (
+                                {properties.map((row) => (
                                     <TableRow
-                                        key={row.address}
+                                        key={row.id}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
                                         <TableCell component="th" scope="row">
@@ -81,10 +165,12 @@ export function AdminMain({userService, propertyService} : PropertyProps) {
                                         <TableCell align="center">{row.size}</TableCell>
                                         <TableCell align="center">{row.floors}</TableCell>
                                         <TableCell align="center">
-                                            <Button variant="contained" color="primary" component="span">
+                                            <Button variant="contained" color="primary" component="span"
+                                                    onClick={(evt) => handleApprovedClick(evt, row.id)}>
                                             Approve
                                             </Button>
-                                            <Button variant="contained" color="secondary" component="span">
+                                            <Button variant="contained" color="secondary" component="span"
+                                                    onClick={(evt) => handleDeniedClick(evt, row.id)}>
                                                 Deny
                                             </Button>
                                         </TableCell>
@@ -95,6 +181,7 @@ export function AdminMain({userService, propertyService} : PropertyProps) {
                     </TableContainer>
                 </Grid>
             </Grid>
+            <PopupMessage message={errorMessage} isSuccess={isSuccess} handleClose={handleErrorPopupClose} open={errorPopupOpen}/>
         </>
     );
 }

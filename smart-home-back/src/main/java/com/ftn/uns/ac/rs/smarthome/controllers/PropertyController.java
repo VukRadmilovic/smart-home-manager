@@ -1,8 +1,6 @@
 package com.ftn.uns.ac.rs.smarthome.controllers;
 
 import com.ftn.uns.ac.rs.smarthome.models.dtos.PropertyDTO;
-import com.ftn.uns.ac.rs.smarthome.models.dtos.UserInfoRegister;
-import com.ftn.uns.ac.rs.smarthome.repositories.UserRepository;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IPropertyService;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IUserService;
 import org.springframework.context.MessageSource;
@@ -15,10 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.Locale;
 
 @CrossOrigin("http://localhost:5173/")
@@ -70,20 +64,30 @@ public class PropertyController {
         }
     }
 
-    @PutMapping(value = "/approve/{address}")
-    public ResponseEntity<?> approveProperty(@PathVariable String address){
+    @GetMapping(value = "/getAllUnapprovedProperty")
+    public ResponseEntity<?> getAllUnapprovedProperty(){
         try{
-            this.propertyService.approveProperty(address);
+            return new ResponseEntity<>(this.propertyService.getAllUnapprovedProperty(), HttpStatus.OK);
+        }
+        catch(ResponseStatusException ex) {
+            return new ResponseEntity<>(ex.getReason(), ex.getStatus());
+        }
+    }
+
+    @PutMapping(value = "/approve/{propertyId}")
+    public ResponseEntity<?> approveProperty(@PathVariable Integer propertyId){
+        try{
+            this.propertyService.approveProperty(propertyId);
             return new ResponseEntity<>(messageSource.getMessage("propertyApproved.success", null, Locale.getDefault()), HttpStatus.OK);
         }
         catch(ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());
         }
     }
-    @PutMapping(value = "/deny/{address}")
-    public ResponseEntity<?> denyProperty(@PathVariable String address){
+    @PutMapping(value = "/deny/{propertyId}")
+    public ResponseEntity<?> denyProperty(@PathVariable Integer propertyId){
         try{
-            this.propertyService.denyProperty(address);
+            this.propertyService.denyProperty(propertyId);
             return new ResponseEntity<>(messageSource.getMessage("propertyDeny.success", null, Locale.getDefault()), HttpStatus.OK);
         }
         catch(ResponseStatusException ex) {

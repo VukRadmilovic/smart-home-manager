@@ -1,8 +1,8 @@
 package com.ftn.uns.ac.rs.smarthomesimulator.models.devices;
 
-import com.ftn.uns.ac.rs.smarthomesimulator.models.PowerSource;
+import com.ftn.uns.ac.rs.smarthomesimulator.models.enums.PowerSource;
 import com.ftn.uns.ac.rs.smarthomesimulator.models.Property;
-import com.ftn.uns.ac.rs.smarthomesimulator.models.TemperatureUnit;
+import com.ftn.uns.ac.rs.smarthomesimulator.models.enums.TemperatureUnit;
 import lombok.*;
 
 import javax.persistence.*;
