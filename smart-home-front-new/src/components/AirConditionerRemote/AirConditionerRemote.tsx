@@ -23,6 +23,7 @@ import HdrAutoIcon from "@mui/icons-material/HdrAuto";
 import {LocalizationProvider, MobileTimePicker} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import CloseIcon from "@mui/icons-material/Close";
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Stomp, {Client, Message} from "stompjs";
 import SockJS from "sockjs-client";
 import {Dayjs} from "dayjs";
@@ -33,6 +34,8 @@ import {PopupMessage} from "../PopupMessage/PopupMessage.tsx";
 import {DeviceCapabilities} from "../../models/DeviceCapabilities.ts";
 import {CommandParams} from "../../models/CommandParams.ts";
 import {ACCommand} from "../../models/ACCommand.ts";
+import {DataGrid, GridColDef, GridValueGetterParams} from "@mui/x-data-grid";
+import {Scheduled} from "../../models/Scheduled.ts";
 
 interface AirConditionerRemoteProps {
     open: boolean,
@@ -88,6 +91,37 @@ interface Mark {
     label: string
 }
 
+function getFromDate(params: GridValueGetterParams) {
+    return `${new Date(params.row.from).toLocaleString()}`;
+}
+
+function getToDate(params: GridValueGetterParams) {
+    return `${new Date(params.row.to).toLocaleString()}`;
+}
+
+const columnsScheduled: GridColDef[] = [
+    { field: 'from',
+        headerName: 'From',
+        type:'Date',
+        width:190,
+        valueGetter: getFromDate,
+        align:'center',
+        headerAlign:'center',
+    },
+    { field: 'to',
+        headerName: 'To',
+        type:'Date',
+        width:190,
+        valueGetter: getToDate,
+        align:'center',
+        headerAlign:'center',
+    },
+    { field: 'everyDay',
+        headerName: 'Daily',
+        type:'boolean',
+        align:'center',
+        headerAlign:'center' }
+];
 export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} : AirConditionerRemoteProps)  {
 
     const [errorMessage, setErrorMessage] = React.useState<string>("");
@@ -114,6 +148,9 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
     const [tempMarks, setTempMarks] = React.useState<Mark[]>([]);
     const [fanSpeedMarks, setFanSpeedMarks] = React.useState<Mark[]>([]);
     const [deviceCapabilities, setDeviceCapabilities] = React.useState<DeviceCapabilities | null>(null);
+    const [seeScheduled, setSeeScheduled] = React.useState<boolean>(false);
+    const [schedules, setSchedules] = React.useState<Scheduled[]>([]);
+    const [checked, setChecked] = React.useState<number[]>([]);
     const defaultParams : CommandParams = {
         userId: -1,
         unit: 'C',
@@ -145,6 +182,30 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
         fungusPrevent: false
     }
 
+    const deleteChecked = () => {
+        checked.forEach((id) => {
+            const command : ACCommand = {
+                deviceId: deviceId,
+                commandType: CommandType.CANCEL_SCHEDULED,
+                commandParams: {
+                    userId: +sessionStorage.getItem("id")!,
+                    unit: '',
+                    target: -1,
+                    fanSpeed: -1,
+                    currentTemp: -1,
+                    health: false,
+                    fungus: false,
+                    mode: ACMode.HEAT,
+                    everyDay: false,
+                    from: 0,
+                    to: 0,
+                    taskId: +id
+                }
+            }
+            client.current!.send("/app/command/ac", {}, JSON.stringify(command));
+        });
+    }
+
     const close = () => {
         setCurrentState(emptyState);
         setCurrentStatus("Offline");
@@ -155,6 +216,10 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
         setFanSpeed(1);
         setMode("");
         handleClose();
+    }
+
+    const back = () => {
+        setSeeScheduled(false);
     }
     const [currentState, setCurrentState] = React.useState<ACValueDigest>(emptyState);
     const handleMode = (
@@ -212,6 +277,7 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
                     client.current!.subscribe('/ac/freshest/' + deviceId, onMessageReceived);
                     client.current!.subscribe("/ac/status/" + deviceId, onStatusReceived);
                     client.current!.send("/app/capabilities/ac", {}, deviceId.toString());
+                    client.current!.subscribe("/ac/schedules/" + deviceId,onSchedulesReceived);
                     client.current!.subscribe("/ac/capabilities/" + deviceId,onCapabilitiesReceived);
                 },
                 () => {
@@ -225,6 +291,35 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
         }
     };
 
+    const onSchedulesReceived = (payload : Message) => {
+        const schedules : Scheduled[] = JSON.parse(payload.body);
+        setSchedules(schedules);
+    }
+
+    const getSchedules = () => {
+        setSeeScheduled(true);
+        const params : CommandParams = {
+            userId: +sessionStorage.getItem("id")!,
+            unit: '',
+            target: -1,
+            fanSpeed: -1,
+            health: false,
+            currentTemp: -1,
+            fungus: false,
+            mode: ACMode.AUTO,
+            everyDay: false,
+            from: 0,
+            to: 0,
+            taskId: 0
+        }
+
+        const command : ACCommand = {
+            deviceId: deviceId,
+            commandType: CommandType.GET_SCHEDULES,
+            commandParams: params
+        }
+        client.current!.send("/app/command/ac", {}, JSON.stringify(command));
+    }
     const onStatusReceived = (payload : Message) => {
         lastStatusReceived.current = new Date().getTime();
         setInterval(() => {
@@ -392,161 +487,191 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
             onClose={handleClose}>
             <DialogTitle textAlign={'center'}>Remote</DialogTitle>
             <DialogContent>
+                {!seeScheduled ?
                 <Grid container rowSpacing={3}>
-                    <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} mt={2}>
-                        <Grid item container xs={12} sm={12} md={6} lg={6} xl={6}>
-                            <Typography variant={"body1"} display={'inline'}>Current Status:&nbsp;</Typography>
-                            <Typography color={currentStatusColor} display={'inline'}><b> {currentStatus}</b></Typography>
+                        <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} mt={2}>
+                            <Grid item container xs={12} sm={12} md={6} lg={6} xl={6}>
+                                <Typography variant={"body1"} display={'inline'}>Current Status:&nbsp;</Typography>
+                                <Typography color={currentStatusColor} display={'inline'}><b> {currentStatus}</b></Typography>
+                            </Grid>
+                            <Grid item container xs={12} sm={12} md={6} lg={6} xl={6} justifyContent={'right'}>
+                                <Typography variant={"body1"}>Current Temperature: <b>{currentState.currentTemp == -1? "-" : Math.floor(currentState.currentTemp)}°{currentState.unit}</b></Typography>
+                            </Grid>
                         </Grid>
-                        <Grid item container xs={12} sm={12} md={6} lg={6} xl={6} justifyContent={'right'}>
-                            <Typography variant={"body1"}>Current Temperature: <b>{currentState.currentTemp == -1? "-" : Math.floor(currentState.currentTemp)}°{currentState.unit}</b></Typography>
-                        </Grid>
-                    </Grid>
-                    <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} alignItems={'center'}>
-                        <Grid item xs={12} sm={12} md={12} lg={12} xl={4}>
-                            <Typography variant={"body1"} display={'inline'}>Set Temperature:</Typography>
-                        </Grid>
-                        <Grid item xs={12} sm={12} md={12} lg={12} xl={8}>
-                            <Slider
-                                sx={{margin:'0'}}
-                                value={targetTemp}
-                                disabled={disableForm}
-                                onChange={handleTempChange}
-                                aria-label="Temperature"
-                                valueLabelDisplay="on"
-                                step={1}
-                                marks={tempMarks}
-                                min={deviceCapabilities == null ? 14 : +deviceCapabilities?.capabilities.get("minTemperature")!}
-                                max={deviceCapabilities == null ? 38 : +deviceCapabilities?.capabilities.get("maxTemperature")!}/>
-                        </Grid>
-                    </Grid>
-                    <Grid container item xs={12} sm={12} md={12} lg={12} xl={12}
-                          mt={3}
-                          columnSpacing={1} alignItems={'center'}>
-                        <Grid item xs={12} sm={12} md={12} lg={12} xl={4}>
-                            <Typography variant={"body1"} display={'inline'}>Fan Speed:</Typography>
-                        </Grid>
-                        <Grid item xs={12} sm={12} md={12} lg={12} xl={8}>
-                            <Slider
-                                aria-label="Fan Speed"
-                                value={fanSpeed}
-                                disabled={fanSpeedDisable || disableForm}
-                                onChange={handleFanSpeedChange}
-                                valueLabelDisplay="on"
-                                sx={{margin:'0'}}
-                                step={1}
-                                marks={fanSpeedMarks}
-                                min={1}
-                                max={deviceCapabilities == null ? 1 : +deviceCapabilities?.capabilities.get("fanSpeed")!}/>
-                        </Grid>
-                    </Grid>
-
-                    <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} alignItems={'center'}>
-                        <Grid item xs={12} sm={12} md={12} lg={12} xl={3}>
-                            <Typography variant={"body1"} display={'inline'}>Set Mode:</Typography>
-                        </Grid>
-                        <Grid item xs={12} sm={12} md={12} lg={12} xl={9}>
-                            <ToggleButtonGroup
-                                color="primary"
-                                value={mode}
-                                disabled={disableForm}
-                                exclusive
-                                onChange={handleMode}
-                                aria-label="mode">
-                                <ToggleButton value="HEAT" aria-label="heat"
-                                              disabled={deviceCapabilities == null ? true : deviceCapabilities?.capabilities.get("heating"!) != "true"}
-                                              selected={mode == "HEAT"}>
-                                    <LightModeIcon/> Heat
-                                </ToggleButton>
-                                <ToggleButton value="COOL" aria-label="cool"
-                                              disabled={deviceCapabilities == null ? true : deviceCapabilities?.capabilities.get("cooling"!) != "true"}
-                                              selected={mode == "COOL"}>
-                                    <AcUnitIcon/> Cool
-                                </ToggleButton>
-                                <ToggleButton value="DRY" aria-label="dry"
-                                              disabled={deviceCapabilities == null ? true : deviceCapabilities?.capabilities.get("dry"!) != "true"}
-                                              selected={mode == "DRY"}>
-                                    <AirIcon/> Vent
-                                </ToggleButton>
-                                <ToggleButton value="AUTO" aria-label="auto"
-                                              disabled={deviceCapabilities == null ? true : deviceCapabilities?.capabilities.get("auto"!) != "true"}
-                                              selected={mode == "AUTO"}>
-                                    <HdrAutoIcon/> Auto
-                                </ToggleButton>
-                            </ToggleButtonGroup>
-                        </Grid>
-                    </Grid>
-                    <Grid container item xs={12} sm={12} md={12} lg={12} xl={12}
-                          columnSpacing={1} alignItems={'center'} justifyContent={'center'} columnGap={3}>
-                        <FormControlLabel control={<Checkbox
-                            checked={healthChecked}
-                            disabled={disableForm || deviceCapabilities == null ? true : deviceCapabilities?.capabilities.get("health"!) != "true"}
-                            onChange={handleHealthChange}
-                        />} label="Health/Ionizing Air" />
-                        <FormControlLabel control={<Checkbox
-                            disabled={disableForm || deviceCapabilities == null ? true : deviceCapabilities?.capabilities.get("fungusPrevention"!) != "true"}
-                            checked={fungusChecked}
-                            onChange={handleFungusChange}
-                        />} label="Fungus Prevention" />
-                    </Grid>
-                    <Grid container item xs={12} sm={12} md={12} lg={12} xl={12}
-                          alignItems={'center'}
-                          justifyContent={'center'}>
-                        <Grid item xs={12} sm={12} md={12} lg={12} xl={3}>
-                            <Stack direction="row" spacing={1} alignItems="center">
-                                <Typography>Off</Typography>
-                                <AntSwitch checked={isOn} disabled={disableForm} onChange={handleSwitchChange}/>
-                                <Typography>On</Typography>
-                            </Stack>
-                        </Grid>
-                        <Grid item xs={12} sm={12} md={12} lg={12} xl={3} ml={5}>
-                            <Button color={'secondary'}
+                        <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} alignItems={'center'}>
+                            <Grid item xs={12} sm={12} md={12} lg={12} xl={4}>
+                                <Typography variant={"body1"} display={'inline'}>Set Temperature:</Typography>
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={12} lg={12} xl={8}>
+                                <Slider
+                                    sx={{margin:'0'}}
+                                    value={targetTemp}
                                     disabled={disableForm}
-                                    variant={'contained'}
-                                    onClick={sendCommand}>Send</Button>
+                                    onChange={handleTempChange}
+                                    aria-label="Temperature"
+                                    valueLabelDisplay="on"
+                                    step={1}
+                                    marks={tempMarks}
+                                    min={deviceCapabilities == null ? 14 : +deviceCapabilities?.capabilities.get("minTemperature")!}
+                                    max={deviceCapabilities == null ? 38 : +deviceCapabilities?.capabilities.get("maxTemperature")!}/>
+                            </Grid>
                         </Grid>
-                    </Grid>
-                    <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} alignItems={'center'}
-                    columnSpacing={2}>
-                        <Grid item xs={12} sm={12} md={12} lg={12} xl={3}>
-                            <FormControlLabel control={<Checkbox
-                                checked={scheduledChecked}
-                                disabled={disableForm}
-                                onChange={handleScheduleCheckedChange}
-                            />} label="Scheduled" />
+                        <Grid container item xs={12} sm={12} md={12} lg={12} xl={12}
+                              mt={3}
+                              columnSpacing={1} alignItems={'center'}>
+                            <Grid item xs={12} sm={12} md={12} lg={12} xl={4}>
+                                <Typography variant={"body1"} display={'inline'}>Fan Speed:</Typography>
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={12} lg={12} xl={8}>
+                                <Slider
+                                    aria-label="Fan Speed"
+                                    value={fanSpeed}
+                                    disabled={fanSpeedDisable || disableForm}
+                                    onChange={handleFanSpeedChange}
+                                    valueLabelDisplay="on"
+                                    sx={{margin:'0'}}
+                                    step={1}
+                                    marks={fanSpeedMarks}
+                                    min={1}
+                                    max={deviceCapabilities == null ? 1 : +deviceCapabilities?.capabilities.get("fanSpeed")!}/>
+                            </Grid>
                         </Grid>
-                        <Grid item xs={12} sm={12} md={12} lg={5} xl={4} mr={3}>
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <MobileTimePicker  label={'From'}
-                                                   value={from}
-                                                   onChange={(newValue) => setFrom(newValue)}
-                                                   disabled={!scheduledChecked || disableForm}/>
-                            </LocalizationProvider>
-                        </Grid>
-                        <Grid item xs={12} sm={12} md={12} lg={5} xl={4}>
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <MobileTimePicker   label={'To'}
-                                                    value={to}
-                                                    onChange={(newValue) => setTo(newValue)}
-                                                    disabled={!scheduledChecked || disableForm}/>
-                            </LocalizationProvider>
-                        </Grid>
-                    </Grid>
-                    <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} justifyContent={'center'}>
-                        <FormControlLabel control={<Checkbox
-                            disabled={!scheduledChecked || disableForm}
-                            checked={repeatChecked}
-                            onChange={handleRepeatCheckedChange}
-                        />} label="Repeat Daily" />
-                    </Grid>
-                    <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} mb={1}  justifyContent={'center'}>
-                        <Button variant={'contained'}
-                                onClick={schedule}
-                                disabled={!scheduledChecked || disableForm}
-                                color={'primary'}>Schedule Cycle</Button>
-                    </Grid>
 
+                        <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} alignItems={'center'}>
+                            <Grid item xs={12} sm={12} md={12} lg={12} xl={3}>
+                                <Typography variant={"body1"} display={'inline'}>Set Mode:</Typography>
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={12} lg={12} xl={9}>
+                                <ToggleButtonGroup
+                                    color="primary"
+                                    value={mode}
+                                    disabled={disableForm}
+                                    exclusive
+                                    onChange={handleMode}
+                                    aria-label="mode">
+                                    <ToggleButton value="HEAT" aria-label="heat"
+                                                  disabled={deviceCapabilities == null ? true : deviceCapabilities?.capabilities.get("heating"!) != "true"}
+                                                  selected={mode == "HEAT"}>
+                                        <LightModeIcon/> Heat
+                                    </ToggleButton>
+                                    <ToggleButton value="COOL" aria-label="cool"
+                                                  disabled={deviceCapabilities == null ? true : deviceCapabilities?.capabilities.get("cooling"!) != "true"}
+                                                  selected={mode == "COOL"}>
+                                        <AcUnitIcon/> Cool
+                                    </ToggleButton>
+                                    <ToggleButton value="DRY" aria-label="dry"
+                                                  disabled={deviceCapabilities == null ? true : deviceCapabilities?.capabilities.get("dry"!) != "true"}
+                                                  selected={mode == "DRY"}>
+                                        <AirIcon/> Vent
+                                    </ToggleButton>
+                                    <ToggleButton value="AUTO" aria-label="auto"
+                                                  disabled={deviceCapabilities == null ? true : deviceCapabilities?.capabilities.get("auto"!) != "true"}
+                                                  selected={mode == "AUTO"}>
+                                        <HdrAutoIcon/> Auto
+                                    </ToggleButton>
+                                </ToggleButtonGroup>
+                            </Grid>
+                        </Grid>
+                        <Grid container item xs={12} sm={12} md={12} lg={12} xl={12}
+                              columnSpacing={1} alignItems={'center'} justifyContent={'center'} columnGap={3}>
+                            <FormControlLabel control={<Checkbox
+                                checked={healthChecked}
+                                disabled={disableForm || deviceCapabilities == null ? true : deviceCapabilities?.capabilities.get("health"!) != "true"}
+                                onChange={handleHealthChange}
+                            />} label="Health/Ionizing Air" />
+                            <FormControlLabel control={<Checkbox
+                                disabled={disableForm || deviceCapabilities == null ? true : deviceCapabilities?.capabilities.get("fungusPrevention"!) != "true"}
+                                checked={fungusChecked}
+                                onChange={handleFungusChange}
+                            />} label="Fungus Prevention" />
+                        </Grid>
+                        <Grid container item xs={12} sm={12} md={12} lg={12} xl={12}
+                              alignItems={'center'}
+                              justifyContent={'center'}>
+                            <Grid item xs={12} sm={12} md={12} lg={12} xl={3}>
+                                <Stack direction="row" spacing={1} alignItems="center">
+                                    <Typography>Off</Typography>
+                                    <AntSwitch checked={isOn} disabled={disableForm} onChange={handleSwitchChange}/>
+                                    <Typography>On</Typography>
+                                </Stack>
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={12} lg={12} xl={3} ml={5}>
+                                <Button color={'secondary'}
+                                        disabled={disableForm}
+                                        variant={'contained'}
+                                        onClick={sendCommand}>Send</Button>
+                            </Grid>
+                        </Grid>
+                        <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} alignItems={'center'}
+                        columnSpacing={2}>
+                            <Grid item xs={12} sm={12} md={12} lg={12} xl={3}>
+                                <FormControlLabel control={<Checkbox
+                                    checked={scheduledChecked}
+                                    disabled={disableForm}
+                                    onChange={handleScheduleCheckedChange}
+                                />} label="Scheduled" />
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={12} lg={5} xl={4} mr={3}>
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <MobileTimePicker  label={'From'}
+                                                       value={from}
+                                                       onChange={(newValue) => setFrom(newValue)}
+                                                       disabled={!scheduledChecked || disableForm}/>
+                                </LocalizationProvider>
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={12} lg={5} xl={4}>
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <MobileTimePicker   label={'To'}
+                                                        value={to}
+                                                        onChange={(newValue) => setTo(newValue)}
+                                                        disabled={!scheduledChecked || disableForm}/>
+                                </LocalizationProvider>
+                            </Grid>
+                        </Grid>
+                        <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} justifyContent={'center'}>
+                            <FormControlLabel control={<Checkbox
+                                disabled={!scheduledChecked || disableForm}
+                                checked={repeatChecked}
+                                onChange={handleRepeatCheckedChange}
+                            />} label="Repeat Daily" />
+                        </Grid>
+                        <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} mb={1}  justifyContent={'center'}>
+                            <Button variant={'contained'}
+                                    onClick={schedule}
+                                    disabled={!scheduledChecked || disableForm}
+                                    color={'primary'}>Schedule Cycle</Button>
+                        </Grid>
+                        <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} mb={1}  justifyContent={'center'}>
+                            <Button variant="text"
+                                    sx={{color:'blue'}}
+                                    onClick={getSchedules}>See Schedules</Button>
+                        </Grid>
                 </Grid>
+                    :
+                <Grid rowSpacing={3} height={600} justifyContent={'center'}>
+                    <IconButton aria-label="back" sx={{position:'absolute',top:'2px',left:'3px'}} onClick={back}>
+                        <ChevronLeftIcon />
+                    </IconButton>
+                    <DataGrid
+                        sx={{height:500}}
+                        rows={schedules}
+                        disableColumnMenu={true}
+                        getRowId={(val) => val.id}
+                        columns={columnsScheduled}
+                        hideFooterPagination={true}
+                        onRowSelectionModelChange={(model) => {
+                            console.log(model);
+                            setChecked(model as [])}}
+                        checkboxSelection
+                    />
+                    <Grid item container xs={12} sm={12} md={12} lg={12} xl={12} justifyContent={'center'}>
+                    <Button variant={'contained'}
+                            onClick={deleteChecked}
+                            sx={{marginTop:'1em'}}
+                            color={'primary'}>Delete Selected</Button>
+                    </Grid>
+                </Grid>
+            }
             <IconButton aria-label="close" sx={{position:'absolute',top:'2px',right:'3px'}} onClick={close}>
                 <CloseIcon />
             </IconButton>
