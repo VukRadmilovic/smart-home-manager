@@ -22,13 +22,9 @@ public class DeviceThreadManager {
     private final Set<Integer> nonSimulatedDevices = ConcurrentHashMap.newKeySet();
 
     private final MqttService mqttService;
-    private final IDeviceService deviceService;
 
-
-    public DeviceThreadManager(MqttService mqttService,
-                               IDeviceService deviceService) {
+    public DeviceThreadManager(MqttService mqttService) {
         this.mqttService = mqttService;
-        this.deviceService = deviceService;
     }
 
     public void addDeviceThread(Device device, Command command) {
@@ -46,7 +42,7 @@ public class DeviceThreadManager {
             case "SolarPanelSystem":
                 SolarPanelSystem system = (SolarPanelSystem) device;
                 addDeviceThreadInternal(device.getId(),
-                        new SolarPanelSystemThread(TemperatureUnit.CELSIUS, mqttService, device.getId()).getNewSimulatorThread());
+                        new SolarPanelSystemThread(system).getNewSimulatorThread());
             default:
                 break;
         }

@@ -11,6 +11,7 @@ import org.eclipse.paho.mqttv5.client.MqttDisconnectResponse;
 import org.eclipse.paho.mqttv5.common.MqttException;
 import org.eclipse.paho.mqttv5.common.MqttMessage;
 import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
+import org.slf4j.Logger;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ import java.util.Map;
 
 @Service
 public class MqttMessageCallback implements MqttCallback {
+    private Logger log = org.slf4j.LoggerFactory.getLogger(MqttMessageCallback.class);
 
     private final SimpMessagingTemplate messagingTemplate;
     private final ObjectMapper jsonMapper = new ObjectMapper();
@@ -60,6 +62,12 @@ public class MqttMessageCallback implements MqttCallback {
         else if(topic.contains("status/ac")) {
             String[] data = message.split(",");
             messagingTemplate.convertAndSend("/ac/status/" + data[1],data[0]);
+            log.info("AC status changed to: " + data[0] + " for device: " + data[1]);
+        }
+        else if(topic.contains("status/sps")) {
+            String[] data = message.split(",");
+            messagingTemplate.convertAndSend("/sps/status/" + data[1],data[0]);
+            log.info("SPS status changed to: " + data[0] + " for device: " + data[1]);
         }
         else {
 

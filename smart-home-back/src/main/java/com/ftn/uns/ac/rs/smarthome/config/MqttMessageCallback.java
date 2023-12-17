@@ -1,6 +1,7 @@
 package com.ftn.uns.ac.rs.smarthome.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ftn.uns.ac.rs.smarthome.PowerManager;
 import com.ftn.uns.ac.rs.smarthome.StillThereDevicesManager;
 import com.ftn.uns.ac.rs.smarthome.models.ACStateChange;
 import com.ftn.uns.ac.rs.smarthome.services.InfluxService;
@@ -24,14 +25,17 @@ public class MqttMessageCallback implements MqttCallback {
     private final InfluxService influxService;
     private final IDeviceService deviceService;
     private final StillThereDevicesManager stillThereDevicesManager;
+    private final PowerManager powerManager;
     private final ObjectMapper jsonMapper = new ObjectMapper();
 
     public MqttMessageCallback(InfluxService influxService,
                                IDeviceService deviceService,
-                               StillThereDevicesManager stillThereDevicesManager) {
+                               StillThereDevicesManager stillThereDevicesManager,
+                               PowerManager powerManager) {
         this.influxService = influxService;
         this.deviceService = deviceService;
         this.stillThereDevicesManager = stillThereDevicesManager;
+        this.powerManager = powerManager;
     }
 
     @Override
@@ -52,7 +56,7 @@ public class MqttMessageCallback implements MqttCallback {
 
     @Override public void messageArrived(String topic, MqttMessage mqttMessage) {
         String message = new String(mqttMessage.getPayload());
-        if(topic.contains("states")) {
+        if (topic.contains("states")) {
             try {
                 Map<String,String> map = new HashMap<>();
                 ACStateChange stateChange = jsonMapper.readValue(message, ACStateChange.class);
@@ -65,8 +69,7 @@ public class MqttMessageCallback implements MqttCallback {
             catch (Exception ex) {
                 System.out.println(ex.getMessage());
             }
-        }
-        else {
+        } else {
 
             String[] data = message.split(",");
             String measurementObject = data[0];
@@ -83,6 +86,10 @@ public class MqttMessageCallback implements MqttCallback {
                     stillThereDevicesManager.isntThere(deviceId)) {
                 deviceService.setDeviceStillThere(deviceId);
                 stillThereDevicesManager.add(deviceId);
+            }
+
+            if (measurementObject.equals("produced")) {
+                powerManager.addProduction(value);
             }
         }
     }

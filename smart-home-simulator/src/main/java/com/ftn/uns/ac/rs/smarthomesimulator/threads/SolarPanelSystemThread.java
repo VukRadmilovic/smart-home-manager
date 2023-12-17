@@ -1,159 +1,126 @@
 package com.ftn.uns.ac.rs.smarthomesimulator.threads;
 
+import com.ftn.uns.ac.rs.smarthomesimulator.config.MqttConfiguration;
+import com.ftn.uns.ac.rs.smarthomesimulator.models.ACCommand;
+import com.ftn.uns.ac.rs.smarthomesimulator.models.ACStateChange;
 import com.ftn.uns.ac.rs.smarthomesimulator.models.devices.SolarPanelSystem;
-import com.ftn.uns.ac.rs.smarthomesimulator.models.enums.TemperatureUnit;
+import com.ftn.uns.ac.rs.smarthomesimulator.models.enums.ACState;
+import com.ftn.uns.ac.rs.smarthomesimulator.models.enums.CommandType;
 import com.ftn.uns.ac.rs.smarthomesimulator.services.MqttService;
+import com.ftn.uns.ac.rs.smarthomesimulator.services.ThreadMqttService;
+import org.eclipse.paho.mqttv5.client.IMqttToken;
+import org.eclipse.paho.mqttv5.client.MqttCallback;
+import org.eclipse.paho.mqttv5.client.MqttDisconnectResponse;
 import org.eclipse.paho.mqttv5.common.MqttException;
+import org.eclipse.paho.mqttv5.common.MqttMessage;
+import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class SolarPanelSystemThread implements Runnable {
-
-    private final TemperatureUnit unit;
-    private final MqttService mqttService;
+    private static final Logger logger = LoggerFactory.getLogger(SolarPanelSystemThread.class);
     private final Integer deviceId;
+    private final SolarPanelSystem system;
+    private MqttConfiguration mqttConfiguration;
+    private ThreadMqttService mqttService;
+    private boolean isOff = true;
     private int count = 1;
 
-    public SolarPanelSystemThread(TemperatureUnit unit,
-                                  MqttService mqttService,
-                                  Integer deviceId) {
-        this.unit = unit;
-        this.mqttService = mqttService;
-        this.deviceId = deviceId;
+    private class MqttSPSMessageCallback implements MqttCallback {
+        @Override
+        public void disconnected(MqttDisconnectResponse mqttDisconnectResponse) {}
+
+        @Override
+        public void mqttErrorOccurred(MqttException e) {System.err.println(e.getMessage());}
+
+        @Override
+        public void messageArrived(String s, MqttMessage mqttMessage) {
+            try {
+                String message = new String(mqttMessage.getPayload());
+            } catch(Exception ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
+
+        @Override
+        public void deliveryComplete(IMqttToken iMqttToken) {}
+
+        @Override
+        public void connectComplete(boolean b, String s) {}
+
+        @Override
+        public void authPacketArrived(int i, MqttProperties mqttProperties) {}
+    }
+
+    public SolarPanelSystemThread(SolarPanelSystem system) {
+        try {
+            this.mqttConfiguration = new MqttConfiguration(new MqttSPSMessageCallback());
+            this.mqttService = new ThreadMqttService(this.mqttConfiguration);
+        } catch (Exception e) {
+            logger.error("Error while creating mqtt configuration: " + e.getMessage());
+        }
+        this.system = system;
+        this.deviceId = system.getId();
     }
 
     @Override
     public void run() {
         try {
-            generateValues();
+            mqttConfiguration.getClient().subscribe("commands/sps/" + system.getId(), 2);
+            generatePower();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            System.err.println("Simulator thread interrupted");
+            logger.error("Thread interrupted: " + e.getMessage());
+        } catch (MqttException ex) {
+            logger.error("Error while subscribing to topic: " + "commands/sps/" + system.getId());
         }
     }
 
-    public void generateValues() throws InterruptedException {
-        String[] seasons = {
-                "WIN", "WIN", "SPR", "SPR", "SPR", "SUM",
-                "SUM", "SUM", "FAL", "FAL", "FAL", "WIN"
-        };
-        //WIN,SPR,SUM,FAL
-        int[][] dayStartEnd = new int[][]{{8, 17}, {7, 19}, {6, 20}, {7, 17}};
-
-        //WIN,SPR,SUM,FAL {day,night}
-        int[][][] typicalDayNightTemps = new int[][][]{{{0, 10}, {-5, 0}}, {{15, 25}, {5, 15}},
-                {{25, 35}, {15, 25}}, {{15, 25}, {5, 15}}};
-
-        int interval = 5;
-        int[][] typicalDayNightHumidity = new int[][]{{40, 50}, {35, 40}, {30, 35}, {35, 50}};
-        double tempValue, humValue;
+    public void generatePower() throws InterruptedException {
         while (true) {
-            int[] currentDayStartEnd;
-            int[][] currentTypicalDayNightTemps;
-            int[] currentTypicalDayNightHumidity;
-            int correctIndex;
-            LocalDateTime now = LocalDateTime.now();
-            String season = seasons[now.getMonthValue() - 1];
-            correctIndex = switch (season) {
-                case "WIN" -> 0;
-                case "SPR" -> 1;
-                case "SUM" -> 2;
-                default -> 3;
-            };
-            currentDayStartEnd = dayStartEnd[correctIndex];
-            currentTypicalDayNightTemps = typicalDayNightTemps[correctIndex];
-            currentTypicalDayNightHumidity = typicalDayNightHumidity[correctIndex];
-            if(now.getHour() >= currentDayStartEnd[0] && now.getHour() < currentDayStartEnd[1]) {
-                int wholeSectionDuration = Math.abs(currentDayStartEnd[0] - currentDayStartEnd[1]);
-                int multiplier = Math.abs(now.getHour() - currentDayStartEnd[0]);
-                double hourAllowedTempDifference = (double) Math.abs(currentTypicalDayNightTemps[0][0] - currentTypicalDayNightTemps[0][1]) / (double) wholeSectionDuration;
-                double hourAllowedHumDifference = (double) Math.abs(currentTypicalDayNightHumidity[0] - currentTypicalDayNightHumidity[1]) / (double) wholeSectionDuration;
-                int halfDay = Math.abs(currentDayStartEnd[1] - currentDayStartEnd[0]) / 2;
-                int multiplierHum = multiplier;
-                if(now.getHour() >= halfDay) {
-                    multiplier = multiplier % halfDay;
-                }
-
-                double maxTemp = hourAllowedTempDifference * multiplier + hourAllowedTempDifference;
-                double minTemp = hourAllowedTempDifference * multiplier;
-                double maxHum = hourAllowedHumDifference * multiplierHum + hourAllowedHumDifference;
-                double minHum = hourAllowedHumDifference * multiplierHum;
-                if(now.getHour() <= halfDay) {
-                    tempValue = currentTypicalDayNightTemps[0][0] + (minTemp + Math.random() * (maxTemp - minTemp));
-                }
-                else {
-                    tempValue = currentTypicalDayNightTemps[0][1] - (minTemp + Math.random() * (maxTemp - minTemp));
-                }
-                humValue = currentTypicalDayNightHumidity[1] - (minHum + Math.random() * (maxHum - minHum));
-                sendAndDisplayMeasurements(tempValue, humValue);
-            }
-            else {
-                int wholeSectionDuration = 24 - Math.abs(currentDayStartEnd[1] - currentDayStartEnd[0]);
-                int divisor = 24 - currentDayStartEnd[1] + now.getHour();
-                double hourAllowedTempDifference = (double) Math.abs(currentTypicalDayNightTemps[1][0] - currentTypicalDayNightTemps[1][1]) / (double) wholeSectionDuration;
-                double hourAllowedHumDifference = (double) Math.abs(currentTypicalDayNightHumidity[0] - currentTypicalDayNightHumidity[1]) / (double) wholeSectionDuration;
-                int halfNight = wholeSectionDuration / 2;
-                int multiplier;
-                boolean hasPassedHalf = false;
-                if(divisor < 24) {
-                    multiplier =  divisor;
-                }
-                else {
-                    multiplier = divisor % 24;
-                }
-                int multiplierHum = multiplier;
-                if(multiplier >= halfNight) {
-                    hasPassedHalf = true;
-                    multiplier = multiplier % halfNight;
-                }
-                double maxTemp = hourAllowedTempDifference * multiplier + hourAllowedTempDifference;
-                double minTemp = hourAllowedTempDifference * multiplier;
-                double maxHum = hourAllowedHumDifference * multiplierHum + hourAllowedHumDifference;
-                double minHum = hourAllowedHumDifference * multiplierHum;
-                if(!hasPassedHalf) {
-                    tempValue = currentTypicalDayNightTemps[1][1] - (minTemp + Math.random() * (maxTemp - minTemp));
-                }
-                else {
-                    tempValue = currentTypicalDayNightTemps[1][0] + (minTemp + Math.random() * (maxTemp - minTemp));
-                }
-                humValue = currentTypicalDayNightHumidity[0] + (minHum + Math.random() * (maxHum - minHum));
-                sendAndDisplayMeasurements(tempValue, humValue);
-            }
-
-            Thread.sleep(interval * 1000);
+            sendInternalState();
+            sendAndDisplayPower(system.getNumberOfPanels() * system.getPanelSize() * system.getPanelEfficiency());
+            Thread.sleep(5 * 1000);
         }
     }
 
-    private void sendAndDisplayMeasurements(double temp, double humidity) {
+    public void sendInternalState() {
+        try {
+            String status = isOff? "OFF" : "ON";
+            String message = status + "," + deviceId;
+            mqttService.publishOnOff(message, "sps");
+            logger.info("Sending message: " + message);
+        } catch(Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    private void sendAndDisplayPower(double kWProduced) {
         DecimalFormat df = new DecimalFormat("#.###", new DecimalFormatSymbols(Locale.ENGLISH));
         df.setRoundingMode(RoundingMode.CEILING);
-        String msgHumidity = "humidity," + df.format(humidity) + "%," + deviceId;
-        String msgTemp = "temperature," + df.format(temp) + "C," + deviceId;
+        String msg = "produced," + df.format(kWProduced) + "p," + deviceId;
 
-        if (unit == TemperatureUnit.FAHRENHEIT) {
-            temp =  temp * 1.8 + 32;
-            msgTemp = "temperature," + df.format(temp) + "F," + deviceId;
-        }
-
-        System.out.println(msgTemp + "\n" + msgHumidity);
+        logger.info("Sending message: " + msg);
 
         try {
-            this.mqttService.publishMessageLite(msgTemp,"measurements");
-            this.mqttService.publishMessageLite(msgHumidity,"measurements");
+            this.mqttService.publishMessageLite(msg,"measurements");
 
             if (count % 2 == 0) {
                 count = 1;
-                System.out.println("Sending status message");
+                logger.info("Sending status message");
                 this.mqttService.publishStatusMessageLite("status,1T," + deviceId);
             } else {
                 count++;
             }
         } catch (MqttException e) {
-            System.out.println("Error publishing message");
+            logger.error("Error while sending message: " + msg);
         }
     }
 
