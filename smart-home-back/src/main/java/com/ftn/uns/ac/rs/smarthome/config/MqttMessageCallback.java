@@ -1,6 +1,7 @@
 package com.ftn.uns.ac.rs.smarthome.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ftn.uns.ac.rs.smarthome.PowerManager;
 import com.ftn.uns.ac.rs.smarthome.StillThereDevicesManager;
 import com.ftn.uns.ac.rs.smarthome.models.ACStateChange;
 import com.ftn.uns.ac.rs.smarthome.services.InfluxService;
@@ -11,6 +12,7 @@ import org.eclipse.paho.mqttv5.client.MqttDisconnectResponse;
 import org.eclipse.paho.mqttv5.common.MqttException;
 import org.eclipse.paho.mqttv5.common.MqttMessage;
 import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -20,18 +22,21 @@ import java.util.Map;
 
 @Service
 public class MqttMessageCallback implements MqttCallback {
-
+    private Logger log = org.slf4j.LoggerFactory.getLogger(MqttMessageCallback.class);
     private final InfluxService influxService;
     private final IDeviceService deviceService;
     private final StillThereDevicesManager stillThereDevicesManager;
+    private final PowerManager powerManager;
     private final ObjectMapper jsonMapper = new ObjectMapper();
 
     public MqttMessageCallback(InfluxService influxService,
                                IDeviceService deviceService,
-                               StillThereDevicesManager stillThereDevicesManager) {
+                               StillThereDevicesManager stillThereDevicesManager,
+                               PowerManager powerManager) {
         this.influxService = influxService;
         this.deviceService = deviceService;
         this.stillThereDevicesManager = stillThereDevicesManager;
+        this.powerManager = powerManager;
     }
 
     @Override
@@ -52,7 +57,8 @@ public class MqttMessageCallback implements MqttCallback {
 
     @Override public void messageArrived(String topic, MqttMessage mqttMessage) {
         String message = new String(mqttMessage.getPayload());
-        if(topic.contains("states")) {
+        log.info("Message arrived: " + message + ", ID: " + mqttMessage.getId());
+        if (topic.contains("states")) {
             try {
                 Map<String,String> map = new HashMap<>();
                 ACStateChange stateChange = jsonMapper.readValue(message, ACStateChange.class);
@@ -65,8 +71,7 @@ public class MqttMessageCallback implements MqttCallback {
             catch (Exception ex) {
                 System.out.println(ex.getMessage());
             }
-        }
-        else {
+        } else {
             String[] data = message.split(",");
             String measurementObject = data[0];
             String valueWithUnit = data[1];
@@ -75,13 +80,18 @@ public class MqttMessageCallback implements MqttCallback {
             String deviceIdStr = data[2];
             influxService.save(measurementObject, value, new Date(),
                     Map.of("deviceId", deviceIdStr, "unit", String.valueOf(unit)));
-            System.out.println("Message arrived: " + message + ", ID: " + mqttMessage.getId());
 
             int deviceId = Integer.parseInt(deviceIdStr);
             if (measurementObject.equals("status") && value >= 1 &&
                     stillThereDevicesManager.isntThere(deviceId)) {
                 deviceService.setDeviceStillThere(deviceId);
                 stillThereDevicesManager.add(deviceId);
+            }
+
+            if (measurementObject.equals("produced")) {
+                powerManager.addProduction(value);
+            } else if (measurementObject.equals("consumed")) {
+                powerManager.addConsumption(value);
             }
         }
     }

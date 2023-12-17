@@ -18,6 +18,7 @@ public class MqttService {
         this.mqttConfiguration.getClient().subscribe("ac",2);
         this.mqttConfiguration.getClient().subscribe("status/ac",2);
         this.mqttConfiguration.getClient().subscribe("scheduled",2);
+        this.mqttConfiguration.getClient().subscribe("status/sps", 2);
     }
 
     public void publishMeasurementMessageLite(String message, String topic) throws MqttException {
