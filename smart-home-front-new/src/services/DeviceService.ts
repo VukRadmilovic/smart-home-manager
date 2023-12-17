@@ -54,10 +54,10 @@ export class DeviceService {
         });
     }
 
-    public getPaginatedCommands(deviceId: number, from: number, to: number,page:number, size: number, userId: number) : Promise<CommandsDTO> {
+    public getPaginatedCommands(deviceId: number, from: number, to: number,page:number, size: number, firstFetch: boolean, userId: number) : Promise<CommandsDTO> {
         return axios({
             method: 'GET',
-            url : `${this.api_host}/api/devices/commands?from=${from}&to=${to}&deviceId=${deviceId}&page=${page}&size=${size}&userId=${userId}`,
+            url : `${this.api_host}/api/devices/commands?from=${from}&to=${to}&deviceId=${deviceId}&page=${page}&size=${size}&firstFetch=${firstFetch}&userId=${userId}`,
             headers: {
                 'Authorization': 'Bearer ' + sessionStorage.getItem('user')
             },

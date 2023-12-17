@@ -11,7 +11,8 @@ public class CommandsRequestDTO {
     private Long from;
     private Long to;
     private Integer deviceId;
-    private Integer page;
-    private Integer size;
+    private Long page;
+    private Long size;
+    private Boolean firstFetch;
     private Integer userId;
 }

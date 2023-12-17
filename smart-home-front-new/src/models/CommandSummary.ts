@@ -1,5 +1,5 @@
 export interface CommandSummary {
-    timestamp: Date,
+    timestamp: number,
     username: string,
     command: string,
 }

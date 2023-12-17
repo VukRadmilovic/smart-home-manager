@@ -60,7 +60,6 @@ public class InfluxService {
     }
 
     private List<CommandSummaryInternal> queryCommands(String fluxQuery) {
-        System.out.println(fluxQuery);
         List<CommandSummaryInternal> result = new ArrayList<>();
         QueryApi queryApi = this.influxDbClient.getQueryApi();
         List<FluxTable> tables = queryApi.query(fluxQuery);
@@ -89,9 +88,21 @@ public class InfluxService {
                         optTags));
             }
         }
-        System.out.println(result.size());
         result.sort(Comparator.comparing(CommandSummaryInternal::getTimestamp).reversed());
         return result;
+    }
+
+    private List<Integer> queryUniqueUsersPerDevice(String fluxQuery) {
+        List<Integer> results = new ArrayList<>();
+        QueryApi queryApi = this.influxDbClient.getQueryApi();
+        List<FluxTable> tables = queryApi.query(fluxQuery);
+        for (FluxTable fluxTable : tables) {
+            List<FluxRecord> records = fluxTable.getRecords();
+            for (FluxRecord fluxRecord : records) {
+                results.add(fluxRecord.getValue() == null ? 0 : Integer.parseInt(fluxRecord.getValue().toString()));
+            }
+        }
+        return results;
     }
 
     public MeasurementsDTO findPaginatedByMeasurementNameAndDeviceIdInTimeRange(MeasurementsStreamRequestDTO requestDTO) {
@@ -113,7 +124,6 @@ public class InfluxService {
     }
 
     public List<CommandSummaryInternal> findPaginatedByTimeSpanAndUserIdAndDeviceId(CommandsRequestDTO request) {
-        System.out.println("lol " + request.getSize());
         String fluxQuery = String.format("from(bucket: \"%s\") " +
                 "  |> range(start: %d, stop: %d) " +
                 "  |> filter(fn: (r) => r[\"_measurement\"] == \"states\") " +
@@ -128,5 +138,18 @@ public class InfluxService {
                 "|> limit(n: %d, offset: %d) "
                                          ,request.getSize(), request.getPage() * request.getSize());
         return this.queryCommands(fluxQuery);
+    }
+
+    public List<Integer> findAllDistinctUsersForAllRecords(Integer deviceId) {
+        String fluxQuery = String.format("from(bucket: \"%s\") "  +
+                                            " |> range(start: 0, stop: 9007199254740991) " +
+                                            " |> filter(fn: (r) => r[\"_measurement\"] == \"states\") "  +
+                                            " |> filter(fn: (r) => r[\"_field\"] == \"value\") " +
+                                            " |> filter(fn: (r) => r[\"deviceId\"] == \"%s\") " +
+                                            " |> group(columns: [\"userId\"]) " +
+                                            " |> distinct(column: \"userId\") " +
+                                            " |> keep(columns: [\"_value\"]) ",
+                            this.bucket,deviceId.toString());
+        return this.queryUniqueUsersPerDevice(fluxQuery);
     }
 }

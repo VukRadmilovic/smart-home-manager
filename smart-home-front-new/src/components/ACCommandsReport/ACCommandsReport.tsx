@@ -1,4 +1,4 @@
-import {Autocomplete, Button, CssBaseline, Grid, TextField, Typography} from "@mui/material";
+import {Autocomplete, Button, CssBaseline, Grid, IconButton, TextField, Typography} from "@mui/material";
 import {SideNav} from "../Sidenav/SideNav.tsx";
 import {UserService} from "../../services/UserService.ts";
 import {DeviceService} from "../../services/DeviceService.ts";
@@ -10,6 +10,8 @@ import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {Dayjs} from "dayjs";
 import {PopupMessage} from "../PopupMessage/PopupMessage.tsx";
 import {useNavigate} from "react-router-dom";
+import {UserIdUsernamePair} from "../../models/UserIdUsernamePair.ts";
+import CloseIcon from "@mui/icons-material/Close";
 
 interface ACCommandsReportProps {
     userService: UserService,
@@ -54,26 +56,71 @@ export function ACCommandsReport({userService, deviceService} : ACCommandsReport
     const [commands,setCommands] = React.useState<CommandSummary[]>([]);
     const [currentPageCommands,setCurrentPageCommands] = React.useState<CommandSummary[]>([]);
     const [from, setFrom] = React.useState<Dayjs | null>(null);
-    const [usernames, setUsernames] = React.useState<string[]>([]);
+    const [usernames, setUsernames] = React.useState<UserIdUsernamePair[]>([]);
     const [to, setTo] = React.useState<Dayjs | null>(null);
     const firstLoad = useRef(true);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [page, setPage] = React.useState<number>(0);
     const [rowCount, setRowCount] = React.useState<number>(100);
+    const [prevPage, setPrevPage] = React.useState<number>(0);
     const [prevPageSize, setPrevPageSize] = React.useState<number>(2);
+    const [user, setUser] = React.useState<UserIdUsernamePair | null>(null);
+    const [inputValueUser, setInputValueUser] = React.useState('');
+    const [isFilteredData, setIsFilteredData] = React.useState<boolean>(false);
+    const [filteredCommands, setFilteredCommands] = React.useState<CommandSummary[]>([]);
+    const [hasAllLoaded, setHasAllLoaded] = React.useState<boolean>(false);
     const handleErrorPopupClose = (reason?: string) => {
         if (reason === 'clickaway') return;
         setErrorPopupOpen(false);
     };
+
+    const resetFrom = () => setFrom(null);
+    const resetTo = () => setTo(null);
+
+    const filter = () => {
+        setIsFilteredData(true);
+        const userId : number = user == null ? -1 : user.id;
+        const fromTime : number = from == null ? 0 : from.valueOf();
+        const toTime : number = to == null ? Number.MAX_SAFE_INTEGER : to.valueOf();
+        if(hasAllLoaded) {
+            let filtered: CommandSummary[];
+            filtered = commands.filter((command) => command.timestamp >= (fromTime - 999) && command.timestamp <= (toTime + 999));
+            if(userId != -1) {
+                filtered = filtered.filter((command) => command.username == user?.username)
+            }
+            setFilteredCommands(filtered)
+            setRowCount(filtered.length);
+        }
+        else {
+            deviceService.getPaginatedCommands(+deviceId,fromTime,
+                toTime, 0, Number.MAX_SAFE_INTEGER,false, userId)
+                .then((val) => {
+                    setFilteredCommands(val.commands);
+                    if(val.commands.length < 100) {
+                        setRowCount(val.commands.length);
+                        setHasAllLoaded(true);
+                    }
+                    else
+                        setRowCount(val.commands.length + 1);
+                }).catch((error) => {
+                setErrorMessage(error.response.data);
+                setIsSuccess(false);
+                setErrorPopupOpen(true);
+            })
+        }
+    }
     useEffect(() => {
         if(!firstLoad.current) return;
         deviceService.getPaginatedCommands(+deviceId,0,
-            Number.MAX_SAFE_INTEGER, 0, 100, -1)
+            Number.MAX_SAFE_INTEGER, 0, 100,true, -1)
             .then((val) => {
                 setCommands(val.commands);
-                setCurrentPageCommands(val.commands.slice(0,2))
-                if(val.commands.length < 100)
-                    setRowCount(val.commands.length)
+                setCurrentPageCommands(val.commands.slice(0,10))
+                setUsernames(val.allUsers)
+                if(val.commands.length < 2) {
+                    setRowCount(val.commands.length);
+                    setHasAllLoaded(true);
+                }
                 else
                     setRowCount(val.commands.length + 1);
             }).catch((error) => {
@@ -100,10 +147,10 @@ export function ACCommandsReport({userService, deviceService} : ACCommandsReport
 
     const getNextPage = (model: GridPaginationModel) => {
         setIsLoading(true);
-        if(commands.length <= model.page * model.pageSize) {
+        if(commands.length <= model.page * model.pageSize && !hasAllLoaded) {
             setPage(page + 1);
             deviceService.getPaginatedCommands(+deviceId,0,
-                Number.MAX_SAFE_INTEGER, page + 1, 100, -1)
+                Number.MAX_SAFE_INTEGER, page + 1, 100,false, -1)
                 .then((val) => {
                     setCommands(prevState => [...prevState,...val.commands]);
                     setCurrentPageCommands(val.commands.slice(0,model.pageSize))
@@ -126,12 +173,16 @@ export function ACCommandsReport({userService, deviceService} : ACCommandsReport
             else if(prevPageSize == model.pageSize)
                 setCurrentPageCommands(commands.slice(model.page * prevPageSize, model.page * prevPageSize + model.pageSize));
             else {
-                setCurrentPageCommands(commands.slice((model.page + 1) * prevPageSize, (model.page + 1) * prevPageSize + model.pageSize));
+                setCurrentPageCommands(commands.slice(prevPage * prevPageSize, prevPage * prevPageSize + model.pageSize));
             }
             setIsLoading(false);
+            if(model.page != prevPage && model.pageSize != prevPageSize) return;
+            else if(model.page != prevPage && model.pageSize == prevPageSize)
+                setPrevPage(model.page);
+            else if(model.page == prevPage && model.pageSize != prevPageSize)
+                setPrevPageSize(model.pageSize);
+
         }
-        if(prevPageSize != model.pageSize)
-            setPrevPageSize(model.pageSize);
     }
 
 
@@ -154,7 +205,17 @@ export function ACCommandsReport({userService, deviceService} : ACCommandsReport
                         <Autocomplete
                             disablePortal
                             id="user"
+                            value={user}
+                            onChange={(_event: any, newValue: UserIdUsernamePair | null) => {
+                                setUser(newValue);
+                                console.log(newValue)
+                            }}
+                            inputValue={inputValueUser}
+                            onInputChange={(_event, newInputValue) => {
+                                setInputValueUser(newInputValue);
+                            }}
                             options={usernames}
+                            getOptionLabel={(val) => val.username}
                             sx={{ width: 250, marginRight:'5em' }}
                             renderInput={(params) => <TextField {...params} label="User" />}
                         />
@@ -166,6 +227,9 @@ export function ACCommandsReport({userService, deviceService} : ACCommandsReport
                                 value={from}
                                 onChange={(newValue) => setFrom(newValue)}
                             />
+                            <IconButton aria-label="resetFrom" onClick={resetFrom}>
+                                <CloseIcon />
+                            </IconButton>
                             <MobileDateTimePicker
                                 sx={{marginLeft: '1em'}}
                                 disableFuture={true}
@@ -173,12 +237,37 @@ export function ACCommandsReport({userService, deviceService} : ACCommandsReport
                                 value={to}
                                 onChange={(newValue) => setTo(newValue)}
                             />
+                            <IconButton aria-label="resetTo" onClick={resetTo}>
+                                <CloseIcon />
+                            </IconButton>
                         </LocalizationProvider>
                         <Button variant={'contained'}
                                 color={'secondary'}
+                                onClick={filter}
                                 sx={{marginLeft:'auto'}}
                                 size={'large'}>Filter</Button>
                     </Grid>
+                    {isFilteredData?
+                        <DataGrid
+                            sx={{borderRadius:'1.5em',width:'100%',
+                                '&.MuiDataGrid-root--densityCompact .MuiDataGrid-cell': { py: '8px' },
+                                '&.MuiDataGrid-root--densityStandard .MuiDataGrid-cell': { py: '15px' },
+                                '&.MuiDataGrid-root--densityComfortable .MuiDataGrid-cell': { py: '22px' },}}
+                            rows={filteredCommands}
+                            columns={columns}
+                            rowCount={rowCount}
+                            disableColumnMenu={true}
+                            getRowHeight={() => 'auto'}
+                            columnHeaderHeight={70}
+                            getRowId={(row) => row.timestamp}
+                            initialState={{
+                                pagination: {
+                                    paginationModel: { page: 0, pageSize: 10 },
+                                },
+                            }}
+                            pageSizeOptions={[10, 25, 50, 100]}
+                        />
+                        :
                     <DataGrid
                         sx={{borderRadius:'1.5em',width:'100%',
                             '&.MuiDataGrid-root--densityCompact .MuiDataGrid-cell': { py: '8px' },
@@ -196,11 +285,11 @@ export function ACCommandsReport({userService, deviceService} : ACCommandsReport
                         getRowId={(row) => row.timestamp}
                         initialState={{
                             pagination: {
-                                paginationModel: { page: 0, pageSize: 2 },
+                                paginationModel: { page: 0, pageSize: 10 },
                             },
                         }}
-                        pageSizeOptions={[2,10,25,50,100]}
-                    />
+                        pageSizeOptions={[10,25,50,100]}
+                    /> }
                 </Grid>
             </Grid>
             <PopupMessage message={errorMessage} isSuccess={isSuccess} handleClose={handleErrorPopupClose}
