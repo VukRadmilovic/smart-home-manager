@@ -278,7 +278,7 @@ public class ACThread implements Runnable {
             ScheduledFuture<?> once = scheduler.schedule(() -> {
                 scheduler.schedule(
                         changeSettings,
-                        init,
+                        0,
                         TimeUnit.MILLISECONDS);
                 scheduler.schedule(() -> {
                     scheduledThread.remove(id);
@@ -289,7 +289,7 @@ public class ACThread implements Runnable {
                             ACState.SCHEDULE_OFF.toString(),null));
                     isOff = true;
                 }, stopTime, TimeUnit.MILLISECONDS);
-            },0, TimeUnit.MILLISECONDS);
+            },init, TimeUnit.MILLISECONDS);
 
             scheduledThread.put(id, once);
             scheduledDetails.put(id, new Scheduled(id,from, to, received.getCommandParams().isEveryDay()));
@@ -304,11 +304,10 @@ public class ACThread implements Runnable {
     }
 
     private void removeScheduledThread(ACCommand received) {
-        System.out.println(received);
         Long scheduledTaskId = received.getCommandParams().getTaskId();
         if(scheduledThread.containsKey(scheduledTaskId)) {
-            System.out.println("yes");
             scheduledThread.get(scheduledTaskId).cancel(true);
+            System.out.println("yes");
             scheduledThread.remove(scheduledTaskId);
 
             Map<String,String> extraInfo = new HashMap<>();
@@ -327,7 +326,6 @@ public class ACThread implements Runnable {
         for (Map.Entry<Long, Scheduled> entry : scheduledDetails.entrySet()) {
            schedules.add(entry.getValue());
         }
-        System.out.println(schedules);
         SchedulesPerUser schedulesPerUser = new SchedulesPerUser(ac.getId(),schedules);
         try {
             publishSchedulesLite(mapper.writeValueAsString(schedulesPerUser));
