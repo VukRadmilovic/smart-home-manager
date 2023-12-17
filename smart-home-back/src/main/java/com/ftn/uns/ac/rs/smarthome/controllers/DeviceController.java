@@ -120,11 +120,12 @@ public class DeviceController {
     public ResponseEntity<?> getCommands(@RequestParam Long from,
                                                    @RequestParam Long to,
                                                    @RequestParam Integer deviceId,
-                                                   @RequestParam Integer page,
-                                                   @RequestParam Integer size,
+                                                   @RequestParam Long page,
+                                                   @RequestParam Long size,
+                                                   @RequestParam Boolean firstFetch,
                                                    @RequestParam Integer userId) {
         try {
-            CommandsRequestDTO dto = new CommandsRequestDTO(from, to, deviceId,page,size,userId);
+            CommandsRequestDTO dto = new CommandsRequestDTO(from, to, deviceId,page,size,firstFetch,userId);
             CommandsDTO measurements = this.deviceService.getCommandsByTimeRangeAndUserId(dto);
             return new ResponseEntity<>(measurements, HttpStatus.OK);
         } catch(ResponseStatusException ex) {

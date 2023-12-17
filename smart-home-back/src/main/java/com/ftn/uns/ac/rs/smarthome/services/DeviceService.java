@@ -1,6 +1,7 @@
 package com.ftn.uns.ac.rs.smarthome.services;
 
 import com.ftn.uns.ac.rs.smarthome.models.Measurement;
+import com.ftn.uns.ac.rs.smarthome.models.UserIdUsernamePair;
 import com.ftn.uns.ac.rs.smarthome.models.devices.Device;
 import com.ftn.uns.ac.rs.smarthome.models.devices.Thermometer;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.*;
@@ -116,6 +117,7 @@ public class DeviceService implements IDeviceService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("device.notFound", null, Locale.getDefault()));
         }
         List<CommandSummary> commands = new ArrayList<>();
+        List<UserIdUsernamePair> allUsers = new ArrayList<>();
         List<CommandSummaryInternal> commandsInternal = influxService.findPaginatedByTimeSpanAndUserIdAndDeviceId(request);
         for(CommandSummaryInternal command : commandsInternal) {
             String commandDesc = "";
@@ -171,6 +173,14 @@ public class DeviceService implements IDeviceService {
                 commands.add(new CommandSummary(command.getTimestamp().getTime(), "Device", commandDesc));
             }
         }
-        return new CommandsDTO(commands,null);
+        if(request.getFirstFetch()) {
+            List<Integer> allUserIds = this.influxService.findAllDistinctUsersForAllRecords(request.getDeviceId());
+            for(Integer id : allUserIds) {
+                if(id == 0) continue;
+                allUsers.add(new UserIdUsernamePair(id,this.userService.getUserInfo(id).getUsername()));
+            }
+            allUsers.add(new UserIdUsernamePair(0,"Device"));
+        }
+        return new CommandsDTO(commands,allUsers);
     }
 }
