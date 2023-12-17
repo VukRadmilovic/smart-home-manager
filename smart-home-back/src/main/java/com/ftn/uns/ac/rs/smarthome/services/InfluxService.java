@@ -1,8 +1,7 @@
 package com.ftn.uns.ac.rs.smarthome.services;
 
 import com.ftn.uns.ac.rs.smarthome.models.Measurement;
-import com.ftn.uns.ac.rs.smarthome.models.dtos.MeasurementsDTO;
-import com.ftn.uns.ac.rs.smarthome.models.dtos.MeasurementsStreamRequestDTO;
+import com.ftn.uns.ac.rs.smarthome.models.dtos.*;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.QueryApi;
 import com.influxdb.client.WriteApiBlocking;
@@ -60,6 +59,41 @@ public class InfluxService {
         return new MeasurementsDTO(result,hasMore);
     }
 
+    private List<CommandSummaryInternal> queryCommands(String fluxQuery) {
+        System.out.println(fluxQuery);
+        List<CommandSummaryInternal> result = new ArrayList<>();
+        QueryApi queryApi = this.influxDbClient.getQueryApi();
+        List<FluxTable> tables = queryApi.query(fluxQuery);
+        for (FluxTable fluxTable : tables) {
+            List<FluxRecord> records = fluxTable.getRecords();
+            for (FluxRecord fluxRecord : records) {
+                Map<String,String> optTags = new HashMap<>();
+                optTags.put("userId",fluxRecord.getValueByKey("userId").toString());
+                if(fluxRecord.getValueByKey("from") != null)
+                    optTags.put("from", fluxRecord.getValueByKey("from").toString());
+                if(fluxRecord.getValueByKey("to") != null)
+                    optTags.put("to", fluxRecord.getValueByKey("to").toString());
+                if(fluxRecord.getValueByKey("everyDay") != null)
+                    optTags.put("everyDay", fluxRecord.getValueByKey("everyDay").toString());
+                if(fluxRecord.getValueByKey("isHealth") != null)
+                    optTags.put("isHealth", fluxRecord.getValueByKey("isHealth").toString());
+                if(fluxRecord.getValueByKey("isFungus") != null)
+                    optTags.put("isFungus", fluxRecord.getValueByKey("isFungus").toString());
+                if(fluxRecord.getValueByKey("target") != null)
+                    optTags.put("target", fluxRecord.getValueByKey("target").toString());
+                if(fluxRecord.getValueByKey("fanSpeed") != null)
+                    optTags.put("fanSpeed", fluxRecord.getValueByKey("fanSpeed").toString());
+                result.add(new CommandSummaryInternal(
+                        fluxRecord.getValue() == null ? "" : fluxRecord.getValue().toString(),
+                        fluxRecord.getTime() == null ? null : Date.from(fluxRecord.getTime()),
+                        optTags));
+            }
+        }
+        System.out.println(result.size());
+        result.sort(Comparator.comparing(CommandSummaryInternal::getTimestamp).reversed());
+        return result;
+    }
+
     public MeasurementsDTO findPaginatedByMeasurementNameAndDeviceIdInTimeRange(MeasurementsStreamRequestDTO requestDTO) {
         String fluxQuery = String.format(
                 "from(bucket: \"%s\") " +
@@ -67,6 +101,7 @@ public class InfluxService {
                         "  |> filter(fn: (r) => r[\"_measurement\"] == \"%s\") " +
                         "  |> filter(fn: (r) => r[\"_field\"] == \"value\") " +
                         "  |> filter(fn: (r) => r[\"deviceId\"] == \"%s\")" +
+                        "  |> group() " +
                         "  |> limit(n: %d, offset: %d) ",
                 this.bucket,requestDTO.getFrom(),
                 requestDTO.getTo(),
@@ -75,5 +110,23 @@ public class InfluxService {
                 requestDTO.getLimit() + 1,
                 requestDTO.getOffset());
         return this.query(fluxQuery,requestDTO.getLimit());
+    }
+
+    public List<CommandSummaryInternal> findPaginatedByTimeSpanAndUserIdAndDeviceId(CommandsRequestDTO request) {
+        System.out.println("lol " + request.getSize());
+        String fluxQuery = String.format("from(bucket: \"%s\") " +
+                "  |> range(start: %d, stop: %d) " +
+                "  |> filter(fn: (r) => r[\"_measurement\"] == \"states\") " +
+                "  |> filter(fn: (r) => r[\"_field\"] == \"value\") " +
+                "  |> filter(fn: (r) => r[\"deviceId\"] == \"%s\") ",
+                this.bucket, request.getFrom(), request.getTo(), request.getDeviceId());
+        if(request.getUserId() != -1) {
+            fluxQuery += String.format("|> filter(fn: (r) => r[\"userId\"] == \"%s\")", request.getUserId());
+        }
+        fluxQuery += String.format("|> group() " +
+                "|> sort(columns: [\"_time\"], desc: true) " +
+                "|> limit(n: %d, offset: %d) "
+                                         ,request.getSize(), request.getPage() * request.getSize());
+        return this.queryCommands(fluxQuery);
     }
 }

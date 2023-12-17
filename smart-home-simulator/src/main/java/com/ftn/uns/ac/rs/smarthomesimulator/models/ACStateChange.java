@@ -10,6 +10,7 @@ import java.util.Map;
 public class ACStateChange {
 
     private Integer userId;
+    private Integer deviceId;
     private String change;
     private Map<String,String> extraInfo;
 }

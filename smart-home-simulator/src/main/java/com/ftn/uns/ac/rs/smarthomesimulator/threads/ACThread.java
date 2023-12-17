@@ -56,6 +56,7 @@ public class ACThread implements Runnable {
                     }
                     else {
                         publishStateMessage(new ACStateChange(receivedCommand.getCommandParams().getUserId(),
+                                ac.getId(),
                                 ACState.ON.toString(),null));
                     }
                     isOff = false;
@@ -63,6 +64,7 @@ public class ACThread implements Runnable {
                 }
                 else if(commandType == CommandType.OFF){
                     publishStateMessage(new ACStateChange(receivedCommand.getCommandParams().getUserId(),
+                            ac.getId(),
                             ACState.OFF.toString(),null));
                     isOff = true;
                 }
@@ -75,6 +77,7 @@ public class ACThread implements Runnable {
                     extraInfo.put("to",receivedCommand.getCommandParams().getTo().toString());
                     extraInfo.put("everyDay", String.valueOf(receivedCommand.getCommandParams().isEveryDay()));
                     publishStateMessage(new ACStateChange(receivedCommand.getCommandParams().getUserId(),
+                            ac.getId(),
                             ACState.SCHEDULE.toString(),extraInfo));
                     scheduleThread(receivedCommand);
                 }
@@ -249,6 +252,9 @@ public class ACThread implements Runnable {
         Runnable changeSettings = () -> {
             settings = received;
             isOff = false;
+            publishStateMessage(new ACStateChange(0,
+                    ac.getId(),
+                    ACState.SCHEDULE_ON.toString(),null));
         };
         if (received.getCommandParams().isEveryDay()) {
             ScheduledFuture<?> everyDay = scheduler.scheduleWithFixedDelay(() -> {
@@ -258,6 +264,9 @@ public class ACThread implements Runnable {
                         TimeUnit.MILLISECONDS);
                 scheduler.schedule(() -> {
                     isOff = true;
+                    publishStateMessage(new ACStateChange(0,
+                            ac.getId(),
+                            ACState.SCHEDULE_OFF.toString(),null));
                 }, stopTime, TimeUnit.MILLISECONDS);
             }, init, TimeUnit.DAYS.toMillis(1), TimeUnit.MILLISECONDS);
             scheduledThread.put(scheduledThreadCount.incrementAndGet(), everyDay);
@@ -268,6 +277,9 @@ public class ACThread implements Runnable {
                         init,
                         TimeUnit.MILLISECONDS);
                 scheduler.schedule(() -> {
+                    publishStateMessage(new ACStateChange(0,
+                            ac.getId(),
+                            ACState.SCHEDULE_OFF.toString(),null));
                     isOff = true;
                 }, stopTime, TimeUnit.MILLISECONDS);
             },0, TimeUnit.MILLISECONDS);
@@ -309,29 +321,35 @@ public class ACThread implements Runnable {
             Map<String,String> extraInfo = new HashMap<>();
             extraInfo.put("isHealth",String.valueOf(receivedCommand.getCommandParams().isHealth()));
             publishStateMessage(new ACStateChange(receivedCommand.getCommandParams().getUserId(),
+                    ac.getId(),
                     ACState.HEALTH_CHANGE.toString(),extraInfo));
         }
         if(receivedCommand.getCommandParams().isFungus() != settings.getCommandParams().isFungus()) {
             Map<String,String> extraInfo = new HashMap<>();
             extraInfo.put("isFungus",String.valueOf(receivedCommand.getCommandParams().isFungus()));
             publishStateMessage(new ACStateChange(receivedCommand.getCommandParams().getUserId(),
+                    ac.getId(),
                     ACState.FUNGUS_CHANGE.toString(),extraInfo));
         }
         if(receivedCommand.getCommandParams().getMode() != settings.getCommandParams().getMode()) {
             if (receivedCommand.getCommandParams().getMode() == ACMode.AUTO) {
                 publishStateMessage(new ACStateChange(receivedCommand.getCommandParams().getUserId(),
+                        ac.getId(),
                         ACState.AUTO_MODE.toString(),null));
             }
             if (receivedCommand.getCommandParams().getMode() == ACMode.COOL) {
                 publishStateMessage(new ACStateChange(receivedCommand.getCommandParams().getUserId(),
+                        ac.getId(),
                         ACState.COOL_MODE.toString(),null));
             }
             if(receivedCommand.getCommandParams().getMode() == ACMode.HEAT) {
                 publishStateMessage(new ACStateChange(receivedCommand.getCommandParams().getUserId(),
+                        ac.getId(),
                         ACState.HEAT_MODE.toString(),null));
             }
             if(receivedCommand.getCommandParams().getMode() == ACMode.DRY) {
                 publishStateMessage(new ACStateChange(receivedCommand.getCommandParams().getUserId(),
+                        ac.getId(),
                         ACState.DRY_MODE.toString(),null));
             }
         }
@@ -340,6 +358,7 @@ public class ACThread implements Runnable {
             Map<String,String> extraInfo = new HashMap<>();
             extraInfo.put("target",String.valueOf(changedTemp));
             publishStateMessage(new ACStateChange(receivedCommand.getCommandParams().getUserId(),
+                    ac.getId(),
                     ACState.TEMP_CHANGE.toString(),extraInfo));
         }
         if(!Objects.equals(receivedCommand.getCommandParams().getFanSpeed(), settings.getCommandParams().getFanSpeed())) {
@@ -347,6 +366,7 @@ public class ACThread implements Runnable {
             Map<String,String> extraInfo = new HashMap<>();
             extraInfo.put("fanSpeed",String.valueOf(changedFanSpeed));
             publishStateMessage(new ACStateChange(receivedCommand.getCommandParams().getUserId(),
+                    ac.getId(),
                     ACState.FAN_SPEED_CHANGE.toString(),extraInfo));
         }
     }

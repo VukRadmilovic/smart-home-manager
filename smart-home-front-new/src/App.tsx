@@ -15,6 +15,7 @@ import {UserDevices} from "./components/UserDevices/UserDevices.tsx";
 import {DeviceService} from "./services/DeviceService.ts";
 import {ThermometerCharts} from "./components/ThermometerCharts/ThermometerCharts.tsx";
 import {ThermometerChartsHistory} from "./components/ThermometerHistoryCharts/ThermometerHistoryCharts.tsx";
+import {ACCommandsReport} from "./components/ACCommandsReport/ACCommandsReport.tsx";
 
 
 function App() {
@@ -126,6 +127,7 @@ function App() {
                         <Route path="/devices" element={<UserDevices userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>
                         <Route path="/thermoCharts/:id" element={<ThermometerCharts userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>
                         <Route path="/thermoChartsHistory/:id" element={<ThermometerChartsHistory userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>
+                        <Route path="/acCommands/:id" element={<ACCommandsReport userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>
                     </Routes>
                 </BrowserRouter>
             </ThemeProvider>

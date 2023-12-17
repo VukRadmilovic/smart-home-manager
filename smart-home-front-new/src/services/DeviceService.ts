@@ -4,6 +4,7 @@ import {MeasurementRequest} from "../models/MeasurementRequest.ts";
 import {ChartData} from "../models/ChartData.ts";
 import EventSource from "react-native-sse";
 import {DeviceCapabilities} from "../models/DeviceCapabilities.ts";
+import {CommandsDTO} from "../models/CommandsDTO.ts";
 
 export class DeviceService {
     private api_host = "http://localhost:80"
@@ -44,6 +45,19 @@ export class DeviceService {
         return axios({
             method: 'GET',
             url: `${this.api_host}/api/devices/capabilities/` + deviceId,
+            headers: {
+                'Authorization': 'Bearer ' + sessionStorage.getItem('user')
+            },
+        }).then((response) => response.data
+        ).catch((err) => {
+            throw err
+        });
+    }
+
+    public getPaginatedCommands(deviceId: number, from: number, to: number,page:number, size: number, userId: number) : Promise<CommandsDTO> {
+        return axios({
+            method: 'GET',
+            url : `${this.api_host}/api/devices/commands?from=${from}&to=${to}&deviceId=${deviceId}&page=${page}&size=${size}&userId=${userId}`,
             headers: {
                 'Authorization': 'Bearer ' + sessionStorage.getItem('user')
             },

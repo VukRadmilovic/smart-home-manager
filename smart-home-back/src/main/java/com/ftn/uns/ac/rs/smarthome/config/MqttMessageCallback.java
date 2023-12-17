@@ -59,6 +59,7 @@ public class MqttMessageCallback implements MqttCallback {
                 if(stateChange.getExtraInfo() != null)
                     map = stateChange.getExtraInfo();
                 map.put("userId",stateChange.getUserId().toString());
+                map.put("deviceId", stateChange.getDeviceId().toString());
                 influxService.save("states", stateChange.getChange(), new Date(), map);
             }
             catch (Exception ex) {
