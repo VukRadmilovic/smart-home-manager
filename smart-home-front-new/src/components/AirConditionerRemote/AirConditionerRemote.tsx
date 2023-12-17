@@ -1,6 +1,6 @@
 import {
     Button,
-    Checkbox,
+    Checkbox, CircularProgress,
     Dialog,
     DialogContent,
     DialogTitle,
@@ -153,6 +153,7 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
     const [checked, setChecked] = React.useState<number[]>([]);
     const [isCommandSuccess, setIsCommandSuccess] = React.useState<number>(0);
     const [isScheduleSuccess, setIsScheduleSuccess] = React.useState<number>(0);
+    const [isLoading, setIsLoading] = React.useState<boolean>(true);
     const defaultParams : CommandParams = {
         userId: -1,
         unit: 'C',
@@ -347,6 +348,7 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
             setCurrentStatusColor("red");
             setDisableForm(false);
         }
+        setIsLoading(false);
     }
 
     const onCapabilitiesReceived = (payload : Message) => {
@@ -501,10 +503,15 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
             fullWidth={true}
             open={open}
             onClose={handleClose}>
+            {!isLoading? null :
+                <CircularProgress sx={{position:'absolute',right:'50px',top:'8px'}} />
+            }
             <DialogTitle textAlign={'center'}>Remote</DialogTitle>
             <DialogContent>
                 {!seeScheduled ?
+
                 <Grid container rowSpacing={3}>
+
                         <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} mt={2}>
                             <Grid item container xs={12} sm={12} md={6} lg={6} xl={6}>
                                 <Typography variant={"body1"} display={'inline'}>Current Status:&nbsp;</Typography>
