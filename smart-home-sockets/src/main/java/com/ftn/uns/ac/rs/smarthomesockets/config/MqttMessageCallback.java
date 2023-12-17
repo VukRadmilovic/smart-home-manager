@@ -1,10 +1,10 @@
 package com.ftn.uns.ac.rs.smarthomesockets.config;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.SerializableString;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftn.uns.ac.rs.smarthomesockets.models.ACValueDigest;
 import com.ftn.uns.ac.rs.smarthomesockets.models.Measurement;
+import com.ftn.uns.ac.rs.smarthomesockets.models.dtos.SchedulesPerUser;
 import org.eclipse.paho.mqttv5.client.IMqttToken;
 import org.eclipse.paho.mqttv5.client.MqttCallback;
 import org.eclipse.paho.mqttv5.client.MqttDisconnectResponse;
@@ -60,6 +60,10 @@ public class MqttMessageCallback implements MqttCallback {
         else if(topic.contains("status/ac")) {
             String[] data = message.split(",");
             messagingTemplate.convertAndSend("/ac/status/" + data[1],data[0]);
+        }
+        else if(topic.contains("scheduled")) {
+            SchedulesPerUser schedules = jsonMapper.readValue(message, SchedulesPerUser.class);
+            messagingTemplate.convertAndSend("/ac/schedules/" + schedules.getDeviceId(),schedules.getSchedules());
         }
         else {
 

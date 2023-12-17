@@ -32,6 +32,7 @@ public class ACThread implements Runnable {
     private boolean hasConfigChanged = true;
 
     private final Map<Long, ScheduledFuture<?>> scheduledThread = new ConcurrentHashMap<>();
+    private final Map<Long,Scheduled> scheduledDetails = new ConcurrentHashMap<>();
     private final ScheduledExecutorService scheduler =  Executors.newScheduledThreadPool(5);
     private final AtomicLong scheduledThreadCount = new AtomicLong(0);
 
@@ -44,8 +45,7 @@ public class ACThread implements Runnable {
         public void mqttErrorOccurred(MqttException e) {System.err.println(e.getMessage());}
 
         @Override
-        public void messageArrived(String s, MqttMessage mqttMessage) {
-
+        public void messageArrived(String topic, MqttMessage mqttMessage) {
             try {
                 hasConfigChanged = true;
                 String message = new String(mqttMessage.getPayload());
@@ -69,18 +69,16 @@ public class ACThread implements Runnable {
                             ACState.OFF.toString(),null));
                     isOff = true;
                 }
-                else if(commandType == CommandType.CANCEL_SCHEDULE) {
+                else if(commandType == CommandType.CANCEL_SCHEDULED) {
                     removeScheduledThread(receivedCommand);
+                    getSchedules();
+                }
+                else if(commandType == CommandType.GET_SCHEDULES) {
+                    getSchedules();
                 }
                 else {
-                    Map<String,String> extraInfo = new HashMap<>();
-                    extraInfo.put("from",receivedCommand.getCommandParams().getFrom().toString());
-                    extraInfo.put("to",receivedCommand.getCommandParams().getTo().toString());
-                    extraInfo.put("everyDay", String.valueOf(receivedCommand.getCommandParams().isEveryDay()));
-                    publishStateMessage(new ACStateChange(receivedCommand.getCommandParams().getUserId(),
-                            ac.getId(),
-                            ACState.SCHEDULE.toString(),extraInfo));
                     scheduleThread(receivedCommand);
+                    getSchedules();
                 }
             }
             catch(Exception ex) {
@@ -245,7 +243,9 @@ public class ACThread implements Runnable {
         long nowMillis = new Date().getTime();
         if (from < nowMillis) {
             init = (from + 1000 * 60 * 60 * 24) - nowMillis;
+            from += 1000 * 60 * 60 * 24;
             stopTime = (to + 1000 * 60 * 60 * 24) - nowMillis;
+            to += 1000 * 60 * 60 * 24;
         } else {
             init = from - nowMillis;
             stopTime = to - nowMillis;
@@ -270,21 +270,37 @@ public class ACThread implements Runnable {
                             ACState.SCHEDULE_OFF.toString(),null));
                 }, stopTime, TimeUnit.MILLISECONDS);
             }, init, TimeUnit.DAYS.toMillis(1), TimeUnit.MILLISECONDS);
-            scheduledThread.put(scheduledThreadCount.incrementAndGet(), everyDay);
+            Long id = scheduledThreadCount.incrementAndGet();
+            System.out.println(id);
+            scheduledThread.put(id, everyDay);
+            scheduledDetails.put(id, new Scheduled(id,from, to, received.getCommandParams().isEveryDay()));
         } else {
+            Long id = scheduledThreadCount.incrementAndGet();
             ScheduledFuture<?> once = scheduler.schedule(() -> {
                 scheduler.schedule(
                         changeSettings,
-                        init,
+                        0,
                         TimeUnit.MILLISECONDS);
                 scheduler.schedule(() -> {
+                    scheduledThread.remove(id);
+                    scheduledDetails.remove(id);
+                    getSchedules();
                     publishStateMessage(new ACStateChange(0,
                             ac.getId(),
                             ACState.SCHEDULE_OFF.toString(),null));
                     isOff = true;
                 }, stopTime, TimeUnit.MILLISECONDS);
-            },0, TimeUnit.MILLISECONDS);
-            scheduledThread.put(scheduledThreadCount.incrementAndGet(), once);
+            },init, TimeUnit.MILLISECONDS);
+
+            scheduledThread.put(id, once);
+            scheduledDetails.put(id, new Scheduled(id,from, to, received.getCommandParams().isEveryDay()));
+            Map<String,String> extraInfo = new HashMap<>();
+            extraInfo.put("from",Long.toString(from));
+            extraInfo.put("to",Long.toString(to));
+            extraInfo.put("everyDay", String.valueOf(received.getCommandParams().isEveryDay()));
+            publishStateMessage(new ACStateChange(received.getCommandParams().getUserId(),
+                    ac.getId(),
+                    ACState.SCHEDULE.toString(),extraInfo));
         }
     }
 
@@ -292,12 +308,40 @@ public class ACThread implements Runnable {
         Long scheduledTaskId = received.getCommandParams().getTaskId();
         if(scheduledThread.containsKey(scheduledTaskId)) {
             scheduledThread.get(scheduledTaskId).cancel(true);
+            System.out.println("yes");
             scheduledThread.remove(scheduledTaskId);
+
+            Map<String,String> extraInfo = new HashMap<>();
+            extraInfo.put("from",Long.toString(scheduledDetails.get(scheduledTaskId).getFrom()));
+            extraInfo.put("to",Long.toString(scheduledDetails.get(scheduledTaskId).getTo()));
+            extraInfo.put("everyDay", String.valueOf(scheduledDetails.get(scheduledTaskId).isEveryDay()));
+            publishStateMessage(new ACStateChange(received.getCommandParams().getUserId(),
+                    ac.getId(),
+                    ACState.CANCEL_SCHEDULED.toString(),extraInfo));
+            scheduledDetails.remove(scheduledTaskId);
+        }
+    }
+
+    private void getSchedules() {
+        List<Scheduled> schedules = new ArrayList<>();
+        for (Map.Entry<Long, Scheduled> entry : scheduledDetails.entrySet()) {
+           schedules.add(entry.getValue());
+        }
+        SchedulesPerUser schedulesPerUser = new SchedulesPerUser(ac.getId(),schedules);
+        try {
+            publishSchedulesLite(mapper.writeValueAsString(schedulesPerUser));
+        }
+        catch (Exception ex) {
+            System.out.println(ex.getMessage());
         }
     }
 
     private void publishMessageLite(String message) throws MqttException {
         this.mqttConfiguration.getClient().publish("ac", new MqttMessage(message.getBytes()));
+    }
+
+    private void publishSchedulesLite(String message) throws MqttException {
+        this.mqttConfiguration.getClient().publish("scheduled", new MqttMessage(message.getBytes()));
     }
 
     private void publishOnOff(String message) throws MqttException {
