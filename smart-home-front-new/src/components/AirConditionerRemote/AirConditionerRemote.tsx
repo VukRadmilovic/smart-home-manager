@@ -279,7 +279,8 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
                     client.current!.send("/app/capabilities/ac", {}, deviceId.toString());
                     client.current!.subscribe("/ac/schedules/" + deviceId,onSchedulesReceived);
                     client.current!.subscribe("/ac/capabilities/" + deviceId,onCapabilitiesReceived);
-                },
+                    getSchedules();
+                    },
                 () => {
                     console.log(':::::: SOCKET TRYING TO RECONNECT ::::::');
                 }
@@ -297,7 +298,6 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
     }
 
     const getSchedules = () => {
-        setSeeScheduled(true);
         const params : CommandParams = {
             userId: +sessionStorage.getItem("id")!,
             unit: '',
@@ -452,29 +452,40 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
         if(from > to) {
             toLocal = toLocal + 1000 * 60 * 60 * 24;
         }
-            if(mode != ACMode.AUTO){
-                fanSpeedInt = fanSpeed
+        let valid = true;
+        schedules.forEach((task) => {
+            if(!((fromLocal >= task.to && toLocal > task.to) || (fromLocal < task.from && toLocal <= task.from)))
+            {
+                setErrorMessage("You already have scheduled cycle at this time span!");
+                setIsSuccess(false);
+                setErrorPopupOpen(true);
+                valid = false;
             }
-            const params : CommandParams = {
-                userId: +sessionStorage.getItem("id")!,
-                unit: deviceCapabilities?.capabilities.get("temperatureUnit")!,
-                target: targetTemp,
-                fanSpeed: fanSpeedInt,
-                health: healthChecked,
-                currentTemp: -1,
-                fungus: fungusChecked,
-                mode: mode as ACMode,
-                everyDay: repeatChecked,
-                from: fromLocal,
-                to: toLocal,
-                taskId: 0
-            }
-            const command : ACCommand = {
-                deviceId: deviceId,
-                commandType: CommandType.SCHEDULE,
-                commandParams: params
-            }
-            client.current!.send("/app/command/ac", {}, JSON.stringify(command));
+        })
+        if(!valid) return;
+        if(mode != ACMode.AUTO){
+            fanSpeedInt = fanSpeed
+        }
+        const params : CommandParams = {
+            userId: +sessionStorage.getItem("id")!,
+            unit: deviceCapabilities?.capabilities.get("temperatureUnit")!,
+            target: targetTemp,
+            fanSpeed: fanSpeedInt,
+            health: healthChecked,
+            currentTemp: -1,
+            fungus: fungusChecked,
+            mode: mode as ACMode,
+            everyDay: repeatChecked,
+            from: fromLocal,
+            to: toLocal,
+            taskId: 0
+        }
+        const command : ACCommand = {
+            deviceId: deviceId,
+            commandType: CommandType.SCHEDULE,
+            commandParams: params
+        }
+        client.current!.send("/app/command/ac", {}, JSON.stringify(command));
 
     }
 
@@ -644,7 +655,7 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
                         <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} mb={1}  justifyContent={'center'}>
                             <Button variant="text"
                                     sx={{color:'blue'}}
-                                    onClick={getSchedules}>See Schedules</Button>
+                                    onClick={() => {setSeeScheduled(true);}}>See Schedules</Button>
                         </Grid>
                 </Grid>
                     :
