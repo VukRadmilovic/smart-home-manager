@@ -25,14 +25,14 @@ import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import CloseIcon from "@mui/icons-material/Close";
 import Stomp, {Client, Message} from "stompjs";
 import SockJS from "sockjs-client";
-import { Dayjs } from "dayjs";
+import {Dayjs} from "dayjs";
 import {ACValueDigest} from "../../models/ACValueDigest.ts";
-import {ACCommand} from "../../models/ACCommand.ts";
 import {CommandType} from "../../models/enums/CommandType.ts";
-import {CommandParams} from "../../models/CommandParams.ts";
 import {ACMode} from "../../models/enums/ACMode.ts";
 import {PopupMessage} from "../PopupMessage/PopupMessage.tsx";
 import {DeviceCapabilities} from "../../models/DeviceCapabilities.ts";
+import {CommandParams} from "../../models/CommandParams.ts";
+import {ACCommand} from "../../models/ACCommand.ts";
 
 interface AirConditionerRemoteProps {
     open: boolean,
@@ -133,7 +133,7 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
         commandType: CommandType.OFF,
         commandParams: defaultParams
     }
-    const [currentConfig] = React.useState<ACCommand>(defaultConfig);
+    const [currentConfig,setCurrentConfig] = React.useState<ACCommand>(defaultConfig);
     const emptyState : ACValueDigest = {
         deviceId: deviceId,
         currentTemp: -1,
@@ -235,12 +235,16 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
            }
         }, 30 * 1000)
         if(payload.body == "ON") {
+            currentConfig.commandType = CommandType.ON;
+            setCurrentConfig(currentConfig);
             setIsOn(true);
             setCurrentStatus("ON")
             setCurrentStatusColor("green");
             setDisableForm(false);
         }
         else {
+            currentConfig.commandType = CommandType.OFF;
+            setCurrentConfig(currentConfig);
             setIsOn(false);
             setCurrentStatus("OFF")
             setCurrentStatusColor("red");
@@ -330,7 +334,7 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
             taskId: 0
         }
 
-        console.log(currentConfig.commandParams.unit)
+
         const command : ACCommand = {
             deviceId: deviceId,
             commandType: commandType,
@@ -349,7 +353,7 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
         }
         const fromLocal : number = from!.valueOf();
         let toLocal : number = to!.valueOf();
-        let fanSpeedInt = 3;
+        let fanSpeedInt = 1;
         if(from > to) {
             toLocal = toLocal + 1000 * 60 * 60 * 24;
         }
@@ -357,6 +361,8 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
                 fanSpeedInt = fanSpeed
             }
             const params : CommandParams = {
+                userId: +sessionStorage.getItem("id")!,
+                unit: deviceCapabilities?.capabilities.get("temperatureUnit")!,
                 target: targetTemp,
                 fanSpeed: fanSpeedInt,
                 health: healthChecked,

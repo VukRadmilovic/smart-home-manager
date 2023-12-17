@@ -23,6 +23,7 @@ import {useNavigate} from "react-router-dom";
 import {LocalizationProvider, MobileDateTimePicker} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {ChartData} from "../../models/ChartData.ts";
+import {Dayjs} from "dayjs";
 
 interface ThermometerChartsProps {
     userService: UserService
@@ -51,8 +52,8 @@ export function ThermometerChartsHistory({userService, deviceService} : Thermome
     const navigate = useNavigate();
     const [units, setUnits] = React.useState<string>('C');
     const [timeSpan, setTimeSpan] = React.useState<string>("");
-    const [from, setFrom] = React.useState<Date>(null);
-    const [to, setTo] = React.useState<Date>(null);
+    const [from, setFrom] = React.useState<Dayjs | null>(null);
+    const [to, setTo] = React.useState<Dayjs | null>(null);
     const [isCustom, setIsCustom] = React.useState<boolean>(false);
     const [isTimeFormatter, setIsTimeFormatter] = React.useState<boolean>(true);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -123,13 +124,13 @@ export function ThermometerChartsHistory({userService, deviceService} : Thermome
         let fromLocal: Date | number = new Date();
         let toLocal = new Date().getTime();
         let targetLength = 0;
-        if (timeSpan == "C" && to <= from) {
+        if (timeSpan == "C" && to! <= from!) {
             setErrorMessage("Invalid date range!");
             setIsSuccess(false);
             setErrorPopupOpen(true);
             return;
         }
-        if (timeSpan == "C" && to.valueOf() - from.valueOf() > 1000 * 60 * 60 * 24 * 30)
+        if (timeSpan == "C" && to!.valueOf() - from!.valueOf() > 1000 * 60 * 60 * 24 * 30)
         {
             setErrorMessage("Date range must be less than a month!");
             setIsSuccess(false);
@@ -173,8 +174,8 @@ export function ThermometerChartsHistory({userService, deviceService} : Thermome
             targetLength = 120;
         } else {
             setIsTimeFormatter(true);
-            fromLocal = from.valueOf();
-            toLocal = to.valueOf();
+            fromLocal = from!.valueOf();
+            toLocal = to!.valueOf();
             if((toLocal - fromLocal) <= 1000 * 60 * 60)
                 targetLength = 60
             else if ((toLocal - fromLocal) <= 1000 * 60 * 60 * 3)
@@ -330,14 +331,14 @@ export function ThermometerChartsHistory({userService, deviceService} : Thermome
                                             sx={{marginLeft: '1em'}}
                                             label="From"
                                             value={from}
-                                            onChange={(newValue) => setFrom(newValue as Date)}
+                                            onChange={(newValue) => setFrom(newValue)}
                                         />
                                         <MobileDateTimePicker
                                             sx={{marginLeft: '1em'}}
                                             disableFuture={true}
                                             label="To"
                                             value={to}
-                                            onChange={(newValue) => setTo(newValue as Date)}
+                                            onChange={(newValue) => setTo(newValue)}
                                         />
                                 </LocalizationProvider>
                             }

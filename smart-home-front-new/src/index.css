@@ -197,3 +197,8 @@ button:focus-visible {
   padding-bottom:10px;
   color:white;
 }
+
+.bold-and-colored {
+  font-weight: bold;
+  background-color: rgba(0, 173, 181, 0.1);
+}

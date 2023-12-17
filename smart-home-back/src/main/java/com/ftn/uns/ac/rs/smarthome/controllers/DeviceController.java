@@ -3,6 +3,8 @@ package com.ftn.uns.ac.rs.smarthome.controllers;
 import com.ftn.uns.ac.rs.smarthome.models.Measurement;
 import com.ftn.uns.ac.rs.smarthome.models.TemperatureUnit;
 import com.ftn.uns.ac.rs.smarthome.models.User;
+import com.ftn.uns.ac.rs.smarthome.models.dtos.CommandsDTO;
+import com.ftn.uns.ac.rs.smarthome.models.dtos.CommandsRequestDTO;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.DeviceDetailsDTO;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.MeasurementsStreamRequestDTO;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.devices.AirConditionerDTO;
@@ -111,6 +113,22 @@ public class DeviceController {
             return Flux.fromIterable(measurements);
         } catch(ResponseStatusException ex) {
             return Flux.error(new ResponseStatusException(ex.getStatus(), ex.getMessage()));
+        }
+    }
+
+    @GetMapping(value = "/commands")
+    public ResponseEntity<?> getCommands(@RequestParam Long from,
+                                                   @RequestParam Long to,
+                                                   @RequestParam Integer deviceId,
+                                                   @RequestParam Integer page,
+                                                   @RequestParam Integer size,
+                                                   @RequestParam Integer userId) {
+        try {
+            CommandsRequestDTO dto = new CommandsRequestDTO(from, to, deviceId,page,size,userId);
+            CommandsDTO measurements = this.deviceService.getCommandsByTimeRangeAndUserId(dto);
+            return new ResponseEntity<>(measurements, HttpStatus.OK);
+        } catch(ResponseStatusException ex) {
+            return new ResponseEntity<>(ex.getReason(), ex.getStatus());
         }
     }
 }

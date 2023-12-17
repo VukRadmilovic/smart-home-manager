@@ -27,6 +27,7 @@ import {DeviceService} from "../../services/DeviceService.ts";
 import {DeviceDetailsDto} from "../../models/DeviceDetailsDto.ts";
 import {PopupMessage} from "../PopupMessage/PopupMessage.tsx";
 import {AirConditionerRemote} from "../AirConditionerRemote/AirConditionerRemote.tsx";
+import AssessmentIcon from '@mui/icons-material/Assessment';
 
 interface UserDevicesProps {
     userService: UserService
@@ -263,6 +264,12 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
                                                     <ControlCameraIcon />
                                                     Control
                                                 </MenuItem>
+                                                }
+                                                {device.type == "THERMOMETER" ? null :
+                                                    <MenuItem onClick={() => navigate("/acCommands/" + device.id)} disableRipple>
+                                                        <AssessmentIcon />
+                                                        Commands History
+                                                    </MenuItem>
                                                 }
                                             </OptionsMenu>
                                         }

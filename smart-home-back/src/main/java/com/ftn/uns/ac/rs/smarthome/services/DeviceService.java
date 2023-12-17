@@ -3,9 +3,8 @@ package com.ftn.uns.ac.rs.smarthome.services;
 import com.ftn.uns.ac.rs.smarthome.models.Measurement;
 import com.ftn.uns.ac.rs.smarthome.models.devices.Device;
 import com.ftn.uns.ac.rs.smarthome.models.devices.Thermometer;
-import com.ftn.uns.ac.rs.smarthome.models.dtos.DeviceDetailsDTO;
-import com.ftn.uns.ac.rs.smarthome.models.dtos.MeasurementsDTO;
-import com.ftn.uns.ac.rs.smarthome.models.dtos.MeasurementsStreamRequestDTO;
+import com.ftn.uns.ac.rs.smarthome.models.dtos.*;
+import com.ftn.uns.ac.rs.smarthome.models.enums.ACState;
 import com.ftn.uns.ac.rs.smarthome.repositories.DeviceRepository;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IDeviceService;
 import org.slf4j.Logger;
@@ -14,12 +13,11 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import reactor.core.publisher.Flux;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Service
 public class DeviceService implements IDeviceService {
@@ -27,13 +25,16 @@ public class DeviceService implements IDeviceService {
     private final DeviceRepository deviceRepository;
     private final InfluxService influxService;
     private final MessageSource messageSource;
+    private final UserService userService;
 
     public DeviceService(DeviceRepository deviceRepository,
                          InfluxService influxService,
-                         MessageSource messageSource) {
+                         MessageSource messageSource,
+                         UserService userService) {
         this.deviceRepository = deviceRepository;
         this.influxService = influxService;
         this.messageSource = messageSource;
+        this.userService = userService;
     }
 
     @Override
@@ -101,8 +102,75 @@ public class DeviceService implements IDeviceService {
 
         }
 
-
         return batches;
 
+    }
+
+    @Override
+    public CommandsDTO getCommandsByTimeRangeAndUserId(CommandsRequestDTO request) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy, hh:mm:ss a");
+        if(request.getFrom() >= request.getTo()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("dateRange.invalid", null, Locale.getDefault()));
+        }
+        if(deviceRepository.findById(request.getDeviceId()).isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("device.notFound", null, Locale.getDefault()));
+        }
+        List<CommandSummary> commands = new ArrayList<>();
+        List<CommandSummaryInternal> commandsInternal = influxService.findPaginatedByTimeSpanAndUserIdAndDeviceId(request);
+        for(CommandSummaryInternal command : commandsInternal) {
+            String commandDesc = "";
+            if(command.getCommand().equals(ACState.ON.toString()))
+                commandDesc = "Turned on the device";
+            else if(command.getCommand().equals(ACState.OFF.toString()))
+                commandDesc = "Turned off the device";
+            else if(command.getCommand().equals(ACState.HEAT_MODE.toString()))
+                commandDesc = "Changed mode to heating";
+            else if(command.getCommand().equals(ACState.COOL_MODE.toString()))
+                commandDesc = "Changed mode to cooling";
+            else if(command.getCommand().equals(ACState.DRY_MODE.toString()))
+                commandDesc = "Changed mode to ventilation";
+            else if(command.getCommand().equals(ACState.AUTO_MODE.toString()))
+                commandDesc = "Changed mode to automatic";
+            else if(command.getCommand().equals(ACState.FUNGUS_CHANGE.toString())) {
+                if (command.getTags().get("isFungus").equals("true"))
+                    commandDesc = "Turned on the fungus spreading prevention";
+                else
+                    commandDesc = "Turned off the fungus spreading prevention";
+            }
+            else if(command.getCommand().equals(ACState.HEALTH_CHANGE.toString())) {
+                if (command.getTags().get("isHealth").equals("true"))
+                    commandDesc = "Turned on the air ionizer";
+                else
+                    commandDesc = "Turned off the air ionizer";
+            }
+            else if(command.getCommand().equals(ACState.FAN_SPEED_CHANGE.toString()))
+                commandDesc = "Changed fan speed to " + command.getTags().get("fanSpeed");
+            else if(command.getCommand().equals(ACState.TEMP_CHANGE.toString()))
+                commandDesc = "Changed target temperature to " + command.getTags().get("target");
+            else if(command.getCommand().equals(ACState.SCHEDULE_ON.toString()))
+                commandDesc = "Device turned on according to scheduled cycle";
+            else if(command.getCommand().equals(ACState.SCHEDULE_OFF.toString()))
+                commandDesc = "Device turned off according to scheduled cycle";
+            else if(command.getCommand().equals(ACState.SCHEDULE.toString())) {
+                commandDesc = "Scheduled cycle from " + formatter.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(command.getTags().get("from"))),java.time.ZoneId.systemDefault())) +
+                        " to " + formatter.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(command.getTags().get("to"))),java.time.ZoneId.systemDefault()));
+                if (command.getTags().get("everyDay").equals("true"))
+                    commandDesc += " (repeats every day)";
+            }
+            else {
+                commandDesc = "Cancelled the cycle scheduled from " + formatter.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(command.getTags().get("from"))),java.time.ZoneId.systemDefault())) +
+                        " to " + formatter.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(command.getTags().get("to"))),java.time.ZoneId.systemDefault()));
+                if (command.getTags().get("everyDay").equals("true"))
+                    commandDesc += " (repeats every day)";
+            }
+            if(!command.getTags().get("userId").equals("0")) {
+                UserInfoDTO user = userService.getUserInfo(Integer.parseInt(command.getTags().get("userId")));
+                commands.add(new CommandSummary(command.getTimestamp().getTime(), user.getUsername(), commandDesc));
+            }
+            else {
+                commands.add(new CommandSummary(command.getTimestamp().getTime(), "Device", commandDesc));
+            }
+        }
+        return new CommandsDTO(commands,null);
     }
 }
