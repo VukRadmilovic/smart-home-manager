@@ -17,6 +17,7 @@ import {ThermometerCharts} from "./components/ThermometerCharts/ThermometerChart
 import {ThermometerChartsHistory} from "./components/ThermometerHistoryCharts/ThermometerHistoryCharts.tsx";
 import {ACCommandsReport} from "./components/ACCommandsReport/ACCommandsReport.tsx";
 import {PowerConsumptionChart} from "./components/PowerConsumptionChart/PowerConsumptionChart";
+import {PowerConsumptionChartsHistory} from "./components/PowerConsumptionHistoryChart/PowerConsumptionHistoryCharts";
 
 
 function App() {
@@ -129,6 +130,7 @@ function App() {
                         <Route path="/thermoCharts/:id" element={<ThermometerCharts userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>
                         <Route path="/thermoChartsHistory/:id" element={<ThermometerChartsHistory userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>
                         <Route path="/consumptionCharts/:id" element={<PowerConsumptionChart userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>
+                        <Route path="/consumptionChartsHistory/:id" element={<PowerConsumptionChartsHistory userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>
                         <Route path="/acCommands/:id" element={<ACCommandsReport userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>
                     </Routes>
                 </BrowserRouter>
