@@ -289,27 +289,26 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
                                                         History Monitoring
                                                 </MenuItem>
                                                 }
-                                                {device.type == "THERMOMETER" ? null :
-                                                <MenuItem onClick={() => openRemote(device.id)} disableRipple>
+                                                {device.type == "AC" ? <MenuItem onClick={() => openRemote(device.id)} disableRipple>
                                                     <ControlCameraIcon />
                                                     Control
-                                                </MenuItem>
+                                                </MenuItem> : null
                                                 }
-                                                {device.type == "THERMOMETER" ? null :
-                                                    <MenuItem onClick={() => navigate("/acCommands/" + device.id)} disableRipple>
+                                                {device.type == "AC" ? <MenuItem onClick={() => navigate("/acCommands/" + device.id)} disableRipple>
                                                         <AssessmentIcon />
                                                         Commands History
-                                                    </MenuItem>
+                                                    </MenuItem> :
+                                                    null
                                                 }
-                                                {device.type == "THERMOMETER" ? null :
-                                                    <MenuItem onClick={() => turnSolarPanelOn(device.id)} disableRipple>
+                                                {device.type == "SPS" ? <MenuItem onClick={() => turnSolarPanelOn(device.id)} disableRipple>
                                                         On
-                                                    </MenuItem>
+                                                    </MenuItem> :
+                                                    null
                                                 }
-                                                {device.type == "THERMOMETER" ? null :
-                                                    <MenuItem onClick={() => turnSolarPanelOff(device.id)} disableRipple>
+                                                {device.type == "SPS" ? <MenuItem onClick={() => turnSolarPanelOff(device.id)} disableRipple>
                                                         Off
-                                                    </MenuItem>
+                                                    </MenuItem> :
+                                                    null
                                                 }
                                             </OptionsMenu>
                                         }

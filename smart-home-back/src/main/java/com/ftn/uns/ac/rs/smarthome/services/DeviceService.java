@@ -2,7 +2,9 @@ package com.ftn.uns.ac.rs.smarthome.services;
 
 import com.ftn.uns.ac.rs.smarthome.models.Measurement;
 import com.ftn.uns.ac.rs.smarthome.models.UserIdUsernamePair;
+import com.ftn.uns.ac.rs.smarthome.models.devices.AirConditioner;
 import com.ftn.uns.ac.rs.smarthome.models.devices.Device;
+import com.ftn.uns.ac.rs.smarthome.models.devices.SolarPanelSystem;
 import com.ftn.uns.ac.rs.smarthome.models.devices.Thermometer;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.*;
 import com.ftn.uns.ac.rs.smarthome.models.enums.ACState;
@@ -50,6 +52,8 @@ public class DeviceService implements IDeviceService {
         for(Device device : ownersDevices) {
             String type = "";
             if(device instanceof Thermometer) type = "THERMOMETER";
+            if (device instanceof SolarPanelSystem) type = "SPS";
+            if (device instanceof AirConditioner) type = "AC";
             DeviceDetailsDTO details = new DeviceDetailsDTO(
                     device.getId(),
                     type,
