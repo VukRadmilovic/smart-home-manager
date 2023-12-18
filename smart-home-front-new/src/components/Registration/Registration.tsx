@@ -9,6 +9,8 @@ import {RoleEnum} from "../../models/enums/RoleEnum.ts";
 
 type RegistrationForm = {
     username: string,
+    name: string,
+    surname: string,
     email: string,
     password: string,
     passwordConfirmation: string
@@ -28,6 +30,8 @@ export function Registration({userService, adminRegistration} : RegistrationProp
     const {register, getValues, handleSubmit, formState: {errors}} = useForm<RegistrationForm>({
         defaultValues: {
             username: "",
+            name: "",
+            surname: "",
             email: "",
             password: "",
             passwordConfirmation: ""
@@ -64,6 +68,8 @@ export function Registration({userService, adminRegistration} : RegistrationProp
         const role = adminRegistration? RoleEnum.ROLE_ADMIN : RoleEnum.ROLE_USER
         const newUser: NewUserMultipart = {
             username: formData.username.trim(),
+            name: formData.name.trim(),
+            surname: formData.surname.trim(),
             email: formData.email.trim(),
             password: formData.password.trim(),
             profilePicture: selectedImage,
@@ -103,14 +109,32 @@ export function Registration({userService, adminRegistration} : RegistrationProp
                     <Grid item container xs={12} sm={12} md={12} lg={12} xl={12} rowSpacing={3}>
                         <Grid item container xs={12} sm={12} md={7} lg={7} xl={7} justifyContent={'center'}>
                             <Grid item xs={10} sm={10} md={8} lg={8} xl={8}>
-                                <Grid item container spacing={2}>
+                                <Grid item container spacing={1}>
                                     <Grid item xs={12} sm={6} md={12} lg={12} xl={12}>
-                                        <TextField id="name" label="Username"
+                                        <TextField id="username" label="Username"
                                                    type="text"
                                                    {...register("username",
                                                        {required: "Name is a required field!"})}
                                                    error={!!errors.username}
                                                    helperText={errors.username ? errors.username?.message : "Required"}
+                                                   variant="outlined" fullWidth={true}/>
+                                    </Grid>
+                                    <Grid item xs={12} sm={6} md={12} lg={6} xl={6}>
+                                        <TextField id="name" label="Name"
+                                                   type="text"
+                                                   {...register("name",
+                                                       {required: "Name is a required field!"})}
+                                                   error={!!errors.name}
+                                                   helperText={errors.name ? errors.name?.message : "Required"}
+                                                   variant="outlined" fullWidth={true}/>
+                                    </Grid>
+                                    <Grid item xs={12} sm={6} md={12} lg={6} xl={6}>
+                                        <TextField id="surname" label="Surname"
+                                                   type="text"
+                                                   {...register("surname",
+                                                       {required: "Surname is a required field!"})}
+                                                   error={!!errors.name}
+                                                   helperText={errors.surname ? errors.surname?.message : "Required"}
                                                    variant="outlined" fullWidth={true}/>
                                     </Grid>
                                     <Grid item xs={12} sm={6} md={12} lg={12} xl={12}>

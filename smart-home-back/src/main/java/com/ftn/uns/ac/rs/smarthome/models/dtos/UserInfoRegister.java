@@ -19,6 +19,14 @@ public class UserInfoRegister {
     @NotBlank(message = "{required}")
     private String username;
 
+    @Length(max = 255, message = "{maxLength}")
+    @NotBlank(message = "{required}")
+    private String name;
+
+    @Length(max = 255, message = "{maxLength}")
+    @NotBlank(message = "{required}")
+    private String surname;
+
     @NotBlank
     @Email(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$", message = "{format}")
     private String email;

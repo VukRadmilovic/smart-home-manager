@@ -27,6 +27,12 @@ public class User implements UserDetails {
     private String username;
 
     @Column (nullable = false)
+    private String name;
+
+    @Column (nullable = false)
+    private String surname;
+
+    @Column (nullable = false)
     private String email;
 
     @Column (nullable = false)
@@ -44,8 +50,10 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private List<Role> roles;
 
-    public User(String username, String email, String password, Boolean isConfirmed, String profilePicture, List<Role> roles) {
+    public User(String username,String name, String surname, String email, String password, Boolean isConfirmed, String profilePicture, List<Role> roles) {
         this.username = username;
+        this.name = name;
+        this.surname = surname;
         this.email = email;
         this.password = password;
         this.isConfirmed = isConfirmed;

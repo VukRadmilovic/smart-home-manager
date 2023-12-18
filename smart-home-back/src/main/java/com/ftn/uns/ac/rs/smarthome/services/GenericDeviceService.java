@@ -79,7 +79,7 @@ public abstract class GenericDeviceService<D extends Device, DDTO extends Device
         File file = new File(filepath.toString());
         File compressed;
         try {
-            compressed = ImageCompressor.compressImage(file, 0.1f, "d" + savedDevice.getId());
+            compressed = ImageCompressor.compressImage(file, 0.4f, "d" + savedDevice.getId());
         } catch (ResponseStatusException e) {
             log.error("Error while compressing image: {}", e.getMessage());
             deviceRepository.deleteById(savedDevice.getId());

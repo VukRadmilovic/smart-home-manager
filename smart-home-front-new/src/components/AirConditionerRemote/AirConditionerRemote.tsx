@@ -154,6 +154,7 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
     const [isCommandSuccess, setIsCommandSuccess] = React.useState<number>(0);
     const [isScheduleSuccess, setIsScheduleSuccess] = React.useState<number>(0);
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
+    const firstStatusLoad = useRef(true);
     const defaultParams : CommandParams = {
         userId: -1,
         unit: 'C',
@@ -335,7 +336,10 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
         if(payload.body == "ON") {
             currentConfig.commandType = CommandType.ON;
             setCurrentConfig(currentConfig);
-            setIsOn(true);
+            if(firstStatusLoad.current) {
+                setIsOn(true);
+                firstStatusLoad.current = false;
+            }
             setCurrentStatus("ON")
             setCurrentStatusColor("green");
             setDisableForm(false);
@@ -343,7 +347,10 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
         else {
             currentConfig.commandType = CommandType.OFF;
             setCurrentConfig(currentConfig);
-            setIsOn(false);
+            if(firstStatusLoad.current) {
+                setIsOn(false);
+                firstStatusLoad.current = false;
+            }
             setCurrentStatus("OFF")
             setCurrentStatusColor("red");
             setDisableForm(false);

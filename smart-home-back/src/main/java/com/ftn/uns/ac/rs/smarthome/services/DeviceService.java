@@ -171,7 +171,7 @@ public class DeviceService implements IDeviceService {
             }
             if(!command.getTags().get("userId").equals("0")) {
                 UserInfoDTO user = userService.getUserInfo(Integer.parseInt(command.getTags().get("userId")));
-                commands.add(new CommandSummary(command.getTimestamp().getTime(), user.getUsername(), commandDesc));
+                commands.add(new CommandSummary(command.getTimestamp().getTime(), user.getUsername() + " (" + user.getName() +  " " + user.getSurname() +")", commandDesc));
             }
             else {
                 commands.add(new CommandSummary(command.getTimestamp().getTime(), "Device", commandDesc));
@@ -181,7 +181,8 @@ public class DeviceService implements IDeviceService {
             List<Integer> allUserIds = this.influxService.findAllDistinctUsersForAllRecords(request.getDeviceId());
             for(Integer id : allUserIds) {
                 if(id == 0) continue;
-                allUsers.add(new UserIdUsernamePair(id,this.userService.getUserInfo(id).getUsername()));
+                UserInfoDTO userInfo = this.userService.getUserInfo(id);
+                allUsers.add(new UserIdUsernamePair(id,userInfo.getUsername() + " (" + userInfo.getName() +  " " + userInfo.getSurname() +")"));
             }
             allUsers.add(new UserIdUsernamePair(0,"Device"));
         }

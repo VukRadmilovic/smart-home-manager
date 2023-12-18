@@ -12,6 +12,8 @@ public class UserInfoDTO {
 
     private Integer id;
     private String username;
+    private String name;
+    private String surname;
     private String email;
     private String profilePicture;
     private String role;

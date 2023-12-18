@@ -14,7 +14,6 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.MessageSource;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -84,6 +83,8 @@ public class UserService implements IUserService {
             String profilePictureLocation = "http://127.0.0.1:9000/images/profilePictures/admin.jpg";
             User superadmin = new User(1,
                     "admin",
+                    "Admin",
+                    "Admin",
                     "smarthome.superadmin@no-reply.com",
                     hashedRandomPassword,
                     false,
@@ -140,7 +141,7 @@ public class UserService implements IUserService {
             Path filepath = Paths.get(path, userInfo.getProfilePicture().getOriginalFilename());
             userInfo.getProfilePicture().transferTo(filepath);
             File file = new File(filepath.toString());
-            File compressed = ImageCompressor.compressImage(file, 0.1f, userInfo.getUsername());
+            File compressed = ImageCompressor.compressImage(file, 0.4f, userInfo.getUsername());
             String[] tokens = compressed.getName().split("/");
             String key = tokens[tokens.length - 1];
             String type = userInfo.getProfilePicture().getContentType();
@@ -148,6 +149,8 @@ public class UserService implements IUserService {
             String pathToImage = "http://127.0.0.1:9000/" + bucket + '/' + "profilePictures/" + key;
             User toSave = new User(
                     userInfo.getUsername(),
+                    userInfo.getName(),
+                    userInfo.getSurname(),
                     userInfo.getEmail(),
                     passwordEncoder().encode(userInfo.getPassword()),
                     false,
@@ -281,6 +284,8 @@ public class UserService implements IUserService {
         }
         return new UserInfoDTO(user.get().getId(),
                 user.get().getUsername(),
+                user.get().getName(),
+                user.get().getSurname(),
                 user.get().getEmail(),
                 user.get().getProfilePicture(),
                 user.get().getRoles().get(0).getName());
