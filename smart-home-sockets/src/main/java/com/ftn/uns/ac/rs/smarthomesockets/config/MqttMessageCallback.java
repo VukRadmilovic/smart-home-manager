@@ -69,6 +69,11 @@ public class MqttMessageCallback implements MqttCallback {
             messagingTemplate.convertAndSend("/sps/status/" + data[1],data[0]);
             log.info("SPS status changed to: " + data[0] + " for device: " + data[1]);
         }
+        else if (topic.contains("status/battery")) {
+            String[] data = message.split(",");
+            messagingTemplate.convertAndSend("/battery/status/" + data[1],data[0]);
+            log.info("Battery status changed to: " + data[0] + " for device: " + data[1]);
+        }
         else if(topic.contains("scheduled")) {
             SchedulesPerUser schedules = jsonMapper.readValue(message, SchedulesPerUser.class);
             messagingTemplate.convertAndSend("/ac/schedules/" + schedules.getDeviceId(),schedules.getSchedules());

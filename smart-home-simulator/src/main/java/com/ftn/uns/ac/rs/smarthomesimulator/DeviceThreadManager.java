@@ -2,11 +2,11 @@ package com.ftn.uns.ac.rs.smarthomesimulator;
 
 import com.ftn.uns.ac.rs.smarthomesimulator.models.ACCommand;
 import com.ftn.uns.ac.rs.smarthomesimulator.models.Command;
-import com.ftn.uns.ac.rs.smarthomesimulator.models.enums.TemperatureUnit;
 import com.ftn.uns.ac.rs.smarthomesimulator.models.devices.*;
+import com.ftn.uns.ac.rs.smarthomesimulator.repositories.BatteryRepository;
 import com.ftn.uns.ac.rs.smarthomesimulator.services.MqttService;
-import com.ftn.uns.ac.rs.smarthomesimulator.services.interfaces.IDeviceService;
 import com.ftn.uns.ac.rs.smarthomesimulator.threads.ACThread;
+import com.ftn.uns.ac.rs.smarthomesimulator.threads.BatteryThread;
 import com.ftn.uns.ac.rs.smarthomesimulator.threads.SolarPanelSystemThread;
 import com.ftn.uns.ac.rs.smarthomesimulator.threads.ThermometerThread;
 import org.springframework.stereotype.Component;
@@ -22,29 +22,37 @@ public class DeviceThreadManager {
     private final Set<Integer> nonSimulatedDevices = ConcurrentHashMap.newKeySet();
 
     private final MqttService mqttService;
+    private final BatteryRepository batteryRepository;
 
-    public DeviceThreadManager(MqttService mqttService) {
+    public DeviceThreadManager(MqttService mqttService,
+                               BatteryRepository batteryRepository) {
         this.mqttService = mqttService;
+        this.batteryRepository = batteryRepository;
     }
 
     public void addDeviceThread(Device device, Command command) {
         switch (device.getClass().getSimpleName()) {
-            case "Thermometer":
+            case "Thermometer" -> {
                 Thermometer thermometer = (Thermometer) device;
                 addDeviceThreadInternal(device.getId(),
                         new ThermometerThread(thermometer, mqttService).getNewSimulatorThread());
-                break;
-            case "AirConditioner":
+            }
+            case "AirConditioner" -> {
                 AirConditioner ac = (AirConditioner) device;
                 addDeviceThreadInternal(device.getId(),
                         new ACThread(ac, (ACCommand) command).getNewSimulatorThread());
-                break;
-            case "SolarPanelSystem":
+            }
+            case "SolarPanelSystem" -> {
                 SolarPanelSystem system = (SolarPanelSystem) device;
                 addDeviceThreadInternal(device.getId(),
                         new SolarPanelSystemThread(system).getNewSimulatorThread());
-            default:
-                break;
+            }
+            case "Battery" -> {
+                Battery battery = (Battery) device;
+                addDeviceThreadInternal(device.getId(),
+                        new BatteryThread(battery, batteryRepository).getNewSimulatorThread());
+            }
+            default -> {}
         }
     }
 
