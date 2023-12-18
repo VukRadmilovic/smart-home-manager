@@ -13,6 +13,8 @@ import {
 } from "@mui/material";
 import {SideNav} from "../Sidenav/SideNav.tsx";
 import {UserService} from "../../services/UserService.ts";
+import axios from 'axios';
+
 import HomeIcon from '@mui/icons-material/Home';
 import AddIcon from '@mui/icons-material/Add';
 import TimelineIcon from '@mui/icons-material/Timeline';
@@ -162,6 +164,34 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
         }
     });
 
+    async function turnSolarPanelOn(id: number) {
+        await axios.put('http://localhost:80/api/devices/sps/' + id + '/on', {}, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': 'Bearer ' + sessionStorage.getItem('user')
+            },
+        });
+
+        setErrorMessage("Solar panel turned on.");
+        setIsSuccess(true);
+        setErrorPopupOpen(true);
+        return;
+    }
+
+    async function turnSolarPanelOff(id: number) {
+        await axios.put('http://localhost:80/api/devices/sps/' + id + '/off', {}, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': 'Bearer ' + sessionStorage.getItem('user')
+            },
+        });
+
+        setErrorMessage("Solar panel turned off.");
+        setIsSuccess(true);
+        setErrorPopupOpen(true);
+        return;
+    }
+
     return (
         <>
             <CssBaseline/>
@@ -269,6 +299,16 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
                                                     <MenuItem onClick={() => navigate("/acCommands/" + device.id)} disableRipple>
                                                         <AssessmentIcon />
                                                         Commands History
+                                                    </MenuItem>
+                                                }
+                                                {device.type == "THERMOMETER" ? null :
+                                                    <MenuItem onClick={() => turnSolarPanelOn(device.id)} disableRipple>
+                                                        On
+                                                    </MenuItem>
+                                                }
+                                                {device.type == "THERMOMETER" ? null :
+                                                    <MenuItem onClick={() => turnSolarPanelOff(device.id)} disableRipple>
+                                                        Off
                                                     </MenuItem>
                                                 }
                                             </OptionsMenu>
