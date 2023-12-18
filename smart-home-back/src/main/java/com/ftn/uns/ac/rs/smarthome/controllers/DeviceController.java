@@ -202,6 +202,26 @@ public class DeviceController {
         }
     }
 
+    @PutMapping(value = "/sps/{id}/off")
+    public ResponseEntity<?> turnOffSolarPanelSystem(@PathVariable("id") Integer id) {
+        try {
+            this.solarPanelSystemService.turnOffSolarPanelSystem(id);
+            return new ResponseEntity<>(messageSource.getMessage("sps.turn.off.success", null, Locale.getDefault()), HttpStatus.OK);
+        } catch(ResponseStatusException ex) {
+            return new ResponseEntity<>(ex.getReason(), ex.getStatus());
+        }
+    }
+
+    @PutMapping(value = "/sps/{id}/on")
+    public ResponseEntity<?> turnOnSolarPanelSystem(@PathVariable("id") Integer id) {
+        try {
+            this.solarPanelSystemService.turnOnSolarPanelSystem(id);
+            return new ResponseEntity<>(messageSource.getMessage("sps.turn.on.success", null, Locale.getDefault()), HttpStatus.OK);
+        } catch(ResponseStatusException ex) {
+            return new ResponseEntity<>(ex.getReason(), ex.getStatus());
+        }
+    }
+
     @GetMapping(value = "/commands")
     public ResponseEntity<?> getCommands(@RequestParam Long from,
                                                    @RequestParam Long to,

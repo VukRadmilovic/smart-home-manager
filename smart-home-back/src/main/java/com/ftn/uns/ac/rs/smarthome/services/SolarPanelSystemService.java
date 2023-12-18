@@ -14,15 +14,49 @@ import java.io.IOException;
 
 @Service
 public class SolarPanelSystemService extends GenericDeviceService<SolarPanelSystem, SolarPanelSystemDTO> implements ISolarPanelSystemService {
+    private final MqttService mqttService;
+
     public SolarPanelSystemService(PropertyRepository propertyRepository,
                                    DeviceRepository deviceRepository,
                                    MessageSource messageSource,
-                                   S3API fileServerService) throws IOException {
+                                   S3API fileServerService,
+                                   MqttService mqttService) throws IOException {
         super(propertyRepository, deviceRepository, messageSource, fileServerService);
+        this.mqttService = mqttService;
     }
 
     @Override
     protected SolarPanelSystem createDevice(SolarPanelSystemDTO dto, Property property) {
         return new SolarPanelSystem(dto, property);
+    }
+
+    @Override
+    public void turnOffSolarPanelSystem(Integer id) {
+        SolarPanelSystem solarPanelSystem = (SolarPanelSystem) deviceRepository.findById(id).orElse(null);
+        if (solarPanelSystem != null) {
+            solarPanelSystem.setIsOn(false);
+            deviceRepository.save(solarPanelSystem);
+
+            try {
+                mqttService.publishMessageToTopic("OFF", "commands/sps/" + solarPanelSystem.getId());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void turnOnSolarPanelSystem(Integer id) {
+        SolarPanelSystem solarPanelSystem = (SolarPanelSystem) deviceRepository.findById(id).orElse(null);
+        if (solarPanelSystem != null) {
+            solarPanelSystem.setIsOn(true);
+            deviceRepository.save(solarPanelSystem);
+
+            try {
+                mqttService.publishMessageToTopic("ON", "commands/sps/" + solarPanelSystem.getId());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

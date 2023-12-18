@@ -26,7 +26,7 @@ public class SolarPanelSystemThread implements Runnable {
     private final SolarPanelSystem system;
     private MqttConfiguration mqttConfiguration;
     private ThreadMqttService mqttService;
-    private boolean isOff = true;
+    private boolean isOff = false;
     private int count = 1;
 
     private static final double[] sunlightStarts = {6.5, 6.5, 6, 5.5, 5, 5, 5, 5.5, 6, 7, 7, 6.5};
@@ -77,6 +77,11 @@ public class SolarPanelSystemThread implements Runnable {
         public void messageArrived(String s, MqttMessage mqttMessage) {
             try {
                 String message = new String(mqttMessage.getPayload());
+                if (message.equals("OFF")) {
+                    isOff = true;
+                } else if (message.equals("ON")) {
+                    isOff = false;
+                }
             } catch(Exception ex) {
                 System.out.println(ex.getMessage());
             }
@@ -124,14 +129,17 @@ public class SolarPanelSystemThread implements Runnable {
 
     public void generatePower() throws InterruptedException {
         while (true) {
-            sendInternalState();
-            // kWh = (number of panels * panel size * panel efficiency * (sunlight length today / 3 `peak sun hours only`)
-            // amount of power which will be produced today
-            double kWhProduced = system.getNumberOfPanels() * system.getPanelSize() * system.getPanelEfficiency() * (sunlightLengthToday / 3);
-            // multiply by the percentage of today's power which will be generated during this hour
-            kWhProduced *= getSunlightIntensity(); // amount of power which will be produced in this hour
-            kWhProduced /= ((60.0 * 60) / INTERVAL); // amount of power which will be produced in this interval
-            sendAndDisplayPower(kWhProduced);
+            if (!isOff) {
+                sendInternalState();
+                // kWh = (number of panels * panel size * panel efficiency * (sunlight length today / 3 `peak sun hours only`)
+                // amount of power which will be produced today
+                double kWhProduced = system.getNumberOfPanels() * system.getPanelSize() * system.getPanelEfficiency() * (sunlightLengthToday / 3);
+                // multiply by the percentage of today's power which will be generated during this hour
+                kWhProduced *= getSunlightIntensity(); // amount of power which will be produced in this hour
+                kWhProduced /= ((60.0 * 60) / INTERVAL); // amount of power which will be produced in this interval
+                sendAndDisplayPower(kWhProduced);
+            }
+
             Thread.sleep(INTERVAL * 1000);
         }
     }

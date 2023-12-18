@@ -24,6 +24,10 @@ public class MqttService {
         this.mqttConfiguration.getClient().publish("commands", new MqttMessage(message.getBytes()));
     }
 
+    public void publishMessageToTopic(String message, String topic) throws MqttException {
+        this.mqttConfiguration.getClient().publish(topic, new MqttMessage(message.getBytes()));
+    }
+
     public void publishPowerMessage(String message) throws MqttException {
         this.mqttConfiguration.getClient().publish("power", new MqttMessage(message.getBytes()));
     }
