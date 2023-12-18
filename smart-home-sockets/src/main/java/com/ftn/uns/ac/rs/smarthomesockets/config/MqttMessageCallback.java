@@ -88,9 +88,15 @@ public class MqttMessageCallback implements MqttCallback {
             tags.put("unit", valueWithUnit.substring(valueWithUnit.length() - 1));
             Measurement measurement = new Measurement(data[0], value, (new Date()).getTime(), tags);
             String toSend = jsonMapper.writeValueAsString(measurement);
-            messagingTemplate.convertAndSend("/thermometer/freshest/" + deviceId, toSend);
+
+            if (message.contains("temperature") || message.contains("humidity")) {
+                messagingTemplate.convertAndSend("/thermometer/freshest/" + deviceId, toSend);
+            } else if (message.contains("consumed")) {
+                messagingTemplate.convertAndSend("/consumption/freshest/" + deviceId, toSend);
+            }
+
         }
-        System.out.println("Message received. ID:" + mqttMessage.getId() + ", Message: " + message);
+        System.out.println("Message received. ID:" + mqttMessage.getId() + ", Message: " + message + ", Topic: " + topic);
     }
 
     @Override

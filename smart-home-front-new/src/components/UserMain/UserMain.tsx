@@ -94,6 +94,14 @@ export function UserMain({userService, propertyService} : PropertyProps) {
         });
     })*/
 
+    const navigateToRealTimeCharts = (propertyId: number) => {
+        navigate('/consumptionCharts/' + propertyId);
+    }
+
+    const navigateToHistoricalCharts = (propertyId: number) => {
+        navigate('/consumptionChartsHistory/' + propertyId);
+    }
+
     return (
         <>
             <CssBaseline/>
@@ -157,7 +165,8 @@ export function UserMain({userService, propertyService} : PropertyProps) {
                                             </Typography>
                                         </CardContent>
                                         <Box sx={{ display: 'flex', justifyContent:'center', width:'100%', alignItems: 'center', pl: 1, pb: 1 }}>
-                                            <Button  color={'secondary'} variant={'contained'} sx={{marginRight:'10px'}}>Share</Button>
+                                            <Button onClick={() => navigateToRealTimeCharts(property.id)}  color={'secondary'} variant={'contained'} sx={{marginRight:'10px'}}>RealTime power usage</Button>
+                                            <Button onClick={() => navigateToHistoricalCharts(property.id)}  color={'secondary'} variant={'contained'} sx={{marginRight:'10px'}}>Historical power usage</Button>
                                         </Box>
                                     </Box>
                                     <CardMedia
