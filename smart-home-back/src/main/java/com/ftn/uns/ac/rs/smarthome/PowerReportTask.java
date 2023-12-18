@@ -18,8 +18,8 @@ public class PowerReportTask {
     private final PowerManager powerManager;
     private final InfluxService influxService;
     private final IBatteryService batteryService;
-    private static final int FIXED_RATE = 15 * 1000;
-    private static final int INITIAL_DELAY = 15 * 1000;
+    private static final int FIXED_RATE = 60 * 1000;
+    private static final int INITIAL_DELAY = 60 * 1000;
 
     public PowerReportTask(PowerManager powerManager,
                            InfluxService influxService,

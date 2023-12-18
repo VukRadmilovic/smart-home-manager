@@ -19,7 +19,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
 public class BatteryThread implements Runnable {
-    public static final int INTERVAL = 45;
+    public static final int INTERVAL = 75;
     private static final Logger logger = LoggerFactory.getLogger(BatteryThread.class);
     private final Integer deviceId;
     private Battery battery;

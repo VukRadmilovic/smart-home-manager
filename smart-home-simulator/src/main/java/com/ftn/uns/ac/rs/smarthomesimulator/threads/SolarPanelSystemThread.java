@@ -21,7 +21,7 @@ import java.util.Locale;
 
 public class SolarPanelSystemThread implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(SolarPanelSystemThread.class);
-    public static final int INTERVAL = 5;
+    public static final int INTERVAL = 60;
     private final Integer deviceId;
     private final SolarPanelSystem system;
     private MqttConfiguration mqttConfiguration;
