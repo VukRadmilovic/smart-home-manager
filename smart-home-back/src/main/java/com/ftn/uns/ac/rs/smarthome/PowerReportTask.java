@@ -2,14 +2,20 @@ package com.ftn.uns.ac.rs.smarthome;
 
 import com.ftn.uns.ac.rs.smarthome.models.devices.Battery;
 import com.ftn.uns.ac.rs.smarthome.services.InfluxService;
+import com.ftn.uns.ac.rs.smarthome.services.MqttService;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IBatteryService;
+import org.eclipse.paho.mqttv5.common.MqttException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @Component
@@ -18,15 +24,18 @@ public class PowerReportTask {
     private final PowerManager powerManager;
     private final InfluxService influxService;
     private final IBatteryService batteryService;
+    private final MqttService mqttService;
     private static final int FIXED_RATE = 60 * 1000;
     private static final int INITIAL_DELAY = 60 * 1000;
 
     public PowerReportTask(PowerManager powerManager,
                            InfluxService influxService,
-                           IBatteryService batteryService) {
+                           IBatteryService batteryService,
+                           MqttService mqttService) {
         this.powerManager = powerManager;
         this.influxService = influxService;
         this.batteryService = batteryService;
+        this.mqttService = mqttService;
     }
 
     @Scheduled(initialDelay = INITIAL_DELAY, fixedRate = FIXED_RATE)
@@ -75,7 +84,7 @@ public class PowerReportTask {
             log.info("Power balance is negative, taking power from grid");
         }
         influxService.save("totalConsumption", powerManager.getPowerConsumption(), new Date(),
-                Map.of("unit", "kWh"));
+                Map.of("unit", "kWh", "deviceId", "-1"));
         influxService.save("totalProduction", powerManager.getPowerProduction(), new Date(),
                 Map.of("unit", "kWh"));
         influxService.save("totalBalance", powerManager.getPowerBalance(), new Date(),
@@ -84,6 +93,16 @@ public class PowerReportTask {
                 Map.of("unit", "kWh"));
         influxService.save("totalSentToGrid", powerBalance, new Date(),
                 Map.of("unit", "kWh"));
+        try {
+            DecimalFormat df = new DecimalFormat("#.###", new DecimalFormatSymbols(Locale.ENGLISH));
+            df.setRoundingMode(RoundingMode.CEILING);
+            String msg = "totalConsumption," + df.format(powerManager.getPowerConsumption()) + "p,-1";
+            log.info("Publishing power message: " + msg);
+            this.mqttService.publishPowerMessage(msg);
+        } catch (MqttException ex) {
+            log.error("Error publishing power message: " + ex.getMessage());
+        }
+
         powerManager.reset();
     }
 }

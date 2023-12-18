@@ -16,6 +16,7 @@ public class MqttService {
         this.mqttConfiguration = mqttConfiguration;
         this.mqttConfiguration.getClient().subscribe("measurements",2);
         this.mqttConfiguration.getClient().subscribe("consumed",2);
+        this.mqttConfiguration.getClient().subscribe("power",2);
         this.mqttConfiguration.getClient().subscribe("ac",2);
         this.mqttConfiguration.getClient().subscribe("status/ac",2);
         this.mqttConfiguration.getClient().subscribe("scheduled",2);

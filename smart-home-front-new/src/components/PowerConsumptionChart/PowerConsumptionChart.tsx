@@ -1,12 +1,7 @@
 import {
     CircularProgress,
     CssBaseline,
-    FormControl,
-    FormControlLabel,
     Grid,
-    Radio,
-    RadioGroup,
-    Typography
 } from "@mui/material";
 import {SideNav} from "../Sidenav/SideNav.tsx";
 import {UserService} from "../../services/UserService.ts";
@@ -38,14 +33,36 @@ export function PowerConsumptionChart({userService, deviceService} : PowerConsum
     const [errorPopupOpen, setErrorPopupOpen] = React.useState<boolean>(false);
     const [isSuccess, setIsSuccess] = React.useState(true);
     const [consumptionData, setConsumptionData] = React.useState<ChartDataShort[]>([]);
-    const deviceId = String(location.pathname.split('/').pop());
     const shouldConnect = React.useRef(true);
     const navigate = useNavigate();
-    const units = React.useRef("kWh");
-    const [unitA, setUnitA] = React.useState<string>("kWh");
     const [latestConsumption, setLatestConsumption] = React.useState<string>("Latest Value: ");
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
 
+    const onMessageReceived = (payload) => {
+        console.log('test2');
+        const val: ChartData = JSON.parse(payload.body);
+        const newVal: ChartDataShort = {
+            timestamp: new Date(+val.timestamp),
+            value: val.value,
+        };
+        console.log('test3');
+        setLatestConsumption("Latest Value: " + newVal.value.toFixed(3) + "kWh")
+        setConsumptionData((prevConsumptionData) => {
+            if (prevConsumptionData.length > 0) {
+                if (newVal.timestamp.getTime() - prevConsumptionData[0].timestamp.getTime() > 3900000)
+                    prevConsumptionData.shift();
+                if (newVal.timestamp.getTime() - prevConsumptionData[prevConsumptionData.length - 1].timestamp.getTime() > 60000) {
+                    const nullVal: ChartDataShort = {
+                        timestamp: new Date(val.timestamp),
+                        value: null
+                    }
+                    prevConsumptionData.push(nullVal)
+                }
+            }
+
+            return [...prevConsumptionData, newVal];
+        });
+    }
     const connectSocket = () => {
         try {
             const webChatUrl = "http://localhost:80/realtime";
@@ -55,7 +72,8 @@ export function PowerConsumptionChart({userService, deviceService} : PowerConsum
                 {},
                 () => {
                     console.log(':::::: SOCKET CONNECTED ::::::');
-                    client.subscribe('/consumption/freshest/' + deviceId, onMessageReceived);
+                    client.subscribe('/consumption/freshest', onMessageReceived);
+                    console.log('test/?');
                 },
                 () => {
                     console.log(':::::: SOCKET TRYING TO RECONNECT ::::::');
@@ -99,7 +117,7 @@ export function PowerConsumptionChart({userService, deviceService} : PowerConsum
         const request : MeasurementRequest = {
             from: Math.floor(from / 1000),
             to: Math.floor(Date.now() / 1000),
-            deviceId: deviceId,
+            deviceId: -1,
             measurementName: measurement
         }
         deviceService.getDeviceMeasurements(request).then((response => {
@@ -132,7 +150,7 @@ export function PowerConsumptionChart({userService, deviceService} : PowerConsum
     useEffect(() => {
         if(!shouldConnect.current) return;
         connectSocket();
-        getMeasurement("consumed");
+        getMeasurement("totalConsumption");
         shouldConnect.current = false;
     }, []);
 
@@ -148,31 +166,6 @@ export function PowerConsumptionChart({userService, deviceService} : PowerConsum
             navigate("/")
         }
     });
-
-    const onMessageReceived = (payload) => {
-        const val: ChartData = JSON.parse(payload.body);
-        const newVal: ChartDataShort = {
-            timestamp: new Date(+val.timestamp),
-            value: val.value,
-        };
-        setLatestConsumption("Latest Value: " + newVal.value.toFixed(3) + "kWh")
-        setConsumptionData((prevConsumptionData) => {
-            if (prevConsumptionData.length > 0) {
-                if (newVal.timestamp.getTime() - prevConsumptionData[0].timestamp.getTime() > 3900000)
-                    prevConsumptionData.shift();
-                if (newVal.timestamp.getTime() - prevConsumptionData[prevConsumptionData.length - 1].timestamp.getTime() > 60000) {
-                    const nullVal: ChartDataShort = {
-                        timestamp: new Date(val.timestamp),
-                        value: null
-                    }
-                    prevConsumptionData.push(nullVal)
-                }
-            }
-
-            return [...prevConsumptionData, newVal];
-        });
-    }
-
 
     const handleErrorPopupClose = (reason?: string) => {
         if (reason === 'clickaway') return;

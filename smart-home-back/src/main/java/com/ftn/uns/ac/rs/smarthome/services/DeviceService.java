@@ -86,7 +86,7 @@ public class DeviceService implements IDeviceService {
         if(requestDTO.getFrom() >= requestDTO.getTo()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("dateRange.invalid", null, Locale.getDefault()));
         }
-        if(deviceRepository.findById(requestDTO.getDeviceId()).isEmpty()) {
+        if(requestDTO.getDeviceId() != -1 && deviceRepository.findById(requestDTO.getDeviceId()).isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("device.notFound", null, Locale.getDefault()));
         }
         int batchSize = 5000, page = 0;
