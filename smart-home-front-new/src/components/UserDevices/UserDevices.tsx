@@ -30,6 +30,7 @@ import {DeviceDetailsDto} from "../../models/DeviceDetailsDto.ts";
 import {PopupMessage} from "../PopupMessage/PopupMessage.tsx";
 import {AirConditionerRemote} from "../AirConditionerRemote/AirConditionerRemote.tsx";
 import AssessmentIcon from '@mui/icons-material/Assessment';
+import {WashingMachineRemote} from "../WashingMachineRemote/WashingMachineRemote.tsx";
 
 interface UserDevicesProps {
     userService: UserService
@@ -45,6 +46,7 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
     const [isSuccess, setIsSuccess] = React.useState(true);
     const shouldLoad = useRef(true);
     const [devices, setDevices] = React.useState<DeviceDetailsDto[]>([]);
+    const [remoteType, setRemoteType] = React.useState<string>("");
     const OptionsMenu = styled((props: MenuProps) => (
         <Menu
             elevation={0}
@@ -93,10 +95,14 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
         setActiveDevice(deviceId);
     };
 
-    const openRemote = (deviceId: number) => {
+    const openRemote = (deviceId: number, deviceType: string) => {
         setIsRemoteOpen(true);
         setRemoteDeviceId(deviceId);
         setOpenRemoteSocket(true);
+        if(deviceType == "AC")
+            setRemoteType("AC");
+        if(deviceType == "WM")
+            setRemoteType("WM");
         handleMenuClose();
     }
 
@@ -289,12 +295,12 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
                                                         History Monitoring
                                                 </MenuItem>
                                                 }
-                                                {device.type == "AC" ? <MenuItem onClick={() => openRemote(device.id)} disableRipple>
+                                                {device.type == "AC" || device.type == "WM" ? <MenuItem onClick={() => openRemote(device.id, device.type)} disableRipple>
                                                     <ControlCameraIcon />
                                                     Control
                                                 </MenuItem> : null
                                                 }
-                                                {device.type == "AC" ? <MenuItem onClick={() => navigate("/acCommands/" + device.id)} disableRipple>
+                                                {device.type == "AC" || device.type == "WM" ? <MenuItem onClick={() => navigate("/acCommands/" + device.id)} disableRipple>
                                                         <AssessmentIcon />
                                                         Commands History
                                                     </MenuItem> :
@@ -335,10 +341,14 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
                 </Grid>
             </Grid>
             <PopupMessage message={errorMessage} isSuccess={isSuccess} handleClose={handleErrorPopupClose} open={errorPopupOpen}/>
-            <AirConditionerRemote open={isRemoteOpen}
+            <AirConditionerRemote open={isRemoteOpen && remoteType == "AC"}
                                   handleClose={handleRemoteClose}
                                   openSocket={openRemoteSocket}
                                   deviceId={remoteDeviceId}></AirConditionerRemote>
+            <WashingMachineRemote open={isRemoteOpen && remoteType == "WM"}
+                                  handleClose={handleRemoteClose}
+                                  openSocket={openRemoteSocket}
+                                  deviceId={remoteDeviceId}></WashingMachineRemote>
         </>
     );
 }

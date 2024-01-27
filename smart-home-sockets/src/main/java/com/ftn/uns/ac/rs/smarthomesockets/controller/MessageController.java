@@ -2,6 +2,7 @@ package com.ftn.uns.ac.rs.smarthomesockets.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftn.uns.ac.rs.smarthomesockets.models.ACCommand;
+import com.ftn.uns.ac.rs.smarthomesockets.models.WMCommand;
 import com.ftn.uns.ac.rs.smarthomesockets.models.dtos.DeviceCapabilities;
 import com.ftn.uns.ac.rs.smarthomesockets.services.DeviceService;
 import com.ftn.uns.ac.rs.smarthomesockets.services.MqttService;
@@ -37,12 +38,35 @@ public class MessageController {
         }
     }
 
+    @MessageMapping("/command/wm")
+    public void sendCommandMessageWm(String message){
+        try{
+            WMCommand receivedCommand = mapper.readValue(message, WMCommand.class);
+            mqttService.publishMeasurementMessageLite(message,"command/wm/" + receivedCommand.getDeviceId());
+
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
     @MessageMapping("/capabilities/ac")
-    public void getDeviceCapabilities(String deviceId){
+    public void getDeviceCapabilitiesAc(String deviceId){
         try{
             int deviceIdInt = Integer.parseInt(deviceId);
             DeviceCapabilities capabilities = deviceService.getDeviceCapabilities(deviceIdInt);
             messagingTemplate.convertAndSend("/ac/capabilities/" + deviceIdInt, mapper.writeValueAsString(capabilities));
+        }
+        catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    @MessageMapping("/capabilities/wm")
+    public void getDeviceCapabilitiesWM(String deviceId){
+        try{
+            int deviceIdInt = Integer.parseInt(deviceId);
+            DeviceCapabilities capabilities = deviceService.getDeviceCapabilities(deviceIdInt);
+            messagingTemplate.convertAndSend("/wm/capabilities/" + deviceIdInt, mapper.writeValueAsString(capabilities));
         }
         catch (Exception ex) {
             System.out.println(ex.getMessage());

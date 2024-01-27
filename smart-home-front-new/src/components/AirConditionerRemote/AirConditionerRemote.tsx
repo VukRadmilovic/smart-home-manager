@@ -33,7 +33,7 @@ import {ACMode} from "../../models/enums/ACMode.ts";
 import {PopupMessage} from "../PopupMessage/PopupMessage.tsx";
 import {DeviceCapabilities} from "../../models/DeviceCapabilities.ts";
 import {CommandParams} from "../../models/CommandParams.ts";
-import {ACCommand} from "../../models/ACCommand.ts";
+import {Command} from "../../models/Command.ts";
 import {DataGrid, GridColDef, GridValueGetterParams} from "@mui/x-data-grid";
 import {Scheduled} from "../../models/Scheduled.ts";
 import CheckIcon from '@mui/icons-material/Check';
@@ -169,12 +169,12 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
         to: 0,
         taskId: 0
     }
-    const defaultConfig : ACCommand = {
+    const defaultConfig : Command = {
         deviceId: deviceId,
         commandType: CommandType.OFF,
         commandParams: defaultParams
     }
-    const [currentConfig,setCurrentConfig] = React.useState<ACCommand>(defaultConfig);
+    const [currentConfig,setCurrentConfig] = React.useState<Command>(defaultConfig);
     const emptyState : ACValueDigest = {
         deviceId: deviceId,
         currentTemp: -1,
@@ -188,7 +188,7 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
 
     const deleteChecked = () => {
         checked.forEach((id) => {
-            const command : ACCommand = {
+            const command : Command = {
                 deviceId: deviceId,
                 commandType: CommandType.CANCEL_SCHEDULED,
                 commandParams: {
@@ -240,7 +240,6 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
     const handleErrorPopupClose = (reason?: string) => {
         if (reason === 'clickaway') return;
         setErrorPopupOpen(false);
-
     };
 
     const handleSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -317,7 +316,7 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
             taskId: 0
         }
 
-        const command : ACCommand = {
+        const command : Command = {
             deviceId: deviceId,
             commandType: CommandType.GET_SCHEDULES,
             commandParams: params
@@ -441,7 +440,7 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
         }
 
 
-        const command : ACCommand = {
+        const command : Command = {
             deviceId: deviceId,
             commandType: commandType,
             commandParams: params
@@ -494,7 +493,7 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
             to: toLocal,
             taskId: 0
         }
-        const command : ACCommand = {
+        const command : Command = {
             deviceId: deviceId,
             commandType: CommandType.SCHEDULE,
             commandParams: params
@@ -632,8 +631,8 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
                                         onClick={sendCommand}>Send</Button>
                             </Grid>
 
-                            <CheckIcon color={'success'} visibility={isCommandSuccess != 1 || isCommandSuccess == 0 ? 'hidden' : 'visible'}/>
-                            <CloseIcon color={'error'} visibility={isCommandSuccess != 2 || isCommandSuccess == 0 ? 'hidden' : 'visible'}/>
+                            <CheckIcon color={'success'} visibility={isCommandSuccess != 1 ? 'hidden' : 'visible'}/>
+                            <CloseIcon color={'error'} visibility={isCommandSuccess != 2 ? 'hidden' : 'visible'}/>
                         </Grid>
                         <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} alignItems={'center'}
                         columnSpacing={2}>
@@ -674,8 +673,8 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
                                     sx={{marginRight:5}}
                                     disabled={!scheduledChecked || disableForm}
                                     color={'primary'}>Schedule Cycle</Button>
-                            <CheckIcon color={'success'} visibility={isScheduleSuccess != 1 || isScheduleSuccess == 0 ? 'hidden' : 'visible'}/>
-                            <CloseIcon color={'error'} visibility={isScheduleSuccess != 2 || isScheduleSuccess == 0 ? 'hidden' : 'visible'}/>
+                            <CheckIcon color={'success'} visibility={isScheduleSuccess != 1 ?'hidden' : 'visible'}/>
+                            <CloseIcon color={'error'} visibility={isScheduleSuccess != 2 ? 'hidden' : 'visible'}/>
                         </Grid>
                        
 

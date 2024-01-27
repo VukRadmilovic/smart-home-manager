@@ -2,6 +2,7 @@ package com.ftn.uns.ac.rs.smarthomesockets.services;
 
 import com.ftn.uns.ac.rs.smarthomesockets.models.devices.AirConditioner;
 import com.ftn.uns.ac.rs.smarthomesockets.models.devices.Device;
+import com.ftn.uns.ac.rs.smarthomesockets.models.devices.WashingMachine;
 import com.ftn.uns.ac.rs.smarthomesockets.models.dtos.DeviceCapabilities;
 import com.ftn.uns.ac.rs.smarthomesockets.models.enums.TemperatureUnit;
 import com.ftn.uns.ac.rs.smarthomesockets.repository.DeviceRepository;
@@ -39,6 +40,27 @@ public class DeviceService {
                 capabilities.put("auto", ac.getAuto().toString());
                 capabilities.put("health", ac.getHealth().toString());
                 capabilities.put("fungusPrevention", ac.getFungusPrevention().toString());
+            }
+            if(device.get().getClass().equals(WashingMachine.class)){
+                WashingMachine wm = (WashingMachine)device.get();
+                capabilities.put("temperatureUnit", wm.getTemperatureUnit() == TemperatureUnit.CELSIUS? "C" : "F");
+                capabilities.put("maxTemperature", wm.getTemperatureMax().toString());
+                capabilities.put("minTemperature", wm.getTemperatureMin().toString());
+                capabilities.put("minCentrifuge",wm.getCentrifugeMin().toString());
+                capabilities.put("maxCentrifuge",wm.getCentrifugeMax().toString());
+                capabilities.put("cottons", wm.getCottons().toString());
+                capabilities.put("synthetics", wm.getSynthetics().toString());
+                capabilities.put("daily_express", wm.getDailyExpress().toString());
+                capabilities.put("wool", wm.getWool().toString());
+                capabilities.put("dark_wash", wm.getDarkWash().toString());
+                capabilities.put("outdoor", wm.getOutdoor().toString());
+                capabilities.put("shirts", wm.getShirts().toString());
+                capabilities.put("duvet", wm.getDuvet().toString());
+                capabilities.put("mixed", wm.getMixed().toString());
+                capabilities.put("steam", wm.getSteam().toString());
+                capabilities.put("rinse_spin", wm.getRinseAndSpin().toString());
+                capabilities.put("spin_only", wm.getSpinOnly().toString());
+                capabilities.put("hygiene", wm.getHygiene().toString());
             }
         }
         return new DeviceCapabilities(capabilities);

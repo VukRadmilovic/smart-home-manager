@@ -2,10 +2,7 @@ package com.ftn.uns.ac.rs.smarthome.services;
 
 import com.ftn.uns.ac.rs.smarthome.models.Measurement;
 import com.ftn.uns.ac.rs.smarthome.models.UserIdUsernamePair;
-import com.ftn.uns.ac.rs.smarthome.models.devices.AirConditioner;
-import com.ftn.uns.ac.rs.smarthome.models.devices.Device;
-import com.ftn.uns.ac.rs.smarthome.models.devices.SolarPanelSystem;
-import com.ftn.uns.ac.rs.smarthome.models.devices.Thermometer;
+import com.ftn.uns.ac.rs.smarthome.models.devices.*;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.*;
 import com.ftn.uns.ac.rs.smarthome.models.enums.ACState;
 import com.ftn.uns.ac.rs.smarthome.repositories.DeviceRepository;
@@ -54,6 +51,7 @@ public class DeviceService implements IDeviceService {
             if(device instanceof Thermometer) type = "THERMOMETER";
             if (device instanceof SolarPanelSystem) type = "SPS";
             if (device instanceof AirConditioner) type = "AC";
+            if (device instanceof WashingMachine) type = "WM";
             DeviceDetailsDTO details = new DeviceDetailsDTO(
                     device.getId(),
                     type,
@@ -125,8 +123,13 @@ public class DeviceService implements IDeviceService {
         List<CommandSummaryInternal> commandsInternal = influxService.findPaginatedByTimeSpanAndUserIdAndDeviceId(request);
         for(CommandSummaryInternal command : commandsInternal) {
             String commandDesc = "";
-            if(command.getCommand().equals(ACState.ON.toString()))
+            System.out.println(command);
+            if(command.getCommand().equals(ACState.ON.toString())) {
                 commandDesc = "Turned on the device";
+                if(command.getTags().get("mode") != null) {
+                    commandDesc += " (Mode: " + command.getTags().get("mode") + ", \nTemperature: " + command.getTags().get("temp") + ",\nCentrifuge Speed: " + command.getTags().get("centrifuge") + ")";
+                }
+            }
             else if(command.getCommand().equals(ACState.OFF.toString()))
                 commandDesc = "Turned off the device";
             else if(command.getCommand().equals(ACState.HEAT_MODE.toString()))
@@ -158,15 +161,18 @@ public class DeviceService implements IDeviceService {
             else if(command.getCommand().equals(ACState.SCHEDULE_OFF.toString()))
                 commandDesc = "Device turned off according to scheduled cycle";
             else if(command.getCommand().equals(ACState.SCHEDULE.toString())) {
-                commandDesc = "Scheduled cycle from " + formatter.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(command.getTags().get("from"))),java.time.ZoneId.systemDefault())) +
-                        " to " + formatter.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(command.getTags().get("to"))),java.time.ZoneId.systemDefault()));
-                if (command.getTags().get("everyDay").equals("true"))
+
+                commandDesc = "Scheduled cycle from " + formatter.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(command.getTags().get("from"))), java.time.ZoneId.systemDefault())) +
+                        " to " + formatter.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(command.getTags().get("to"))), java.time.ZoneId.systemDefault()));
+
+                if (command.getTags().get("everyDay") != null && command.getTags().get("everyDay").equals("true"))
                     commandDesc += " (repeats every day)";
+
             }
             else {
                 commandDesc = "Cancelled the cycle scheduled from " + formatter.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(command.getTags().get("from"))),java.time.ZoneId.systemDefault())) +
                         " to " + formatter.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(command.getTags().get("to"))),java.time.ZoneId.systemDefault()));
-                if (command.getTags().get("everyDay").equals("true"))
+                if (command.getTags().get("everyDay") != null && command.getTags().get("everyDay").equals("true"))
                     commandDesc += " (repeats every day)";
             }
             if(!command.getTags().get("userId").equals("0")) {

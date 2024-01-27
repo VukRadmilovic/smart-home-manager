@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftn.uns.ac.rs.smarthomesockets.models.ACValueDigest;
 import com.ftn.uns.ac.rs.smarthomesockets.models.Measurement;
+import com.ftn.uns.ac.rs.smarthomesockets.models.WMValueDigest;
 import com.ftn.uns.ac.rs.smarthomesockets.models.dtos.SchedulesPerUser;
 import org.eclipse.paho.mqttv5.client.IMqttToken;
 import org.eclipse.paho.mqttv5.client.MqttCallback;
@@ -50,6 +51,7 @@ public class MqttMessageCallback implements MqttCallback {
     //TODO Menjaj mapu tagova ako ti treba nesto
     @Override public void messageArrived(String topic, MqttMessage mqttMessage) throws JsonProcessingException {
         String message = new String(mqttMessage.getPayload());
+        System.out.println(topic);
         if(topic.equals("ac")){
             try {
                 ACValueDigest received = jsonMapper.readValue(message, ACValueDigest.class);
@@ -64,6 +66,24 @@ public class MqttMessageCallback implements MqttCallback {
             messagingTemplate.convertAndSend("/ac/status/" + data[1],data[0]);
             log.info("AC status changed to: " + data[0] + " for device: " + data[1]);
         }
+
+        else if(topic.equals("wm")){
+            try {
+                WMValueDigest received = jsonMapper.readValue(message, WMValueDigest.class);
+                messagingTemplate.convertAndSend("/wm/freshest/" + received.getDeviceId(), jsonMapper.writeValueAsString(received));
+            }
+            catch (Exception ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
+
+        else if(topic.contains("status/wm")) {
+            System.out.println(message);
+            String[] data = message.split(",");
+            messagingTemplate.convertAndSend("/wm/status/" + data[1],data[0]);
+            log.info("WM status changed to: " + data[0] + " for device: " + data[1]);
+        }
+
         else if(topic.contains("status/sps")) {
             String[] data = message.split(",");
             messagingTemplate.convertAndSend("/sps/status/" + data[1],data[0]);

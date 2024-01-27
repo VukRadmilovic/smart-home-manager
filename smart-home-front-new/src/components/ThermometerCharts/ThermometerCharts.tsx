@@ -13,7 +13,7 @@ import {UserService} from "../../services/UserService.ts";
 import {DeviceService} from "../../services/DeviceService.ts";
 import {PopupMessage} from "../PopupMessage/PopupMessage.tsx";
 import {ResizableBox} from "../Shared/ResizableBox.tsx";
-import Stomp from 'stompjs';
+import Stomp, {Message} from "stompjs";
 import SockJS from 'sockjs-client';
 import React, {useEffect} from "react";
 import {MeasurementRequest} from "../../models/MeasurementRequest.ts";
@@ -29,7 +29,7 @@ interface ThermometerChartsProps {
 
 type ChartDataShort = {
     timestamp: Date,
-    value: number,
+    value: number | null,
 }
 
 export function ThermometerCharts({userService, deviceService} : ThermometerChartsProps) {
@@ -125,7 +125,7 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
         }
         setTempData(transformedData);
         units.current = unit;
-        setLatestTemp("Latest Value: " + transformedData[transformedData.length - 1].value.toFixed(3) + units.current)
+        setLatestTemp("Latest Value: " + transformedData[transformedData.length - 1].value!.toFixed(3) + units.current)
     }
     const downsample = (data: ChartDataShort[], targetLength : number) => {
         const dataPoints : DataPoint[] = [];
@@ -162,13 +162,13 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
             deviceId: deviceId,
             measurementName: measurement
         }
-        deviceService.getDeviceMeasurements(request).then((response => {
+        deviceService.getDeviceMeasurements(request).then(response => {
             console.log(response)
             if (response.length == 0) {
                 return;
             }
             const data : ChartDataShort[] = [];
-            response.forEach((value,index) => {
+            response.forEach((value) => {
                 const newVal : ChartDataShort = {
                     timestamp : new Date(value.timestamp),
                     value: value.value,
@@ -180,16 +180,16 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
                 downsampled = downsample(data,60);
             if(measurement == "temperature") {
                setTempData(downsampled);
-               setUnitA(response[0].tags["unit"])
-               units.current = response[0].tags["unit"]
-                setLatestTemp("Latest Value: " + downsampled[downsampled.length - 1].value.toFixed(3) + units.current)
+               setUnitA(response[0].tags.get("unit")!)
+               units.current = response[0].tags.get("unit")!
+               setLatestTemp("Latest Value: " + downsampled[downsampled.length - 1].value!.toFixed(3) + units.current)
             }
             else {
                setHumidityData(downsampled);
-               setLatestHum("Latest Value: " + downsampled[downsampled.length - 1].value.toFixed(3) + "%")
+               setLatestHum("Latest Value: " + downsampled[downsampled.length - 1].value!.toFixed(3) + "%")
             }
             setIsLoading(false);
-        })).catch((err) => {
+        }).catch((err) => {
             console.log(err);
             setErrorMessage(err.response);
             setIsSuccess(false);
@@ -218,20 +218,20 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
         }
     });
 
-    const onMessageReceived = (payload) => {
+    const onMessageReceived = (payload : Message) => {
         const val : ChartData =  JSON.parse(payload.body);
         const newVal : ChartDataShort = {
             timestamp : new Date(+val.timestamp),
             value: val.value,
         };
         if(val.name == "temperature"){
-            if(val.tags["unit"] != units.current) {
-                if(val.tags["unit"] == "C")
+            if(val.tags.get("unit") != units.current) {
+                if(val.tags.get("unit") == "C")
                     newVal.value = (val.value * 9/5) + 32
                 else
                     newVal.value = (val.value - 32) * 5 / 9
             }
-            setLatestTemp("Latest Value: " + newVal.value.toFixed(3) + units.current)
+            setLatestTemp("Latest Value: " + newVal.value!.toFixed(3) + units.current)
             setTempData((prevTempData) => {
                 if(prevTempData.length > 0 ) {
                     if (newVal.timestamp.getTime() - prevTempData[0].timestamp.getTime() > 3900000)
@@ -250,7 +250,7 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
             });
         }
         else {
-            setLatestHum("Latest Value: " + newVal.value.toFixed(3) + "%")
+            setLatestHum("Latest Value: " + newVal.value!.toFixed(3) + "%")
             setHumidityData((prevHumData) => {
                 if(prevHumData.length > 0 ) {
                     if (newVal.timestamp.getTime() - prevHumData[0].timestamp.getTime() > 3900000)
@@ -335,6 +335,7 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
                                         { dataKey:'value', showMark: false, label: ("Temperature (" + unitA + ")\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0" + latestTemp) as string},
                                     ]}
                                     xAxis={[{ scaleType:'time', dataKey:'timestamp', label: 'Time'  }]}
+
                                     dataset={tempData}
                                 />
                             </ResizableBox>

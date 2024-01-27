@@ -2,13 +2,11 @@ package com.ftn.uns.ac.rs.smarthomesimulator;
 
 import com.ftn.uns.ac.rs.smarthomesimulator.models.ACCommand;
 import com.ftn.uns.ac.rs.smarthomesimulator.models.Command;
+import com.ftn.uns.ac.rs.smarthomesimulator.models.WMCommand;
 import com.ftn.uns.ac.rs.smarthomesimulator.models.devices.*;
 import com.ftn.uns.ac.rs.smarthomesimulator.repositories.BatteryRepository;
 import com.ftn.uns.ac.rs.smarthomesimulator.services.MqttService;
-import com.ftn.uns.ac.rs.smarthomesimulator.threads.ACThread;
-import com.ftn.uns.ac.rs.smarthomesimulator.threads.BatteryThread;
-import com.ftn.uns.ac.rs.smarthomesimulator.threads.SolarPanelSystemThread;
-import com.ftn.uns.ac.rs.smarthomesimulator.threads.ThermometerThread;
+import com.ftn.uns.ac.rs.smarthomesimulator.threads.*;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -36,6 +34,11 @@ public class DeviceThreadManager {
                 Thermometer thermometer = (Thermometer) device;
                 addDeviceThreadInternal(device.getId(),
                         new ThermometerThread(thermometer, mqttService).getNewSimulatorThread());
+            }
+            case "WashingMachine" -> {
+                WashingMachine wm = (WashingMachine) device;
+                addDeviceThreadInternal(device.getId(),
+                        new WashingMachineThread(wm, (WMCommand) command).getNewSimulatorThread());
             }
             case "AirConditioner" -> {
                 AirConditioner ac = (AirConditioner) device;

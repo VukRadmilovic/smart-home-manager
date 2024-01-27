@@ -19,6 +19,8 @@ public class MqttService {
         this.mqttConfiguration.getClient().subscribe("power",2);
         this.mqttConfiguration.getClient().subscribe("ac",2);
         this.mqttConfiguration.getClient().subscribe("status/ac",2);
+        this.mqttConfiguration.getClient().subscribe("wm",2);
+        this.mqttConfiguration.getClient().subscribe("status/wm",2);
         this.mqttConfiguration.getClient().subscribe("scheduled",2);
         this.mqttConfiguration.getClient().subscribe("status/sps", 2);
         this.mqttConfiguration.getClient().subscribe("status/battery", 2);

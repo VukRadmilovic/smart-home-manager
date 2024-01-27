@@ -88,6 +88,12 @@ public class InfluxService {
                 optTags.put("userId",fluxRecord.getValueByKey("userId").toString());
                 if(fluxRecord.getValueByKey("from") != null)
                     optTags.put("from", fluxRecord.getValueByKey("from").toString());
+                if(fluxRecord.getValueByKey("mode") != null)
+                    optTags.put("mode", fluxRecord.getValueByKey("mode").toString());
+                if(fluxRecord.getValueByKey("temp") != null)
+                    optTags.put("temp", fluxRecord.getValueByKey("temp").toString());
+                if(fluxRecord.getValueByKey("centrifuge") != null)
+                    optTags.put("centrifuge", fluxRecord.getValueByKey("centrifuge").toString());
                 if(fluxRecord.getValueByKey("to") != null)
                     optTags.put("to", fluxRecord.getValueByKey("to").toString());
                 if(fluxRecord.getValueByKey("everyDay") != null)

@@ -63,7 +63,7 @@ export function ACCommandsReport({userService, deviceService} : ACCommandsReport
     const [page, setPage] = React.useState<number>(0);
     const [rowCount, setRowCount] = React.useState<number>(100);
     const [prevPage, setPrevPage] = React.useState<number>(0);
-    const [prevPageSize, setPrevPageSize] = React.useState<number>(2);
+    const [prevPageSize, setPrevPageSize] = React.useState<number>(10);
     const [user, setUser] = React.useState<UserIdUsernamePair | null>(null);
     const [inputValueUser, setInputValueUser] = React.useState('');
     const [isFilteredData, setIsFilteredData] = React.useState<boolean>(false);
@@ -117,7 +117,7 @@ export function ACCommandsReport({userService, deviceService} : ACCommandsReport
                 setCommands(val.commands);
                 setCurrentPageCommands(val.commands.slice(0,10))
                 setUsernames(val.allUsers)
-                if(val.commands.length < 2) {
+                if(val.commands.length < 100) {
                     setRowCount(val.commands.length);
                     setHasAllLoaded(true);
                 }
@@ -168,6 +168,8 @@ export function ACCommandsReport({userService, deviceService} : ACCommandsReport
             })
         }
         else {
+            console.log(prevPageSize);
+            console.log(model.pageSize);
             if(prevPageSize > model.pageSize)
                 setCurrentPageCommands(currentPageCommands.slice(0,model.pageSize));
             else if(prevPageSize == model.pageSize)

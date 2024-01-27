@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SolarPanelSystemCommand extends Command {
+public class WMCommand extends Command{
     private Integer deviceId;
     private CommandType commandType;
-    private ACCommandParams commandParams;
+    private WMCommandParams commandParams;
 }
