@@ -1,0 +1,1760 @@
+openapi: 3.0.1
+info:
+  title: Smart Home Application API
+  description: A large scale application for controlling and monitoring smart devices in a city.
+  version: v0
+servers:
+  - url: http://localhost:8080
+paths:
+  /api/property/deny/{propertyId}:
+    put:
+      tags:
+        - property-controller
+      operationId: denyProperty
+      parameters:
+        - name: propertyId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: string
+  /api/property/approve/{propertyId}:
+    put:
+      tags:
+        - property-controller
+      operationId: approveProperty
+      parameters:
+        - name: propertyId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: string
+  /api/devices/thermometer/{id}/{unit}:
+    put:
+      tags:
+        - device-controller
+      operationId: changeTemperatureUnit
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: unit
+          in: path
+          required: true
+          schema:
+            type: string
+            enum:
+              - CELSIUS
+              - FAHRENHEIT
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: string
+  /api/devices/sps/{id}/on:
+    put:
+      tags:
+        - device-controller
+      operationId: turnOnSolarPanelSystem
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: string
+  /api/devices/sps/{id}/off:
+    put:
+      tags:
+        - device-controller
+      operationId: turnOffSolarPanelSystem
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: string
+  /api/devices/shareControl/{deviceId}:
+    put:
+      tags:
+        - device-controller
+      operationId: editDeviceControl
+      security:
+        - bearerAuth: []
+      description: Endpoint for adding/deleting rights to control and view devices.
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          description: ID of the device 
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceControlDTO'
+        required: true
+      responses:
+        '200':
+          description: Succesfully edited the control rights for the given device.
+          content:
+            'string':
+              schema:
+                type: string
+              example: Successfully edited control rights for this device/property!
+        '404':
+          description: Errors caused by device or user not existing.
+          content:
+            'string':
+              schema:
+                type: string
+              examples:
+                User not found:
+                  value: User not found!
+                Device not found:
+                  value: Device not found!
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /api/devices/shareControl/property/{propertyId}:
+    put:
+      tags:
+        - device-controller
+      security:
+        - bearerAuth: []
+      description: Endpoint for adding/deleting rights to control and view devices for a certain property. By adding rights to a property, a user can view and control all the devices linked to that property.
+      operationId: editDeviceControlForProperty
+      parameters:
+        - name: propertyId
+          in: path
+          description: ID of the property
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceControlDTO'
+        required: true
+      responses:
+        '200':
+          description: Succesfully edited the control rights for the given property.
+          content:
+            'string':
+              schema:
+                type: string
+              example: Successfully edited control rights for this device/property!
+        '404':
+          description: Errors caused by property or user not existing.
+          content:
+            'string':
+              schema:
+                type: string
+              examples:
+                User not found:
+                  value: User not found!
+                Property not found:
+                  value: Property not found!
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /api/user/sendPasswordResetEmail:
+    post:
+      tags:
+        - user-controller
+      operationId: sendPasswordResetEmail
+      description: Endpoint to send password reset email based on the email received in request body.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordResetRequestDTO'
+        required: true
+      responses:
+        '200':
+          description: Password reset email successfully sent.
+          content:
+            'string':
+              schema:
+                type: string
+              example: Password reset email has been sent.
+        '404':
+          description: Error caused by user not existing.
+          content:
+            'string':
+              schema:
+                type: string
+              example: User not found!
+        '400':
+          description: Error caused by reset email sending problems.
+          content:
+            'string':
+              schema:
+                type: string
+              examples:
+                Email sending error:
+                  value: Password reset mail has not been sent. Try again later.
+                
+  /api/user/register:
+    post:
+      tags:
+        - user-controller
+      operationId: register
+      description: Endpoint to register new user.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserInfoRegister'
+      responses:
+        '200':
+          description: User successfully registered, but account has not yet been activated.
+          content:
+            'string':
+              schema:
+                type: string
+              example: User successfully registered! Activate your account via mail.
+        '400':
+          description: Errors caused by username and email already in use, missing role for user, activation email sending problems or profile picture compression error.
+          content:
+            'string':
+              schema:
+                type: string
+              examples:
+                Username exists:
+                  value: Username already exists!
+                Email exists:
+                  value: Email already exists!
+                Email sending error:
+                  value: Activation mail has not been sent. Try again later.
+                Role not assigned:
+                  value: Role does not exist!
+                Compression error:
+                  value: Error compressing the image!
+  /api/user/registerAdmin:
+    post:
+      tags:
+        - user-controller
+      operationId: registerAdmin
+      description: Endpoint for registering new admin user.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserInfoRegister'
+      responses:
+        '200':
+          description: Admin successfully registered. His account is automatically activated.
+          content:
+            'string':
+              schema:
+                type: string
+              example: Admin successfully registered!
+        '400':
+          description: Errors caused by username and email already in use, missing role for user, activation email sending problems or profile picture compression error.
+          content:
+            'string':
+              schema:
+                type: string
+              examples:
+                Username exists:
+                  value: Username already exists!
+                Email exists:
+                  value: Email already exists!
+                Email sending error:
+                  value: Activation mail has not been sent. Try again later.
+                Role not assigned:
+                  value: Role does not exist!
+                Compression error:
+                  value: Error compressing the image!
+  /api/user/passwordReset:
+    post:
+      tags:
+        - user-controller
+      operationId: passwordReset
+      description: Endpoint for password resetting via email.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordResetDTO'
+            example:
+              userId: 2
+              password: Password123#
+        required: true
+        
+      responses:
+        '200':
+          description: Password successfully reset.
+          content:
+            'string':
+              schema:
+                type: string
+              example: Password successfully reset!
+        '404':
+          description: Error caused by user ID being invalid.
+          content:
+            'string':
+              schema:
+                type: string
+              example: User not found!
+  /api/user/login:
+    post:
+      tags:
+        - user-controller
+      operationId: login
+      description: Endpoint for receiving bearer token for authentification and logging in.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginDTO'
+        required: true
+      responses:
+        '200':
+          description: Successful login.
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/TokenDTO'
+              example:
+                token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+                expiration: 1516239022
+        '400':
+          description: Error caused by user account not being activated via email.
+          content:
+            'string':
+              schema:
+                type: string
+              example: User account has not been activated yet!
+        '404':
+          description: Error caused by incorrect username and password combo, or user not existing.
+          content:
+            'string':
+              schema:
+                type: string
+              examples:
+                Credentials invalid: 
+                  value: Username or password not correct!
+                User not found:
+                  value: User not found!
+  /api/property/registerProperty:
+    post:
+      tags:
+        - property-controller
+      operationId: register_1
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PropertyDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: string
+  /api/image/{name}:
+    get:
+      tags:
+        - image-controller
+      operationId: getImage
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: string
+    post:
+      tags:
+        - image-controller
+      operationId: uploadImage
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              required:
+                - image
+                - type
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+                type:
+                  type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: string
+    delete:
+      tags:
+        - image-controller
+      operationId: deleteImage
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: string
+  /api/devices/registerWashingMachine:
+    post:
+      tags:
+        - device-controller
+      operationId: registerWashingMachine
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WashingMachineDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: string
+  /api/devices/registerThermometer:
+    post:
+      tags:
+        - device-controller
+      operationId: registerThermometer
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ThermometerDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: string
+  /api/devices/registerSprinklerSystem:
+    post:
+      tags:
+        - device-controller
+      operationId: registerSprinklerSystem
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SprinklerSystemDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: string
+  /api/devices/registerSolarPanelSystem:
+    post:
+      tags:
+        - device-controller
+      operationId: registerSolarPanelSystem
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SolarPanelSystemDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: string
+  /api/devices/registerLamp:
+    post:
+      tags:
+        - device-controller
+      operationId: registerLamp
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DeviceDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: string
+  /api/devices/registerGate:
+    post:
+      tags:
+        - device-controller
+      operationId: registerGate
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GateDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: string
+  /api/devices/registerCharger:
+    post:
+      tags:
+        - device-controller
+      operationId: registerCharger
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ChargerDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: string
+  /api/devices/registerBattery:
+    post:
+      tags:
+        - device-controller
+      operationId: registerBattery
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BatteryDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: string
+  /api/devices/registerAirConditioner:
+    post:
+      tags:
+        - device-controller
+      operationId: registerAirConditioner
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AirConditionerDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: string
+                
+  /api/user/info:
+    get:
+      tags:
+        - user-controller
+      security: 
+        - bearerAuth: []
+      description: Endpoint for retrieving user info. User credentials are extracted from the bearer token passed in the request header.
+      operationId: getUserInfo
+      responses:
+        '200':
+          description: Successful info retrieval.
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/UserInfoDTO'
+        '404':
+          description: Error caused by user not existing.
+          content:
+            'string':
+              schema:
+                type: string
+              example: User not found!
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+          
+  /api/user/info/{key}:
+    get:
+      tags:
+        - user-controller
+      security:
+        - bearerAuth: []
+      operationId: getUserInfoByKey
+      description: Endpoint for getting up to 10 user suggestions based on the key passed in the path.
+      parameters:
+        - name: key
+          in: path
+          description: A key used for searching suggestions. Checked against user's name, surname and username.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful users retrieval.
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/UserSearchInfoArrayDTO'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /api/user/activate/{userId}:
+    get:
+      tags:
+        - user-controller
+      operationId: activateAccount
+      description: Endpoint for activating user account via link in the activation email.
+      parameters:
+        - name: userId
+          description: ID of the user
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Successful account activation.
+          content:
+            'string':
+              schema:
+                type: string
+              example: Account successfully activated! You can log in now.
+        '404':
+          description: Error caused by user not existing.
+          content:
+            'string':
+              schema:
+                type: string
+              example: User not found!
+  /api/property/getProperty/{username}:
+    get:
+      tags:
+        - property-controller
+      operationId: getProperty
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: string
+  /api/property/getAllUnapprovedProperty:
+    get:
+      tags:
+        - property-controller
+      operationId: getAllUnapprovedProperty
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: string
+  /api/property/getAllProperty:
+    get:
+      tags:
+        - property-controller
+      operationId: getAllProperty
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: string
+  /api/devices/shared:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - device-controller
+      operationId: getAllSharedDevicesWithOwner
+      description: Endpoint for retrieving devices that have been shared with the user. User credentials are extracted from the bearer token passed in the request header.
+      responses:
+        '200':
+          description: Successful user's shared devices retrieval.
+          content:
+            'application/json':
+              schema:
+                 $ref: '#/components/schemas/DeviceDetailsArrayDTO'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /api/devices/shareControl/get/{deviceId}:
+    get:
+      tags:
+        - device-controller
+      operationId: getSharedControlByDeviceId
+      security: 
+        - bearerAuth: []
+      description: Endpoint for retrieving a list of users to whom the access to the device was granted by the owner.
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          description: ID of the device
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Successful retrieval of users with granted access.
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/UserSearchInfoArrayDTO'
+        '404':
+          description: Error caused by device not existing.
+          content:
+            'string':
+              schema:
+                type: string
+              example: Device not found!
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /api/devices/shareControl/get/property/{propertyId}:
+    get:
+      tags:
+        - device-controller
+      security:
+        - bearerAuth: []
+      description: Endpoint for retrieving a list of users to whom the access to the property was granted by the owner. Access to the property means access to all of it's devices.
+      operationId: getSharedControlByPropertyId
+      parameters:
+        - name: propertyId
+          in: path
+          required: true
+          description: ID of the property.
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Successful retrieval of users with granted access.
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/UserSearchInfoArrayDTO'
+        '404':
+          description: Error caused by property not existing.
+          content:
+            'string':
+              schema:
+                type: string
+              example: Property not found!
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /api/devices/ownerAll:
+    get:
+      tags:
+        - device-controller
+      operationId: getAllOwnersDevices
+      description: Endpoint for getting all user's own devices. User's credentials are extracted from the bearer token passed in the request header.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful user's devices retrieval.
+          content:
+            'application/json':
+              schema:
+                 $ref: '#/components/schemas/DeviceDetailsArrayDTO'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /api/devices/measurements:
+    get:
+      tags:
+        - device-controller
+      operationId: getMeasurements
+      security:
+        - bearerAuth: []
+      description: Endpoint for retrieving all the measurements collected for the specified device in the specified time span of the specified measurement type.
+      parameters:
+        - name: from
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: Timestamp marking the start of the desired time span
+        - name: to
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: Timestamp marking the end of the desired time span
+        - name: deviceId
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+          description: ID of the device
+        - name: measurement
+          in: query
+          required: true
+          description: Measurement type name
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful measurements retrieval. Return value is a stream of packages containing up to 5000 measurement values each.
+          content:
+            text/event-stream:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Measurement'
+              example:
+                - name: 'Temperature'
+                  value: 23.5
+                  timestamp: '2024-01-29T17:10:25.544Z'
+                  tags:
+                    unit: C
+                - name: 'Temperature'
+                  value: 24
+                  timestamp: '2024-01-29T17:10:30.544Z'
+                  tags:
+                    unit: C
+                - name: 'Temperature'
+                  value: 24
+                  timestamp: '2024-01-29T17:10:30.544Z'
+                  tags:
+                    unit: C
+                - name: 'Temperature'
+                  value: 24.2
+                  timestamp: '2024-01-29T17:10:35.544Z'
+                  tags:
+                    unit: C
+        '400':
+          description: Error caused by invalid date range.
+          content:
+            'string':
+              schema:
+                type: string
+              example: Date range invalid!
+        '404':
+          description: Error caused by device not existing.
+          content:
+            'string':
+              schema:
+                type: string
+              example: Device not found!
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /api/devices/commands:
+    get:
+      tags:
+        - device-controller
+      security:
+        - bearerAuth: []
+      description: Endpoint for retriving paginated executed commands for the specified device in the specified time range, with additional filtering by who executed the command. 
+      operationId: getCommands
+      parameters:
+        - name: from
+          in: query
+          required: true
+          description: Timestamp marking the start of the desired time span
+          schema:
+            type: integer
+            format: int64
+        - name: to
+          in: query
+          required: true
+          description: Timestamp marking the end of the desired time span
+          schema:
+            type: integer
+            format: int64
+        - name: deviceId
+          in: query
+          description: ID of the device
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: page
+          in: query
+          description: Page number (used for pagination)
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: size
+          in: query
+          description: Page size (used for pagination)
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: firstFetch
+          description: A flag used to tell the server to also fetch a list of all users that have executed a command for the specified device. This is retrieved only once, when the firstFetch flag value is true.
+          in: query
+          required: true
+          schema:
+            type: boolean
+        - name: userId
+          description: ID of the user (used for filtering)
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Successful executed commands retrieval.
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/CommandsDTO'
+        '400':
+          description: Error caused by invalid date range.
+          content:
+            'string':
+              schema:
+                type: string
+              example: Date range invalid!
+        '404':
+          description: Error caused by device not existing.
+          content:
+            'string':
+              schema:
+                type: string
+              example: Device not found!
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+components:
+  responses:
+    UnauthorizedError:
+      description:  Error caused by user being unauthorized.
+      content:
+            'string':
+              schema:
+                type: string
+              example: Unauthorized
+      
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    CommandSummaryDTO:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+        username:
+          type: string
+        command:
+          type: string
+    UserIdUsernamePairDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+    CommandsDTO:
+      type: object
+      properties:
+        commands:
+          type: array
+          items: 
+            $ref: '#/components/schemas/CommandSummaryDTO'
+        allUsers:
+          type: array
+          items: 
+            $ref: '#/components/schemas/UserIdUsernamePairDTO'
+      example:
+        commands:
+          - timestamp: '2024-01-29T17:10:25.544Z'
+            username: 'jane_doe'
+            command: 'Turned on the device'
+          - timestamp: '2024-01-29T17:10:45.544Z'
+            username: 'jane_doe'
+            command: 'Changed mode to AUTO'
+          - timestamp: '2024-01-29T17:11:45.544Z'
+            username: 'jane_doe'
+            command: 'Turned off the device'
+          - timestamp: '2024-01-29T17:12:05.544Z'
+            username: 'device'
+            command: 'Turned on according to scheduled cycle'
+        allUsers:
+          - id: 1
+            username: 'jane_doe'
+          - id: 0
+            username: 'device'
+    UserSearchInfoDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        fullName:
+          type: string
+          
+    TokenDTO:
+      type: object
+      properties:
+        token:
+          type: string
+        expiration:
+          type: integer
+    UserSearchInfoArrayDTO:
+      type: array
+      items:
+        $ref: '#/components/schemas/UserSearchInfoDTO'
+      example:
+        - id: 2
+          username: jane345
+          fullName: Jane Doe
+        - id: 3
+          username: marry!5
+          fullName: Marry Jane
+    UserInfoDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        name:
+          type: string
+        surname:
+          type: string
+        email:
+          type: string
+        profilePicture:
+          type: string
+        role:
+          type: string
+      example:
+        id: 2
+        username: user_Name
+        name: Jane
+        surname: Doe
+        email: jane.doe@mail.com
+        profilePicture: http://wBKRIqmd/user_name.jpg
+        role: ROLE_USER
+    DeviceControlDTO:
+      type: object
+      properties:
+        details:
+          maxItems: 2147483647
+          minItems: 0
+          type: array
+          items:
+            $ref: '#/components/schemas/DeviceControlDetails'
+      example:
+        - userId: 1
+          action: 'd'
+        - userId: 3
+          action: 'a'
+    PowerSource:
+      type: string
+      enum: ['AUTONOMOUS', 'HOUSE']
+    DeviceDetailsDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+        name:
+          type: string
+        powerSource:
+           $ref: '#/components/schemas/PowerSource'
+        energyConsumption:
+          type: number
+          format: double
+        picture:
+          type: string
+        propertyName:
+          type: string
+    DeviceDetailsArrayDTO:
+      type: array
+      items:
+        $ref: '#/components/schemas/DeviceDetailsDTO'
+      example:
+        - id: 1
+          type: THERMOMETER
+          name: Thermometer - Bedroom
+          powerSource: 'AUTONOMOUS'
+          energyConsumption: 5.0
+          picture: http://wBKRIqmd/thermo_bedroom.jpg
+          propertyName: City House
+        - id: 2
+          type: AC
+          name: AC - Living Room
+          powerSource: 'HOUSE'
+          energyConsumption: 30.0
+          picture: http://wBKRIqmd/ac_livingroom.png
+          propertyName: City House
+        - id: 3
+          type: WS
+          name: Washing Machine - Bathroom
+          powerSource: 'HOUSE'
+          energyConsumption: 35.0
+          picture: http://wBKRIqmd/ws_bathroom.png
+          propertyName: Lake House
+    DeviceControlDetails:
+      required:
+        - action
+        - userId
+      type: object
+      properties:
+        userId:
+          type: integer
+          format: int32
+        action:
+          type: string
+    PasswordResetRequestDTO:
+      required:
+        - email
+        - userId
+      type: object
+      properties:
+        email:
+          type: string
+        userId:
+          type: integer
+    UserInfoRegister:
+      required:
+        - email
+        - name
+        - password
+        - role
+        - surname
+        - username
+      type: object
+      properties:
+        username:
+          type: string
+        name:
+          type: string
+        surname:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+        profilePicture:
+          type: string
+          format: binary
+    PasswordResetDTO:
+      required:
+        - password
+        - userId
+      type: object
+      properties:
+        userId:
+          type: integer
+          format: int32
+        password:
+          type: string
+    LoginDTO:
+      required:
+        - password
+        - username
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    PropertyDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+        size:
+          type: string
+        floors:
+          type: string
+        status:
+          type: string
+        propertyType:
+          type: string
+        picture:
+          type: string
+          format: binary
+        owner:
+          type: string
+    WashingMachineDTO:
+      required:
+        - centrifugeMax
+        - centrifugeMin
+        - cottons
+        - dailyExpress
+        - darkWash
+        - duvet
+        - hygiene
+        - image
+        - mixed
+        - outdoor
+        - powerSource
+        - propertyId
+        - rinseAndSpin
+        - shirts
+        - spinOnly
+        - steam
+        - synthetics
+        - temperatureMax
+        - temperatureMin
+        - temperatureUnit
+        - wool
+      type: object
+      properties:
+        propertyId:
+          type: integer
+          format: int32
+        name:
+          type: string
+        image:
+          type: string
+          format: binary
+        powerSource:
+          type: string
+          enum:
+            - AUTONOMOUS
+            - HOUSE
+        energyConsumption:
+          type: number
+          format: double
+        cottons:
+          type: boolean
+        synthetics:
+          type: boolean
+        dailyExpress:
+          type: boolean
+        wool:
+          type: boolean
+        darkWash:
+          type: boolean
+        outdoor:
+          type: boolean
+        shirts:
+          type: boolean
+        duvet:
+          type: boolean
+        mixed:
+          type: boolean
+        steam:
+          type: boolean
+        rinseAndSpin:
+          type: boolean
+        spinOnly:
+          type: boolean
+        hygiene:
+          type: boolean
+        centrifugeMin:
+          type: integer
+          format: int32
+        centrifugeMax:
+          type: integer
+          format: int32
+        temperatureMin:
+          type: integer
+          format: int32
+        temperatureMax:
+          type: integer
+          format: int32
+        temperatureUnit:
+          type: string
+          enum:
+            - CELSIUS
+            - FAHRENHEIT
+    ThermometerDTO:
+      required:
+        - image
+        - powerSource
+        - propertyId
+        - temperatureUnit
+      type: object
+      properties:
+        propertyId:
+          type: integer
+          format: int32
+        name:
+          type: string
+        image:
+          type: string
+          format: binary
+        powerSource:
+          type: string
+          enum:
+            - AUTONOMOUS
+            - HOUSE
+        energyConsumption:
+          type: number
+          format: double
+        temperatureUnit:
+          type: string
+          enum:
+            - CELSIUS
+            - FAHRENHEIT
+    SprinklerSystemDTO:
+      required:
+        - image
+        - powerSource
+        - propertyId
+        - specialMode
+      type: object
+      properties:
+        propertyId:
+          type: integer
+          format: int32
+        name:
+          type: string
+        image:
+          type: string
+          format: binary
+        powerSource:
+          type: string
+          enum:
+            - AUTONOMOUS
+            - HOUSE
+        energyConsumption:
+          type: number
+          format: double
+        specialMode:
+          type: boolean
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+    SolarPanelSystemDTO:
+      required:
+        - image
+        - numberOfPanels
+        - panelEfficiency
+        - panelSize
+        - powerSource
+        - propertyId
+      type: object
+      properties:
+        propertyId:
+          type: integer
+          format: int32
+        name:
+          type: string
+        image:
+          type: string
+          format: binary
+        powerSource:
+          type: string
+          enum:
+            - AUTONOMOUS
+            - HOUSE
+        energyConsumption:
+          type: number
+          format: double
+        numberOfPanels:
+          type: integer
+          format: int32
+        panelSize:
+          type: number
+          format: double
+        panelEfficiency:
+          type: number
+          format: double
+    DeviceDTO:
+      required:
+        - image
+        - powerSource
+        - propertyId
+      type: object
+      properties:
+        propertyId:
+          type: integer
+          format: int32
+        name:
+          type: string
+        image:
+          type: string
+          format: binary
+        powerSource:
+          type: string
+          enum:
+            - AUTONOMOUS
+            - HOUSE
+        energyConsumption:
+          type: number
+          format: double
+    GateDTO:
+      required:
+        - image
+        - powerSource
+        - propertyId
+        - publicMode
+      type: object
+      properties:
+        propertyId:
+          type: integer
+          format: int32
+        name:
+          type: string
+        image:
+          type: string
+          format: binary
+        powerSource:
+          type: string
+          enum:
+            - AUTONOMOUS
+            - HOUSE
+        energyConsumption:
+          type: number
+          format: double
+        publicMode:
+          type: boolean
+        allowedRegistrationPlates:
+          type: array
+          items:
+            type: string
+    ChargerDTO:
+      required:
+        - chargeUntil
+        - image
+        - numberOfPorts
+        - power
+        - powerSource
+        - propertyId
+      type: object
+      properties:
+        propertyId:
+          type: integer
+          format: int32
+        name:
+          type: string
+        image:
+          type: string
+          format: binary
+        powerSource:
+          type: string
+          enum:
+            - AUTONOMOUS
+            - HOUSE
+        energyConsumption:
+          type: number
+          format: double
+        power:
+          type: number
+          format: double
+        numberOfPorts:
+          type: integer
+          format: int32
+        chargeUntil:
+          type: number
+          format: double
+    BatteryDTO:
+      required:
+        - capacity
+        - image
+        - powerSource
+        - propertyId
+      type: object
+      properties:
+        propertyId:
+          type: integer
+          format: int32
+        name:
+          type: string
+        image:
+          type: string
+          format: binary
+        powerSource:
+          type: string
+          enum:
+            - AUTONOMOUS
+            - HOUSE
+        energyConsumption:
+          type: number
+          format: double
+        capacity:
+          type: number
+          format: double
+    AirConditionerDTO:
+      required:
+        - auto
+        - cooling
+        - dry
+        - fanSpeed
+        - fungusPrevention
+        - health
+        - heating
+        - image
+        - maxTemperature
+        - minTemperature
+        - powerSource
+        - propertyId
+        - temperatureUnit
+      type: object
+      properties:
+        propertyId:
+          type: integer
+          format: int32
+        name:
+          type: string
+        image:
+          type: string
+          format: binary
+        powerSource:
+          type: string
+          enum:
+            - AUTONOMOUS
+            - HOUSE
+        energyConsumption:
+          type: number
+          format: double
+        temperatureUnit:
+          type: string
+          enum:
+            - CELSIUS
+            - FAHRENHEIT
+        maxTemperature:
+          type: integer
+          format: int32
+        minTemperature:
+          type: integer
+          format: int32
+        fanSpeed:
+          type: integer
+          format: int32
+        cooling:
+          type: boolean
+        heating:
+          type: boolean
+        dry:
+          type: boolean
+        auto:
+          type: boolean
+        health:
+          type: boolean
+        fungusPrevention:
+          type: boolean
+    Measurement:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: number
+          format: double
+        timestamp:
+          type: string
+          format: date-time
+        tags:
+          type: object
+          additionalProperties:
+            type: string

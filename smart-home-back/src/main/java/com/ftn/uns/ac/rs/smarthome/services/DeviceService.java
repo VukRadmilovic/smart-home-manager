@@ -95,7 +95,7 @@ public class DeviceService implements IDeviceService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("dateRange.invalid", null, Locale.getDefault()));
         }
         if(requestDTO.getDeviceId() != -1 && deviceRepository.findById(requestDTO.getDeviceId()).isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("device.notFound", null, Locale.getDefault()));
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, messageSource.getMessage("device.notFound", null, Locale.getDefault()));
         }
         int batchSize = 5000, page = 0;
         List<List<Measurement>> batches = new ArrayList<>();
@@ -122,7 +122,7 @@ public class DeviceService implements IDeviceService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("dateRange.invalid", null, Locale.getDefault()));
         }
         if(deviceRepository.findById(request.getDeviceId()).isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("device.notFound", null, Locale.getDefault()));
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, messageSource.getMessage("device.notFound", null, Locale.getDefault()));
         }
         List<CommandSummary> commands = new ArrayList<>();
         List<UserIdUsernamePair> allUsers = new ArrayList<>();

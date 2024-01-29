@@ -44,13 +44,13 @@ public class DeviceControlService implements IDeviceControlService {
     public void editDeviceControl(Integer deviceId, List<DeviceControlDetails> details) {
         Optional<Device> device = deviceService.getById(deviceId);
         if(device.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("device.notFound", null, Locale.getDefault()));
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, messageSource.getMessage("device.notFound", null, Locale.getDefault()));
         }
         for(DeviceControlDetails detail : details) {
             Optional<User> user = userService.getById(detail.getUserId());
             Optional<DeviceControl>dc = deviceControlRepository.findByDevice_IdAndOwner_Id(deviceId, detail.getUserId());
             if(user.isEmpty()){
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("user.notFound", null, Locale.getDefault()));
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, messageSource.getMessage("user.notFound", null, Locale.getDefault()));
             }
             if(detail.getAction().equals("a")) {
                 if(dc.isEmpty())
@@ -66,13 +66,13 @@ public class DeviceControlService implements IDeviceControlService {
     public void editDeviceControlForProperty(Integer propertyId, List<DeviceControlDetails> details) {
         Optional<Property> property = propertyService.getById(propertyId);
         if(property.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("property.notFound", null, Locale.getDefault()));
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, messageSource.getMessage("property.notFound", null, Locale.getDefault()));
         }
 
         for (DeviceControlDetails detail : details) {
             Optional<User> user = userService.getById(detail.getUserId());
             if (user.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("user.notFound", null, Locale.getDefault()));
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, messageSource.getMessage("user.notFound", null, Locale.getDefault()));
             }
             if (detail.getAction().equals("a")) {
                 for(Device device : property.get().getDevices()) {
@@ -92,6 +92,10 @@ public class DeviceControlService implements IDeviceControlService {
     @Override
     public List<UserSearchInfo> getDeviceControlUserInfo(Integer deviceId) {
         List<UserSearchInfo> list = new ArrayList<>();
+        Optional<Device> device = deviceService.getById(deviceId);
+        if(device.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, messageSource.getMessage("device.notFound", null, Locale.getDefault()));
+        }
         List<DeviceControl> controls = deviceControlRepository.findByDevice_Id(deviceId);
         for(DeviceControl control : controls) {
             list.add(new UserSearchInfo(control.getOwner().getId(), control.getOwner().getUsername(),
@@ -130,7 +134,7 @@ public class DeviceControlService implements IDeviceControlService {
         List<UserSearchInfo> list = new ArrayList<>();
         Optional<Property> property = propertyService.getById(propertyId);
         if(property.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("property.notFound", null, Locale.getDefault()));
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, messageSource.getMessage("property.notFound", null, Locale.getDefault()));
         }
         Map<Integer, Integer> userDeviceControlCount = new HashMap<>();
         Map<Integer, UserSearchInfo> userInfo = new HashMap<>();
@@ -148,7 +152,6 @@ public class DeviceControlService implements IDeviceControlService {
             if(entry.getValue() == property.get().getDevices().size())
                 list.add(userInfo.get(entry.getKey()));
         }
-        System.out.println(list);
         return list;
     }
 }

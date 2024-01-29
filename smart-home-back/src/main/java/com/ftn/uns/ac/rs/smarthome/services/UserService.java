@@ -110,7 +110,7 @@ public class UserService implements IUserService {
         if(user.isEmpty())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, messageSource.getMessage("user.notFound", null, Locale.getDefault()));
         if(!BCrypt.checkpw(userInfo.getPassword(),user.get().getPassword()))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("login.invalid", null, Locale.getDefault()));
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, messageSource.getMessage("login.invalid", null, Locale.getDefault()));
         Role userRole = user.get().getRoles().get(0);
         if(userRole.getName().equals("ROLE_SUPERADMIN") && !user.get().getIsConfirmed()) {
             return new TokenDTO(null,null);
@@ -199,7 +199,7 @@ public class UserService implements IUserService {
         }
         catch(IOException ex) {
             System.out.println(ex.getMessage());
-            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, messageSource.getMessage("compression.error", null, Locale.getDefault()));
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("compression.error", null, Locale.getDefault()));
         }
         catch(ResponseStatusException ex) {
             throw ex;
@@ -210,7 +210,7 @@ public class UserService implements IUserService {
     public void activate(Integer userId) {
         Optional<User> user = this.userRepository.findById(userId);
         if(user.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("user.notFound", null, Locale.getDefault()));
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, messageSource.getMessage("user.notFound", null, Locale.getDefault()));
         }
         user.get().setIsConfirmed(true);
         this.userRepository.save(user.get());
@@ -220,7 +220,7 @@ public class UserService implements IUserService {
     public void sendPasswordResetEmail(String email) {
         Optional<User> user = this.userRepository.findByEmail(email);
         if(user.isEmpty() || !user.get().getIsConfirmed()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("user.notFound", null, Locale.getDefault()));
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, messageSource.getMessage("user.notFound", null, Locale.getDefault()));
         }
         String  mailMessage =
                 """
@@ -251,7 +251,7 @@ public class UserService implements IUserService {
                     mailMessage
             );
             if (!sentEmail) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("activation.notSent", null, Locale.getDefault()));
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("reset.notSent", null, Locale.getDefault()));
             }
         } catch(IOException ex) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,messageSource.getMessage("reset.notSent", null, Locale.getDefault()));
@@ -263,7 +263,7 @@ public class UserService implements IUserService {
     public void resetPassword(PasswordResetDTO newPassword) {
         Optional<User> user = this.userRepository.findById(newPassword.getUserId());
         if(user.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("user.notFound", null, Locale.getDefault()));
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, messageSource.getMessage("user.notFound", null, Locale.getDefault()));
         }
         user.get().setPassword(passwordEncoder().encode(newPassword.getPassword()));
         if(user.get().getRoles().get(0).getName().equals("ROLE_SUPERADMIN")) {
@@ -279,7 +279,7 @@ public class UserService implements IUserService {
     public UserInfoDTO getUserInfo(Integer userId) {
         Optional<User> user = this.userRepository.findById(userId);
         if(user.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("user.notFound", null, Locale.getDefault()));
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, messageSource.getMessage("user.notFound", null, Locale.getDefault()));
         }
         return new UserInfoDTO(user.get().getId(),
                 user.get().getUsername(),

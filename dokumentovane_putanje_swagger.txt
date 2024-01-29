@@ -1,0 +1,22 @@
+				DOKUMENTOVANE PUTANJE:
+---------------------------------------------------------------------------------
+		USER CONTROLLER
+- POST /api/user/sendPasswordResetEmail
+- POST /api/user/register
+- POST /api/user/registerAdmin
+- POST /api/user/passwordReset
+- POST /api/user/login
+- GET /api/user/info
+- GET /api/user/info/{key}
+- GET /api/user/activate/{userId}
+
+		
+		DEVICE CONTROLLER
+- PUT /api/devices/shareControl/{deviceId}
+- PUT /api/devices/shareControl/property/{propertyId}
+- GET /api/devices/shared
+- GET /api/devices/shareControl/get/{deviceId}
+- GET /api/devices/shareControl/get/property/{propertyId}
+- GET /api/devices/ownerAll
+- GET /api/devices/measurements
+- GET /api/devices/commands
