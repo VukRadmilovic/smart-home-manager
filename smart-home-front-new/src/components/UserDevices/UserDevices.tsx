@@ -37,6 +37,47 @@ interface UserDevicesProps {
     userService: UserService
     deviceService: DeviceService
 }
+
+const OptionsMenu = styled((props: MenuProps) => (
+    <Menu
+        elevation={0}
+        anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+        }}
+        transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+        }}
+        {...props}
+    />
+))(({ theme }) => ({
+    '& .MuiPaper-root': {
+        borderRadius: 6,
+        marginTop: theme.spacing(1),
+        minWidth: 180,
+        color:
+            theme.palette.mode === 'light' ? 'rgb(55, 65, 81)' : theme.palette.grey[300],
+        boxShadow:
+            'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
+        '& .MuiMenu-list': {
+            padding: '4px 0',
+        },
+        '& .MuiMenuItem-root': {
+            '& .MuiSvgIcon-root': {
+                fontSize: 18,
+                color: theme.palette.text.secondary,
+                marginRight: theme.spacing(1.5),
+            },
+            '&:active': {
+                backgroundColor: alpha(
+                    theme.palette.primary.main,
+                    theme.palette.action.selectedOpacity,
+                ),
+            },
+        },
+    },
+}));
 export function UserDevices({userService, deviceService} : UserDevicesProps) {
     const navigate = useNavigate();
     const [isRemoteOpen, setIsRemoteOpen] = React.useState<boolean>(false);
@@ -49,47 +90,11 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
     const shouldLoad = useRef(true);
     const [devices, setDevices] = React.useState<DeviceDetailsDto[]>([]);
     const [remoteType, setRemoteType] = React.useState<string>("");
+    const [isSharedControl, setIsSharedControl] = React.useState<boolean>(false);
+    const [sharedDevices, setSharedDevices] = React.useState<DeviceDetailsDto[]>([]);
+    const [hasSharedDevices, setHasSharedDevices] = React.useState<boolean>(true);
     const [activeDeviceObj, setActiveDeviceObj] = React.useState<DeviceDetailsDto | null>(null);
-    const OptionsMenu = styled((props: MenuProps) => (
-        <Menu
-            elevation={0}
-            anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'right',
-            }}
-            transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-            }}
-            {...props}
-        />
-    ))(({ theme }) => ({
-        '& .MuiPaper-root': {
-            borderRadius: 6,
-            marginTop: theme.spacing(1),
-            minWidth: 180,
-            color:
-                theme.palette.mode === 'light' ? 'rgb(55, 65, 81)' : theme.palette.grey[300],
-            boxShadow:
-                'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
-            '& .MuiMenu-list': {
-                padding: '4px 0',
-            },
-            '& .MuiMenuItem-root': {
-                '& .MuiSvgIcon-root': {
-                    fontSize: 18,
-                    color: theme.palette.text.secondary,
-                    marginRight: theme.spacing(1.5),
-                },
-                '&:active': {
-                    backgroundColor: alpha(
-                        theme.palette.primary.main,
-                        theme.palette.action.selectedOpacity,
-                    ),
-                },
-            },
-        },
-    }));
+    const [currentView, setCurrentView] = React.useState<DeviceDetailsDto[]>([]);
     const [menuAnchorEl, setMenuAnchorEl] = React.useState<null | HTMLElement>(null);
     const openMenu = !!menuAnchorEl;
     const [activeDevice, setActiveDevice] = React.useState<number>(-1);
@@ -124,6 +129,29 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
         setIsSharingOpen(false);
     }
 
+    const handleSharedControlDevices = () => {
+        const sharedControl = !isSharedControl;
+        setIsSharedControl(sharedControl);
+        if(sharedControl) {
+            if(sharedDevices.length > 0) {
+                setCurrentView(sharedDevices);
+            }
+            else {
+                if(hasSharedDevices) {
+                    deviceService.getUserSharedDevices().then((shared) => {
+                        if(shared.length == 0)
+                            setHasSharedDevices(false);
+                        setSharedDevices(shared);
+                        setCurrentView(shared);
+                    })
+                }
+            }
+        }
+        else {
+            setCurrentView(devices);
+        }
+    }
+
     const handleMenuClose = () => {
         setMenuAnchorEl(null);
         setActiveDevice(-1)
@@ -147,6 +175,7 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
             const response = await deviceService.getUserDevices();
             if (response.length > 0) {
                 setDevices(response);
+                setCurrentView(response);
             }
         } catch (err) {
             setErrorMessage(err.response?.data || "An error occurred while fetching devices.");
@@ -169,6 +198,7 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
             fetchUserDevices();
         }
     }, [deviceService, getUserDevices]);
+
 
     useEffect(() => {
         if (sessionStorage.getItem("expiration") != null) {
@@ -240,6 +270,10 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
                         alignItems={'flex-start'}
                         ml={{xl: '20%', lg: '20%', md: '25%', sm: '0', xs: '0'}}
                         mt={{xl: 0, lg: 0, md: 0, sm: '64px', xs: '64px'}}>
+                        <Grid item container justifyContent={'center'}>
+                            <Button  color={isSharedControl? 'primary' : 'secondary'} variant={'contained'} sx={{padding:'15px 30px'}}
+                                     onClick={() => handleSharedControlDevices()}>{isSharedControl? 'See Your Own Devices' : 'See Devices Shared With You'}</Button>
+                        </Grid>
                         <ImageList  sx={{
                             columnCount: {
                                 xs: '2 !important',
@@ -249,7 +283,7 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
                                 xl: '5 !important',
                             },
                             width: "100%"}} cols={3} rowHeight={164}>
-                            {devices.map((device) => (
+                            {currentView.map((device) => (
                             <Card sx={{ display: 'flex',
                                 border:'1px solid #D3D3D3',
                                 borderRadius:'0.6em',
@@ -275,8 +309,10 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
                                         </Typography>
                                     </CardContent>
                                     <Box sx={{ display: 'flex', justifyContent:'center', width:'100%', alignItems: 'center', pl: 1, pb: 1 }}>
+                                        {!isSharedControl?
                                         <Button  color={'secondary'} variant={'contained'} sx={{marginRight:'10px'}}
                                             onClick={() => handleControlSharingOpen(device)}>Share</Button>
+                                            : null }
                                         <div>
                                             <Button
                                                 id={"button_" + device.id}
@@ -345,6 +381,7 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
                                 ))}
                         </ImageList>
                     </Grid>
+                    {isSharedControl? null :
                     <Fab variant="extended"
                          color="primary"
                          sx={{position: 'absolute', bottom: 16, right: 30}}
@@ -352,6 +389,7 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
                         <AddIcon sx={{ mr: 1 }} />
                         Add New
                     </Fab>
+                    }
                 </Grid>
             </Grid>
             <PopupMessage message={errorMessage} isSuccess={isSuccess} handleClose={handleErrorPopupClose} open={errorPopupOpen}/>

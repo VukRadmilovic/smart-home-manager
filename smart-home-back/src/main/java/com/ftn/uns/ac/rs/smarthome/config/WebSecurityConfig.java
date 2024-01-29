@@ -81,6 +81,7 @@ public class WebSecurityConfig {
 				.antMatchers(HttpMethod.PUT, "/api/devices/shareControl/property/*").hasAnyRole("USER")
 				.antMatchers(HttpMethod.GET, "/api/devices/shareControl/get/*").hasAnyRole("USER")
 				.antMatchers(HttpMethod.GET, "/api/devices/shareControl/get/property/*").hasAnyRole("USER")
+				.antMatchers(HttpMethod.GET, "/api/devices/shared").hasAnyRole("USER")
 				.anyRequest().authenticated().and()
 				.cors().and()
 				.addFilterBefore(new TokenAuthenticationFilter(tokenUtils,  userService), BasicAuthenticationFilter.class);

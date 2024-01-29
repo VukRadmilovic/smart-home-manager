@@ -24,6 +24,18 @@ export class DeviceService {
         });
     }
 
+    public getUserSharedDevices(): Promise<DeviceDetailsDto[]> {
+        return axios({
+            method: 'GET',
+            url: `${this.api_host}/api/devices/shared`,
+            headers: {
+                'Authorization': 'Bearer ' + sessionStorage.getItem('user')
+            },
+        }).then((response) => response.data
+        ).catch((err) => {
+            throw err
+        });
+    }
     public getDeviceMeasurements(request: MeasurementRequest): Promise<ChartData[]> {
         const result : ChartData[] = [];
         const eventSourceHeader = {headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('user')}};

@@ -4,8 +4,9 @@ import com.ftn.uns.ac.rs.smarthome.models.DeviceControl;
 import com.ftn.uns.ac.rs.smarthome.models.Property;
 import com.ftn.uns.ac.rs.smarthome.models.User;
 import com.ftn.uns.ac.rs.smarthome.models.UserSearchInfo;
-import com.ftn.uns.ac.rs.smarthome.models.devices.Device;
+import com.ftn.uns.ac.rs.smarthome.models.devices.*;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.DeviceControlDetails;
+import com.ftn.uns.ac.rs.smarthome.models.dtos.DeviceDetailsDTO;
 import com.ftn.uns.ac.rs.smarthome.repositories.DeviceControlRepository;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IDeviceControlService;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IDeviceService;
@@ -15,7 +16,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import java.util.*;
 
@@ -98,6 +98,31 @@ public class DeviceControlService implements IDeviceControlService {
                     control.getOwner().getName() + " " + control.getOwner().getSurname()));
         }
         return list;
+    }
+
+    @Override
+    public List<DeviceDetailsDTO> findByShared(Integer userId) {
+        List<DeviceDetailsDTO> devices = new ArrayList<>();
+        List<DeviceControl> shared = deviceControlRepository.findByOwner_Id(userId);
+        for(DeviceControl control : shared) {
+            Device device = control.getDevice();
+            String type = "";
+            if(device instanceof Thermometer) type = "THERMOMETER";
+            if (device instanceof SolarPanelSystem) type = "SPS";
+            if (device instanceof AirConditioner) type = "AC";
+            if (device instanceof WashingMachine) type = "WM";
+            DeviceDetailsDTO details = new DeviceDetailsDTO(
+                    device.getId(),
+                    type,
+                    device.getName(),
+                    device.getPowerSource(),
+                    device.getEnergyConsumption(),
+                    device.getImage(),
+                    device.getProperty().getName()
+            );
+            devices.add(details);
+        }
+        return devices;
     }
 
     @Override

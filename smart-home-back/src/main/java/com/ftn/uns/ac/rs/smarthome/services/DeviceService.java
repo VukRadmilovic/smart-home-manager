@@ -71,6 +71,7 @@ public class DeviceService implements IDeviceService {
         return devicesDetails;
     }
 
+
     @Override
     public void update(Device device) {
         deviceRepository.save(device);

@@ -109,7 +109,8 @@ public class UserController {
     @GetMapping(value = "/info/{key}")
     public ResponseEntity<?> getUserInfoByKey(@PathVariable String key) {
         try{
-            List<UserSearchInfo> users = this.userService.findByKey(key);
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            List<UserSearchInfo> users = this.userService.findByKey(key, user.getId());
             return new ResponseEntity<>(users, HttpStatus.OK);
         }
         catch(ResponseStatusException ex) {

@@ -15,6 +15,6 @@ public interface IUserService extends UserDetailsService {
     void sendPasswordResetEmail(String email);
     void resetPassword(PasswordResetDTO newPassword);
     UserInfoDTO getUserInfo(Integer id);
-    List<UserSearchInfo> findByKey(String key);
+    List<UserSearchInfo> findByKey(String key, Integer userId);
     Optional<User> getById(Integer id);
 }

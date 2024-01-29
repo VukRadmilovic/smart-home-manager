@@ -291,12 +291,13 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public List<UserSearchInfo> findByKey(String key) {
+    public List<UserSearchInfo> findByKey(String key, Integer userId) {
         List<String> keywords = Arrays.stream(key.toLowerCase().split(" ")).map(String::trim).toList();
         Optional<List<User>> users = userRepository.findTop10ByUsernameInIgnoreCaseOrNameInIgnoreCaseOrSurnameInIgnoreCase(keywords,keywords,keywords);
         List<UserSearchInfo> transformedUsers = new ArrayList<>();
         if(users.isPresent()) {
             for(User user : users.get()) {
+                if(Objects.equals(user.getId(), userId)) continue;
                 transformedUsers.add( new UserSearchInfo(user.getId(), user.getUsername(), user.getName() + " " + user.getSurname()));
             }
         }

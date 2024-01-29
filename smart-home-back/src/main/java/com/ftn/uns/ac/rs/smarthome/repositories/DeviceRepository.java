@@ -12,4 +12,5 @@ public interface DeviceRepository extends JpaRepository<Device, Integer> {
 
     @Query("SELECT dvc FROM Device dvc WHERE dvc.property.owner.id = ?1")
     List<Device> findByOwnerId(Integer ownerId);
+
 }

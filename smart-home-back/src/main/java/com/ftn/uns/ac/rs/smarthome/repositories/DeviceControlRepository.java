@@ -14,4 +14,5 @@ public interface DeviceControlRepository extends JpaRepository<DeviceControl, In
     List<DeviceControl> findByDevice_Id(Integer id);
     Optional<DeviceControl> findByDevice_IdAndOwner_Id(Integer deviceId, Integer ownerId);
     List<DeviceControl> findByDevice_Property_Id(Integer propertyId);
+    List<DeviceControl> findByOwner_Id(Integer ownerId);
 }

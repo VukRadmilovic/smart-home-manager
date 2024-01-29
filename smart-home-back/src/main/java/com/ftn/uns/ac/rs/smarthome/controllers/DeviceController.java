@@ -186,9 +186,16 @@ public class DeviceController {
     }
 
     @GetMapping(value = "/ownerAll")
-    public ResponseEntity<?> changeTemperatureUnit() {
+    public ResponseEntity<?> getAllOwnersDevices() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<DeviceDetailsDTO> devices = this.deviceService.findByOwnerId(user.getId());
+        return new ResponseEntity<>(devices, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/shared")
+    public ResponseEntity<?> getAllSharedDevicesWithOwner() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<DeviceDetailsDTO> devices = this.deviceControlService.findByShared(user.getId());
         return new ResponseEntity<>(devices, HttpStatus.OK);
     }
 
