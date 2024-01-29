@@ -1,6 +1,7 @@
 package com.ftn.uns.ac.rs.smarthome.controllers;
 
 import com.ftn.uns.ac.rs.smarthome.models.User;
+import com.ftn.uns.ac.rs.smarthome.models.UserSearchInfo;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.*;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IUserService;
 import org.springframework.context.MessageSource;
@@ -16,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 
+import java.util.List;
 import java.util.Locale;
 
 @CrossOrigin("http://localhost:5173/")
@@ -98,6 +100,17 @@ public class UserController {
             User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             UserInfoDTO userInfo = this.userService.getUserInfo(user.getId());
             return new ResponseEntity<>(userInfo, HttpStatus.OK);
+        }
+        catch(ResponseStatusException ex) {
+            return new ResponseEntity<>(ex.getReason(), ex.getStatus());
+        }
+    }
+
+    @GetMapping(value = "/info/{key}")
+    public ResponseEntity<?> getUserInfoByKey(@PathVariable String key) {
+        try{
+            List<UserSearchInfo> users = this.userService.findByKey(key);
+            return new ResponseEntity<>(users, HttpStatus.OK);
         }
         catch(ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());

@@ -3,6 +3,7 @@ package com.ftn.uns.ac.rs.smarthome.services;
 import com.ftn.uns.ac.rs.smarthome.config.MqttConfiguration;
 import com.ftn.uns.ac.rs.smarthome.models.Role;
 import com.ftn.uns.ac.rs.smarthome.models.User;
+import com.ftn.uns.ac.rs.smarthome.models.UserSearchInfo;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.*;
 import com.ftn.uns.ac.rs.smarthome.repositories.UserRepository;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IUserService;
@@ -27,10 +28,8 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.Properties;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService implements IUserService {
@@ -289,5 +288,23 @@ public class UserService implements IUserService {
                 user.get().getEmail(),
                 user.get().getProfilePicture(),
                 user.get().getRoles().get(0).getName());
+    }
+
+    @Override
+    public List<UserSearchInfo> findByKey(String key) {
+        List<String> keywords = Arrays.stream(key.toLowerCase().split(" ")).map(String::trim).toList();
+        Optional<List<User>> users = userRepository.findTop10ByUsernameInIgnoreCaseOrNameInIgnoreCaseOrSurnameInIgnoreCase(keywords,keywords,keywords);
+        List<UserSearchInfo> transformedUsers = new ArrayList<>();
+        if(users.isPresent()) {
+            for(User user : users.get()) {
+                transformedUsers.add( new UserSearchInfo(user.getId(), user.getUsername(), user.getName() + " " + user.getSurname()));
+            }
+        }
+        return transformedUsers;
+    }
+
+    @Override
+    public Optional<User> getById(Integer id) {
+        return userRepository.findById(id);
     }
 }

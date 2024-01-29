@@ -6,6 +6,7 @@ import {NewUserMultipart} from "../models/NewUserMultipart.ts";
 import {RoleEnum} from "../models/enums/RoleEnum.ts";
 import {PasswordResetDto} from "../models/PasswordResetDto.ts";
 import {NewPassword} from "../models/NewPassword.ts";
+import {UserSearchInfo} from "../models/UserSearchInfo.ts";
 
 export class UserService {
 
@@ -28,6 +29,19 @@ export class UserService {
             console.log(err);
             throw err;
         }
+    }
+
+    public getUsersByKey(key: string) : Promise<UserSearchInfo[]> {
+        return axios({
+            method: 'GET',
+            url: `${this.api_host}/api/user/info/${key}` ,
+            headers: {
+                'Authorization': 'Bearer ' + sessionStorage.getItem('user')
+            },
+        }).then((response) => response.data
+        ).catch((err) => {
+            throw err
+        });
     }
 
 

@@ -5,6 +5,8 @@ import {ChartData} from "../models/ChartData.ts";
 import EventSource from "react-native-sse";
 import {DeviceCapabilities} from "../models/DeviceCapabilities.ts";
 import {CommandsDTO} from "../models/CommandsDTO.ts";
+import {UserSearchInfo} from "../models/UserSearchInfo.ts";
+import {DeviceControlDto} from "../models/DeviceControlDto.ts";
 
 export class DeviceService {
     private api_host = "http://localhost:80"
@@ -48,6 +50,60 @@ export class DeviceService {
             headers: {
                 'Authorization': 'Bearer ' + sessionStorage.getItem('user')
             },
+        }).then((response) => response.data
+        ).catch((err) => {
+            throw err
+        });
+    }
+
+    public getDeviceSharedControl(deviceId: number) : Promise<UserSearchInfo[]> {
+        return axios({
+            method: 'GET',
+            url: `${this.api_host}/api/devices/shareControl/get/${deviceId}`,
+            headers: {
+                'Authorization': 'Bearer ' + sessionStorage.getItem('user')
+            },
+        }).then((response) => response.data
+        ).catch((err) => {
+            throw err
+        });
+    }
+
+    public editDeviceSharedControl(deviceId: number, dto: DeviceControlDto) : Promise<string> {
+        return axios({
+            method: 'PUT',
+            url: `${this.api_host}/api/devices/shareControl/${deviceId}`,
+            headers: {
+                'Authorization': 'Bearer ' + sessionStorage.getItem('user')
+            },
+            data: dto
+        }).then((response) => response.data
+        ).catch((err) => {
+            throw err
+        });
+    }
+
+    public getPropertySharedControl(propertyId: number) : Promise<UserSearchInfo[]> {
+        return axios({
+            method: 'GET',
+            url: `${this.api_host}/api/devices/shareControl/get/property/${propertyId}`,
+            headers: {
+                'Authorization': 'Bearer ' + sessionStorage.getItem('user')
+            },
+        }).then((response) => response.data
+        ).catch((err) => {
+            throw err
+        });
+    }
+
+    public editPropertySharedControl(propertyId: number, dto: DeviceControlDto) : Promise<string> {
+        return axios({
+            method: 'PUT',
+            url: `${this.api_host}/api/devices/shareControl/property/${propertyId}`,
+            headers: {
+                'Authorization': 'Bearer ' + sessionStorage.getItem('user')
+            },
+            data: dto
         }).then((response) => response.data
         ).catch((err) => {
             throw err

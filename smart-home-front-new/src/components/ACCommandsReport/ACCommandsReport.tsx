@@ -168,8 +168,6 @@ export function ACCommandsReport({userService, deviceService} : ACCommandsReport
             })
         }
         else {
-            console.log(prevPageSize);
-            console.log(model.pageSize);
             if(prevPageSize > model.pageSize)
                 setCurrentPageCommands(currentPageCommands.slice(0,model.pageSize));
             else if(prevPageSize == model.pageSize)
@@ -210,7 +208,6 @@ export function ACCommandsReport({userService, deviceService} : ACCommandsReport
                             value={user}
                             onChange={(_event: any, newValue: UserIdUsernamePair | null) => {
                                 setUser(newValue);
-                                console.log(newValue)
                             }}
                             inputValue={inputValueUser}
                             onInputChange={(_event, newInputValue) => {

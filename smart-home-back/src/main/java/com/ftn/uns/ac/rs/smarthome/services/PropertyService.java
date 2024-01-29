@@ -94,7 +94,7 @@ public class PropertyService implements IPropertyService {
         for (Property property : properties) {
             for (Town town : towns) {
                 if (town.getProperties().contains(property) && property.getStatus() == PropertyStatus.APPROVED) {
-                    propertyDTOS.add(new PropertyDTO(property.getAddress(), town.getName(), property.getSize(), property.getFloors(), property.getStatus(), property.getPropertyType(), property.getOwner().getUsername(), property.getId()));
+                    propertyDTOS.add(new PropertyDTO(property.getAddress(), property.getName(), town.getName(), property.getSize(), property.getFloors(), property.getStatus(), property.getPropertyType(), property.getOwner().getUsername(), property.getId()));
                 }
             }
         }
@@ -109,7 +109,7 @@ public class PropertyService implements IPropertyService {
         for (Property property : properties) {
             for (Town town : towns) {
                 if (town.getProperties().contains(property)) {
-                    propertyDTOS.add(new PropertyDTO(property.getAddress(), town.getName(), property.getSize(), property.getFloors(), property.getStatus(), property.getPropertyType(), property.getOwner().getUsername(), property.getId()));
+                    propertyDTOS.add(new PropertyDTO(property.getAddress(), property.getName(), town.getName(), property.getSize(), property.getFloors(), property.getStatus(), property.getPropertyType(), property.getOwner().getUsername(), property.getId()));
                 }
             }
         }
@@ -142,10 +142,15 @@ public class PropertyService implements IPropertyService {
         for (Property property : properties) {
             for (Town town : towns) {
                 if (town.getProperties().contains(property)) {
-                    propertyDTOS.add(new PropertyDTO(property.getAddress(), town.getName(), property.getSize(), property.getFloors(), property.getStatus(), property.getPropertyType(), property.getOwner().getUsername(), property.getId()));
+                    propertyDTOS.add(new PropertyDTO(property.getAddress(), property.getName(), town.getName(), property.getSize(), property.getFloors(), property.getStatus(), property.getPropertyType(), property.getOwner().getUsername(), property.getId()));
                 }
             }
         }
         return propertyDTOS;
+    }
+
+    @Override
+    public Optional<Property> getById(Integer id) {
+        return propertyRepository.findById(id);
     }
 }

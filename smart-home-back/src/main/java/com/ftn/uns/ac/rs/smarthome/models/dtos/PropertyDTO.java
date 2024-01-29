@@ -22,9 +22,10 @@ public class PropertyDTO {
     private MultipartFile picture;
     private String owner;
 
-    public PropertyDTO(String address, String name, String size, String floors, PropertyStatus status, PropertyType propertyType, String username, Integer id) {
+    public PropertyDTO(String address, String name, String cityName, String size, String floors, PropertyStatus status, PropertyType propertyType, String username, Integer id) {
         this.address = address;
-        this.city = name;
+        this.name = name;
+        this.city = cityName;
         this.size = size;
         this.floors = floors;
         this.propertyType = status.toString();

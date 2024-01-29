@@ -202,3 +202,7 @@ button:focus-visible {
   font-weight: bold;
   background-color: rgba(0, 173, 181, 0.1);
 }
+
+.gray {
+  background-color: rgba(0,0,0,0.05);
+}

@@ -76,6 +76,11 @@ public class WebSecurityConfig {
 				.antMatchers(HttpMethod.GET, "/api/property/deny/*").hasAnyRole("USER", "SUPERADMIN", "ADMIN")
 				.antMatchers(HttpMethod.GET, "/api/property/approve/*").hasAnyRole("SUPERADMIN", "ADMIN")
 				.antMatchers(HttpMethod.GET, "/api/user/info").hasAnyRole("ADMIN", "SUPERADMIN","USER")
+				.antMatchers(HttpMethod.GET, "/api/user/info/*").hasAnyRole("USER")
+				.antMatchers(HttpMethod.PUT, "/api/devices/shareControl/*").hasAnyRole("USER")
+				.antMatchers(HttpMethod.PUT, "/api/devices/shareControl/property/*").hasAnyRole("USER")
+				.antMatchers(HttpMethod.GET, "/api/devices/shareControl/get/*").hasAnyRole("USER")
+				.antMatchers(HttpMethod.GET, "/api/devices/shareControl/get/property/*").hasAnyRole("USER")
 				.anyRequest().authenticated().and()
 				.cors().and()
 				.addFilterBefore(new TokenAuthenticationFilter(tokenUtils,  userService), BasicAuthenticationFilter.class);

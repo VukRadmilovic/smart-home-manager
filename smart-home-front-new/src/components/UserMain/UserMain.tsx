@@ -10,9 +10,12 @@ import React, {useEffect, useRef} from "react";
 import {PopupMessage} from "../PopupMessage/PopupMessage";
 import {useNavigate} from "react-router";
 import {Property} from "../../models/Property";
+import {ControlSharing} from "../ControlSharing/ControlSharing.tsx";
+import {DeviceService} from "../../services/DeviceService.ts";
 
 interface PropertyProps {
     userService: UserService,
+    deviceService: DeviceService,
     propertyService: PropertyService
 }
 
@@ -26,7 +29,7 @@ interface PropertyProps {
     return { address, city, size, floors, status };
 }*/
 
-export function UserMain({userService, propertyService} : PropertyProps) {
+export function UserMain({userService, deviceService, propertyService} : PropertyProps) {
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = React.useState<string>("");
     const [errorPopupOpen, setErrorPopupOpen] = React.useState<boolean>(false);
@@ -34,6 +37,8 @@ export function UserMain({userService, propertyService} : PropertyProps) {
     const shouldLoad = useRef(true);
     const [properties, setProperty] = React.useState<Property[]>([]);
     const [menuAnchorEl] = React.useState<null | HTMLElement>(null);
+    const [isSharingOpen, setIsSharingOpen] = React.useState<boolean>(false);
+    const [activeProperty, setActiveProperty] = React.useState<Property | null>(null);
     const openMenu = !!menuAnchorEl;
     /*const handleMenuClick = (event: React.MouseEvent<HTMLElement>,deviceId: number) => {
         setMenuAnchorEl(event.currentTarget);
@@ -102,6 +107,16 @@ export function UserMain({userService, propertyService} : PropertyProps) {
         navigate('/consumptionChartsHistory/' + propertyId);
     }
 
+    const handleControlSharingOpen = (property: Property) => {
+        console.log(property)
+        setActiveProperty(property);
+        setIsSharingOpen(true);
+    }
+
+    const handleSharingClose = () => {
+        setIsSharingOpen(false);
+    }
+
     return (
         <>
             <CssBaseline/>
@@ -164,10 +179,22 @@ export function UserMain({userService, propertyService} : PropertyProps) {
                                                 <span style={{display: 'inline-flex'}}>{property.city} </span>
                                             </Typography>
                                         </CardContent>
-                                        <Box sx={{ display: 'flex', justifyContent:'center', width:'100%', alignItems: 'center', pl: 1, pb: 1 }}>
-                                            <Button onClick={() => navigateToRealTimeCharts(property.id)}  color={'secondary'} variant={'contained'} sx={{marginRight:'10px'}}>RealTime power usage</Button>
-                                            <Button onClick={() => navigateToHistoricalCharts(property.id)}  color={'secondary'} variant={'contained'} sx={{marginRight:'10px'}}>Historical power usage</Button>
-                                        </Box>
+                                        <Grid container>
+                                            <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}>
+                                                <Grid container item mb={1}>
+                                                    <Grid container item xs={12} sm={12} md={6} lg={4} xl={6}>
+                                                        <Button onClick={() => navigateToRealTimeCharts(property.id)}  color={'secondary'} variant={'contained'} sx={{marginRight:'10px'}}>RealTime power usage</Button>
+                                                    </Grid>
+                                                    <Grid container item xs={12} sm={12} md={6} lg={4} xl={6}>
+                                                        <Button onClick={() => navigateToHistoricalCharts(property.id)}  color={'secondary'} variant={'contained'} sx={{marginRight:'10px'}}>Historical power usage</Button>
+                                                    </Grid>
+                                                </Grid>
+                                            </Grid>
+                                            <Grid item container xs={12} sm={12} md={12} lg={12} xl={12} justifyContent={'center'}>
+                                                <Button  color={'primary'} variant={'contained'} sx={{marginRight:'10px'}}
+                                                         onClick={() => handleControlSharingOpen(property)}>Share</Button>
+                                            </Grid>
+                                        </Grid>
                                     </Box>
                                     <CardMedia
                                         component="img"
@@ -182,6 +209,13 @@ export function UserMain({userService, propertyService} : PropertyProps) {
                 </Grid>
             </Grid>
             <PopupMessage message={errorMessage} isSuccess={isSuccess} handleClose={handleErrorPopupClose} open={errorPopupOpen}/>
+            <ControlSharing open={isSharingOpen}
+                            handleClose={handleSharingClose}
+                            userService={userService}
+                            deviceService={deviceService}
+                            name={activeProperty?.name}
+                            isDevice={false}
+                            deviceOrPropertyId={activeProperty?.id}></ControlSharing>
         </>
     );
 }

@@ -31,6 +31,7 @@ import {PopupMessage} from "../PopupMessage/PopupMessage.tsx";
 import {AirConditionerRemote} from "../AirConditionerRemote/AirConditionerRemote.tsx";
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import {WashingMachineRemote} from "../WashingMachineRemote/WashingMachineRemote.tsx";
+import {ControlSharing} from "../ControlSharing/ControlSharing.tsx";
 
 interface UserDevicesProps {
     userService: UserService
@@ -39,6 +40,7 @@ interface UserDevicesProps {
 export function UserDevices({userService, deviceService} : UserDevicesProps) {
     const navigate = useNavigate();
     const [isRemoteOpen, setIsRemoteOpen] = React.useState<boolean>(false);
+    const [isSharingOpen, setIsSharingOpen] = React.useState<boolean>(false);
     const [remoteDeviceId, setRemoteDeviceId] = React.useState<number>(-1);
     const [openRemoteSocket, setOpenRemoteSocket] = React.useState<boolean>(false);
     const [errorMessage, setErrorMessage] = React.useState<string>("");
@@ -47,6 +49,7 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
     const shouldLoad = useRef(true);
     const [devices, setDevices] = React.useState<DeviceDetailsDto[]>([]);
     const [remoteType, setRemoteType] = React.useState<string>("");
+    const [activeDeviceObj, setActiveDeviceObj] = React.useState<DeviceDetailsDto | null>(null);
     const OptionsMenu = styled((props: MenuProps) => (
         <Menu
             elevation={0}
@@ -109,6 +112,16 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
     const handleRemoteClose = () => {
         setIsRemoteOpen(false);
         setOpenRemoteSocket(false);
+    }
+
+    const handleControlSharingOpen = (device: DeviceDetailsDto) => {
+        setActiveDevice(device.id);
+        setActiveDeviceObj(device);
+        setIsSharingOpen(true);
+    }
+
+    const handleSharingClose = () => {
+        setIsSharingOpen(false);
     }
 
     const handleMenuClose = () => {
@@ -262,7 +275,8 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
                                         </Typography>
                                     </CardContent>
                                     <Box sx={{ display: 'flex', justifyContent:'center', width:'100%', alignItems: 'center', pl: 1, pb: 1 }}>
-                                        <Button  color={'secondary'} variant={'contained'} sx={{marginRight:'10px'}}>Share</Button>
+                                        <Button  color={'secondary'} variant={'contained'} sx={{marginRight:'10px'}}
+                                            onClick={() => handleControlSharingOpen(device)}>Share</Button>
                                         <div>
                                             <Button
                                                 id={"button_" + device.id}
@@ -349,6 +363,13 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
                                   handleClose={handleRemoteClose}
                                   openSocket={openRemoteSocket}
                                   deviceId={remoteDeviceId}></WashingMachineRemote>
+            <ControlSharing open={isSharingOpen}
+                                  handleClose={handleSharingClose}
+                                  userService={userService}
+                                  deviceService={deviceService}
+                                  name={activeDeviceObj?.name}
+                                  isDevice={true}
+                                  deviceOrPropertyId={activeDevice}></ControlSharing>
         </>
     );
 }

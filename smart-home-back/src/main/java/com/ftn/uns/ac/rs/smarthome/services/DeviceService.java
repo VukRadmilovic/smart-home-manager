@@ -38,6 +38,11 @@ public class DeviceService implements IDeviceService {
     }
 
     @Override
+    public Optional<Device> getById(Integer id) {
+        return deviceRepository.findById(id);
+    }
+
+    @Override
     public List<Device> findAll() {
         return deviceRepository.findAll();
     }
@@ -123,7 +128,6 @@ public class DeviceService implements IDeviceService {
         List<CommandSummaryInternal> commandsInternal = influxService.findPaginatedByTimeSpanAndUserIdAndDeviceId(request);
         for(CommandSummaryInternal command : commandsInternal) {
             String commandDesc = "";
-            System.out.println(command);
             if(command.getCommand().equals(ACState.ON.toString())) {
                 commandDesc = "Turned on the device";
                 if(command.getTags().get("mode") != null) {

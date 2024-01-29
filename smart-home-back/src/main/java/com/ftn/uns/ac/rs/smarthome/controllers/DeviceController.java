@@ -3,10 +3,8 @@ package com.ftn.uns.ac.rs.smarthome.controllers;
 import com.ftn.uns.ac.rs.smarthome.models.Measurement;
 import com.ftn.uns.ac.rs.smarthome.models.TemperatureUnit;
 import com.ftn.uns.ac.rs.smarthome.models.User;
-import com.ftn.uns.ac.rs.smarthome.models.dtos.CommandsDTO;
-import com.ftn.uns.ac.rs.smarthome.models.dtos.CommandsRequestDTO;
-import com.ftn.uns.ac.rs.smarthome.models.dtos.DeviceDetailsDTO;
-import com.ftn.uns.ac.rs.smarthome.models.dtos.MeasurementsStreamRequestDTO;
+import com.ftn.uns.ac.rs.smarthome.models.UserSearchInfo;
+import com.ftn.uns.ac.rs.smarthome.models.dtos.*;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.devices.*;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.*;
 import org.springframework.context.MessageSource;
@@ -41,6 +39,8 @@ public class DeviceController {
     private final IGateService gateService;
     private final ISprinklerSystemService sprinklerSystemService;
 
+    private final IDeviceControlService deviceControlService;
+
     public DeviceController(IDeviceService deviceService,
                             MessageSource messageSource,
                             IThermometerService thermometerService,
@@ -51,7 +51,8 @@ public class DeviceController {
                             IChargerService chargerService,
                             ILampService lampService,
                             IGateService gateService,
-                            ISprinklerSystemService sprinklerSystemService) {
+                            ISprinklerSystemService sprinklerSystemService,
+                            IDeviceControlService deviceControlService) {
         this.deviceService = deviceService;
         this.messageSource = messageSource;
         this.thermometerService = thermometerService;
@@ -63,6 +64,7 @@ public class DeviceController {
         this.lampService = lampService;
         this.gateService = gateService;
         this.sprinklerSystemService = sprinklerSystemService;
+        this.deviceControlService = deviceControlService;
     }
 
     @PostMapping(value = "/registerThermometer", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -195,7 +197,6 @@ public class DeviceController {
         try {
             MeasurementsStreamRequestDTO dto = new MeasurementsStreamRequestDTO(from, to, 5000,0,deviceId,measurement);
             List<List<Measurement>> measurements = this.deviceService.getStreamByMeasurementNameAndDeviceIdInTimeRange(dto);
-            System.out.println(measurements);
             return Flux.fromIterable(measurements);
         } catch(ResponseStatusException ex) {
             return Flux.error(new ResponseStatusException(ex.getStatus(), ex.getMessage()));
@@ -234,6 +235,46 @@ public class DeviceController {
             CommandsRequestDTO dto = new CommandsRequestDTO(from, to, deviceId,page,size,firstFetch,userId);
             CommandsDTO measurements = this.deviceService.getCommandsByTimeRangeAndUserId(dto);
             return new ResponseEntity<>(measurements, HttpStatus.OK);
+        } catch(ResponseStatusException ex) {
+            return new ResponseEntity<>(ex.getReason(), ex.getStatus());
+        }
+    }
+
+    @PutMapping(value = "/shareControl/{deviceId}")
+        public ResponseEntity<?> editDeviceControl(@PathVariable("deviceId") Integer deviceId, @Valid @RequestBody DeviceControlDTO deviceControl) {
+        try {
+            this.deviceControlService.editDeviceControl(deviceId, deviceControl.getDetails());
+            return new ResponseEntity<>(messageSource.getMessage("deviceControl.added", null, Locale.getDefault()), HttpStatus.OK);
+        } catch(ResponseStatusException ex) {
+            return new ResponseEntity<>(ex.getReason(), ex.getStatus());
+        }
+    }
+
+    @PutMapping(value = "/shareControl/property/{propertyId}")
+    public ResponseEntity<?> editDeviceControlForProperty(@PathVariable("propertyId") Integer propertyId, @Valid @RequestBody DeviceControlDTO deviceControl) {
+        try {
+            this.deviceControlService.editDeviceControlForProperty(propertyId, deviceControl.getDetails());
+            return new ResponseEntity<>(messageSource.getMessage("deviceControl.added", null, Locale.getDefault()), HttpStatus.OK);
+        } catch(ResponseStatusException ex) {
+            return new ResponseEntity<>(ex.getReason(), ex.getStatus());
+        }
+    }
+
+    @GetMapping(value = "/shareControl/get/{deviceId}")
+    public ResponseEntity<?> getSharedControlByDeviceId(@PathVariable("deviceId") Integer deviceId) {
+        try {
+            List<UserSearchInfo> usersInfo = this.deviceControlService.getDeviceControlUserInfo(deviceId);
+            return new ResponseEntity<>(usersInfo, HttpStatus.OK);
+        } catch(ResponseStatusException ex) {
+            return new ResponseEntity<>(ex.getReason(), ex.getStatus());
+        }
+    }
+
+    @GetMapping(value = "/shareControl/get/property/{propertyId}")
+    public ResponseEntity<?> getSharedControlByPropertyId(@PathVariable("propertyId") Integer propertyId) {
+        try {
+            List<UserSearchInfo> usersInfo = this.deviceControlService.getDeviceControlUserInfoForProperty(propertyId   );
+            return new ResponseEntity<>(usersInfo, HttpStatus.OK);
         } catch(ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());
         }
