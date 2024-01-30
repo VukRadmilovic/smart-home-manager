@@ -78,8 +78,7 @@ public class MqttMessageCallback implements MqttCallback {
             float value = Float.parseFloat(valueWithUnit.substring(0, valueWithUnit.length() - 1));
             char unit = valueWithUnit.charAt(valueWithUnit.length() - 1);
             String deviceIdStr = data[2];
-            influxService.save(measurementObject, value, new Date(),
-                    Map.of("deviceId", deviceIdStr, "unit", String.valueOf(unit)));
+
             int deviceId = Integer.parseInt(deviceIdStr);
             if (measurementObject.equals("status") && value >= 1 &&
                     stillThereDevicesManager.isntThere(deviceId)) {
@@ -88,9 +87,22 @@ public class MqttMessageCallback implements MqttCallback {
             }
 
             if (measurementObject.equals("produced")) {
-                powerManager.addProduction(value);
+                String propertyIdStr = data[3];
+                int propertyId = Integer.parseInt(propertyIdStr);
+                log.info("Adding production for property " + propertyId + " with value " + value);
+                powerManager.addProduction(propertyId, value);
+                influxService.save(measurementObject, value, new Date(),
+                        Map.of("deviceId", deviceIdStr, "unit", String.valueOf(unit), "property", propertyIdStr));
             } else if (measurementObject.equals("consumed")) {
-                powerManager.addConsumption(value);
+                String propertyIdStr = data[3];
+                int propertyId = Integer.parseInt(propertyIdStr);
+                log.info("Adding consumption for property " + propertyId + " with value " + value);
+                powerManager.addConsumption(propertyId, value);
+                influxService.save(measurementObject, value, new Date(),
+                        Map.of("deviceId", deviceIdStr, "unit", String.valueOf(unit), "property", propertyIdStr));
+            } else {
+                influxService.save(measurementObject, value, new Date(),
+                        Map.of("deviceId", deviceIdStr, "unit", String.valueOf(unit)));
             }
         }
     }

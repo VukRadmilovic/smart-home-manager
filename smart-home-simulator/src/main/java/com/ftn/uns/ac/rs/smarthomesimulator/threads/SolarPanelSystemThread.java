@@ -158,7 +158,7 @@ public class SolarPanelSystemThread implements Runnable {
     private void sendAndDisplayPower(double kWProduced) {
         DecimalFormat df = new DecimalFormat("#.###", new DecimalFormatSymbols(Locale.ENGLISH));
         df.setRoundingMode(RoundingMode.CEILING);
-        String msg = "produced," + df.format(kWProduced) + "p," + deviceId;
+        String msg = "produced," + df.format(kWProduced) + "p," + deviceId + "," + system.getProperty().getId();
 
         logger.info("Sending message: " + msg);
 

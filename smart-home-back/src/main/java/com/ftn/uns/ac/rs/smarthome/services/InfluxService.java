@@ -16,7 +16,6 @@ import java.util.*;
 
 @Service
 public class InfluxService {
-
     private final InfluxDBClient influxDbClient;
 
     public InfluxService(InfluxDBClient influxDbClient, Environment env) {

@@ -155,7 +155,7 @@ public class ThermometerThread implements Runnable {
                 System.out.println("Sending status message");
                 this.mqttService.publishStatusMessageLite("status,1T," + deviceId);
                 if (thermometer.getPowerSource().equals(PowerSource.HOUSE)) {
-                    String message = "consumed," + powerConsumption + "p," + deviceId;
+                    String message = "consumed," + powerConsumption + "p," + deviceId + "," + thermometer.getProperty().getId();
                     this.mqttService.publishPowerConsumptionMessage(message);
                     logger.info("Sending power consumption: " + message);
                 }

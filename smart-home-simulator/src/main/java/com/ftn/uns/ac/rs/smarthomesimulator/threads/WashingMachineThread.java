@@ -148,7 +148,7 @@ public class WashingMachineThread implements Runnable {
     }
 
     private void sendPowerConsumption() {
-        String message = "consumed," + powerConsumption + "p," + wm.getId();
+        String message = "consumed," + powerConsumption + "p," + wm.getId() + "," + wm.getProperty().getId();
         log.info("Sending power consumption: " + message);
         try {
             this.mqttConfiguration.getClient().publish("consumed", new MqttMessage(message.getBytes()));
