@@ -107,6 +107,10 @@ export function UserMain({userService, deviceService, propertyService} : Propert
         navigate('/consumptionChartsHistory/' + propertyId);
     }
 
+    const navigateToAddDevice = (propertyId: number) => {
+        navigate('/userRegisterDevice/' + propertyId);
+    }
+
     const handleControlSharingOpen = (property: Property) => {
         console.log(property)
         setActiveProperty(property);
@@ -193,6 +197,8 @@ export function UserMain({userService, deviceService, propertyService} : Propert
                                             <Grid item container xs={12} sm={12} md={12} lg={12} xl={12} justifyContent={'center'}>
                                                 <Button  color={'primary'} variant={'contained'} sx={{marginRight:'10px'}}
                                                          onClick={() => handleControlSharingOpen(property)}>Share</Button>
+                                                <Button  color={'primary'} variant={'contained'} sx={{marginRight:'10px'}}
+                                                         onClick={() => navigateToAddDevice(property.id)}>Add device</Button>
                                             </Grid>
                                         </Grid>
                                     </Box>

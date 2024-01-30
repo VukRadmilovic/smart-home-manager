@@ -124,6 +124,7 @@ function App() {
                         <Route path="/userMain" element={<UserMain userService={userServiceSingleton} deviceService={deviceServiceSingleton} propertyService={propertyServiceSingleton}/>}/>
                         <Route path="/newAdmin" element={<NewAdmin userService={userServiceSingleton}/>}/>
                         <Route path="/userRegisterProperty" element={<UserRegisterProperty userService={userServiceSingleton} propertyService={propertyServiceSingleton}/>}/>
+                        <Route path="/userRegisterDevice/:propertyId" element={<UserRegisterDevice userService={userServiceSingleton}/>}/>
                         <Route path="/userRegisterDevice" element={<UserRegisterDevice userService={userServiceSingleton}/>}/>
                         <Route path="/passwordReset/:id" element={<PasswordReset userService={userServiceSingleton}/>}/>
                         <Route path="/devices" element={<UserDevices userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>

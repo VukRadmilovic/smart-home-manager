@@ -61,11 +61,17 @@ export function UserRegisterDevice({userService}: UserMainProps) {
     const [errorMessage, setErrorMessage] = React.useState<string>("");
     const [errorPopupOpen, setErrorPopupOpen] = React.useState<boolean>(false);
     const [isSuccess, setIsSuccess] = React.useState(true);
+
+    let propertyId = Number(location.pathname.split('/').pop());
+    if (!propertyId) {
+        propertyId = 1;
+    }
+
     const {register, handleSubmit, setValue, formState: {errors}} = useForm<DeviceForm>({
         defaultValues: {
             name: "",
             type: "thermometer",
-            propertyId: 1,
+            propertyId: propertyId,
             energySource: "AUTONOMOUS",
             energyExpenditure: 2,
             measuringUnit: "CELSIUS",
