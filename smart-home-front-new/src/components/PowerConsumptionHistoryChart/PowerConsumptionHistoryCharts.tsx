@@ -54,6 +54,7 @@ export function PowerConsumptionChartsHistory({userService, deviceService} : Pow
     const [isCustom, setIsCustom] = React.useState<boolean>(false);
     const [isTimeFormatter, setIsTimeFormatter] = React.useState<boolean>(true);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const propertyId = String(location.pathname.split('/').pop());
 
     const downsample = (data: ChartDataShort[], targetLength : number) => {
         const dataPoints : DataPoint[] = [];
@@ -196,7 +197,7 @@ export function PowerConsumptionChartsHistory({userService, deviceService} : Pow
         const request : MeasurementRequest = {
             from: Math.floor(from / 1000),
             to: Math.floor(to / 1000),
-            deviceId: -1,
+            deviceId: propertyId,
             measurementName: measurement
         }
         return deviceService.getDeviceMeasurements(request).then((response => {

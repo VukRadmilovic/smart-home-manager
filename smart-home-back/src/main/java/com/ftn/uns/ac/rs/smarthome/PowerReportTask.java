@@ -93,9 +93,9 @@ public class PowerReportTask {
                 log.info("Power balance is negative, taking power from grid");
             }
             influxService.save("totalConsumption", powerManager.getPowerConsumption(propertyId), new Date(),
-                    Map.of("unit", "kWh", "deviceId", "-1", "propertyId", String.valueOf(propertyId)));
+                    Map.of("unit", "kWh", "deviceId", String.valueOf(propertyId)));
             influxService.save("totalProduction", powerManager.getPowerProduction(propertyId), new Date(),
-                    Map.of("unit", "kWh", "propertyId", String.valueOf(propertyId)));
+                    Map.of("unit", "kWh", "deviceId", String.valueOf(propertyId)));
             influxService.save("totalBalance", powerManager.getPowerBalance(propertyId), new Date(),
                     Map.of("unit", "kWh", "propertyId", String.valueOf(propertyId)));
             influxService.save("totalStored", originalPowerBalance - powerBalance, new Date(),
