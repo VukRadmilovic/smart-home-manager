@@ -350,7 +350,7 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
                                                     Control
                                                 </MenuItem> : null
                                                 }
-                                                {device.type == "AC" || device.type == "WM" ? <MenuItem onClick={() => navigate("/acCommands/" + device.id)} disableRipple>
+                                                {device.type == "AC" || device.type == "WM" || device.type == "SPS" ? <MenuItem onClick={() => navigate("/acCommands/" + device.id)} disableRipple>
                                                         <AssessmentIcon />
                                                         Commands History
                                                     </MenuItem> :

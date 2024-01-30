@@ -7,7 +7,7 @@ import java.io.IOException;
 public interface ISolarPanelSystemService {
     void register(SolarPanelSystemDTO solarPanelSystemDTO) throws IOException;
 
-    void turnOffSolarPanelSystem(Integer id);
+    void turnOffSolarPanelSystem(Integer id, Integer userId);
 
-    void turnOnSolarPanelSystem(Integer id);
+    void turnOnSolarPanelSystem(Integer id, Integer userId);
 }

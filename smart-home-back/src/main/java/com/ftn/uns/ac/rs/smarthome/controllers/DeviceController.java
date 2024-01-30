@@ -213,7 +213,8 @@ public class DeviceController {
     @PutMapping(value = "/sps/{id}/off")
     public ResponseEntity<?> turnOffSolarPanelSystem(@PathVariable("id") Integer id) {
         try {
-            this.solarPanelSystemService.turnOffSolarPanelSystem(id);
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            this.solarPanelSystemService.turnOffSolarPanelSystem(id, user.getId());
             return new ResponseEntity<>(messageSource.getMessage("sps.turn.off.success", null, Locale.getDefault()), HttpStatus.OK);
         } catch(ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());
@@ -223,7 +224,8 @@ public class DeviceController {
     @PutMapping(value = "/sps/{id}/on")
     public ResponseEntity<?> turnOnSolarPanelSystem(@PathVariable("id") Integer id) {
         try {
-            this.solarPanelSystemService.turnOnSolarPanelSystem(id);
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            this.solarPanelSystemService.turnOnSolarPanelSystem(id, user.getId());
             return new ResponseEntity<>(messageSource.getMessage("sps.turn.on.success", null, Locale.getDefault()), HttpStatus.OK);
         } catch(ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());
