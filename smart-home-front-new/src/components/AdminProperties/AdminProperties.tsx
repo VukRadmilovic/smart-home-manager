@@ -30,7 +30,7 @@ interface PropertyProps {
     return { address, city, size, floors, status };
 }*/
 
-export function UserMain({userService, deviceService, propertyService} : PropertyProps) {
+export function AdminProperties({userService, deviceService, propertyService} : PropertyProps) {
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = React.useState<string>("");
     const [errorPopupOpen, setErrorPopupOpen] = React.useState<boolean>(false);
@@ -52,7 +52,7 @@ export function UserMain({userService, deviceService, propertyService} : Propert
 
     const getUserProperties = async () => {
         try {
-            const response = await propertyService.getAllUserProperty();
+            const response = await propertyService.getAllProperty();
             if (response.length > 0) {
                 setProperty(response);
             }
@@ -131,8 +131,10 @@ export function UserMain({userService, deviceService, propertyService} : Propert
                   justifyContent={"center"}>
                 <Grid container className={'dark-background'} height={'100%'} justifyContent={'flex-start'}>
                     <Grid item xs={0} sm={0} md={2} lg={2} xl={2}>
-                        <SideNav userService={userService} isAdmin={sessionStorage.getItem("role") == RoleEnum.ROLE_ADMIN ||
-                            sessionStorage.getItem("role") == RoleEnum.ROLE_SUPERADMIN} isSuperadmin={sessionStorage.getItem("role") == RoleEnum.ROLE_SUPERADMIN}/>
+                        <SideNav userService={userService}
+                                 isAdmin={sessionStorage.getItem("role") == RoleEnum.ROLE_ADMIN ||
+                                     sessionStorage.getItem("role") == RoleEnum.ROLE_SUPERADMIN}
+                                 isSuperadmin={sessionStorage.getItem("role") == RoleEnum.ROLE_SUPERADMIN}/>
                     </Grid>
                     <Grid
                         item
@@ -195,12 +197,6 @@ export function UserMain({userService, deviceService, propertyService} : Propert
                                                         <Button onClick={() => navigateToHistoricalCharts(property.id)}  color={'secondary'} variant={'contained'} sx={{marginRight:'10px'}}>Historical power usage</Button>
                                                     </Grid>
                                                 </Grid>
-                                            </Grid>
-                                            <Grid item container xs={12} sm={12} md={12} lg={12} xl={12} justifyContent={'center'}>
-                                                <Button  color={'primary'} variant={'contained'} sx={{marginRight:'10px'}}
-                                                         onClick={() => handleControlSharingOpen(property)}>Share</Button>
-                                                <Button  color={'primary'} variant={'contained'} sx={{marginRight:'10px'}}
-                                                         onClick={() => navigateToAddDevice(property.id)}>Add device</Button>
                                             </Grid>
                                         </Grid>
                                     </Box>

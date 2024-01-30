@@ -16,6 +16,7 @@ import {LineChart} from "@mui/x-charts";
 import {ChartData} from "../../models/ChartData.ts";
 import {DataPoint, LTTB} from 'downsample';
 import {useNavigate} from "react-router-dom";
+import {RoleEnum} from "../../models/enums/RoleEnum";
 
 interface PowerConsumptionChartProps {
     userService: UserService
@@ -182,7 +183,8 @@ export function PowerConsumptionChart({userService, deviceService} : PowerConsum
                   justifyContent={"center"}>
                 <Grid container className={'dark-background'} height={'100%'} justifyContent={'flex-start'}>
                     <Grid item xs={0} sm={0} md={2} lg={2} xl={2}>
-                        <SideNav userService={userService} isAdmin={false} isSuperadmin={false}/>
+                        <SideNav userService={userService} isAdmin={sessionStorage.getItem("role") == RoleEnum.ROLE_ADMIN ||
+                            sessionStorage.getItem("role") == RoleEnum.ROLE_SUPERADMIN} isSuperadmin={sessionStorage.getItem("role") == RoleEnum.ROLE_SUPERADMIN}/>
                     </Grid>
                     <Grid
                         item

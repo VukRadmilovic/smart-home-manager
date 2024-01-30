@@ -18,6 +18,7 @@ import {ThermometerChartsHistory} from "./components/ThermometerHistoryCharts/Th
 import {ACCommandsReport} from "./components/ACCommandsReport/ACCommandsReport.tsx";
 import {PowerConsumptionChart} from "./components/PowerConsumptionChart/PowerConsumptionChart";
 import {PowerConsumptionChartsHistory} from "./components/PowerConsumptionHistoryChart/PowerConsumptionHistoryCharts";
+import {AdminProperties} from "./components/AdminProperties/AdminProperties";
 
 
 function App() {
@@ -122,6 +123,7 @@ function App() {
                         <Route path="/" element={<Login userService={userServiceSingleton}/>}/>
                         <Route path="/adminMain" element={<AdminMain userService={userServiceSingleton} propertyService={propertyServiceSingleton}/>}/>
                         <Route path="/userMain" element={<UserMain userService={userServiceSingleton} deviceService={deviceServiceSingleton} propertyService={propertyServiceSingleton}/>}/>
+                        <Route path="/properties" element={<AdminProperties userService={userServiceSingleton} deviceService={deviceServiceSingleton} propertyService={propertyServiceSingleton}/>}/>
                         <Route path="/newAdmin" element={<NewAdmin userService={userServiceSingleton}/>}/>
                         <Route path="/userRegisterProperty" element={<UserRegisterProperty userService={userServiceSingleton} propertyService={propertyServiceSingleton}/>}/>
                         <Route path="/userRegisterDevice/:propertyId" element={<UserRegisterDevice userService={userServiceSingleton}/>}/>

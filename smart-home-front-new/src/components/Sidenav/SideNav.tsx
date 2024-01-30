@@ -90,6 +90,16 @@ export function SideNav({userService, isSuperadmin, isAdmin} : SideNavProps) {
                         </ListItem>
                     </Link>
                 }
+                {(isAdmin || isSuperadmin) ? <Link to={'/properties'} className={'white-text'}>
+                    <ListItem key='/properties' disablePadding selected={pathname.includes('properties')}>
+                        <ListItemButton>
+                            <ListItemIcon><HomeIcon className={'white-text'}/></ListItemIcon>
+                            <ListItemText primary='Properties'/>
+                        </ListItemButton>
+                    </ListItem>
+                </Link> :
+                    null
+                }
 
                 <ListItem key='sign-out' disablePadding className={'align-bottom center-items width-exact'}>
                     <ListItemButton onClick={() => {

@@ -131,7 +131,8 @@ export function AdminMain({userService, propertyService} : PropertyProps) {
             <CssBaseline/>
             <Grid container className={'dark-background'} height={'100%'}  justifyContent={'flex-start'}>
                 <Grid item xs={0} sm={0} md={2} lg={2} xl={2}>
-                    <SideNav userService={userService} isAdmin={true}
+                    <SideNav userService={userService} isAdmin={sessionStorage.getItem("role") == RoleEnum.ROLE_ADMIN ||
+                        sessionStorage.getItem("role") == RoleEnum.ROLE_SUPERADMIN}
                              isSuperadmin={sessionStorage.getItem("role") == RoleEnum.ROLE_SUPERADMIN}/>
                 </Grid>
                 <Grid item height={'100%'}  xl={10} lg={10} md={10} sm={12} xs={12}
