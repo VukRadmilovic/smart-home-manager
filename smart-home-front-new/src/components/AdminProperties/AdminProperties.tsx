@@ -52,7 +52,7 @@ export function AdminProperties({userService, deviceService, propertyService} : 
 
     const getUserProperties = async () => {
         try {
-            const response = await propertyService.getAllProperty();
+            const response = await propertyService.getAllApprovedProperties();
             if (response.length > 0) {
                 setProperty(response);
             }
@@ -100,12 +100,20 @@ export function AdminProperties({userService, deviceService, propertyService} : 
         });
     })*/
 
-    const navigateToRealTimeCharts = (propertyId: number) => {
+    const navigateToRealTimeConsumptionCharts = (propertyId: number) => {
         navigate('/consumptionCharts/' + propertyId);
     }
 
-    const navigateToHistoricalCharts = (propertyId: number) => {
+    const navigateToHistoricalConsumptionCharts = (propertyId: number) => {
         navigate('/consumptionChartsHistory/' + propertyId);
+    }
+
+    const navigateToRealTimeProductionCharts = (propertyId: number) => {
+        navigate('/productionCharts/' + propertyId);
+    }
+
+    const navigateToHistoricalProductionCharts = (propertyId: number) => {
+        navigate('/productionChartsHistory/' + propertyId);
     }
 
     const navigateToAddDevice = (propertyId: number) => {
@@ -191,10 +199,18 @@ export function AdminProperties({userService, deviceService, propertyService} : 
                                             <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}>
                                                 <Grid container item mb={1}>
                                                     <Grid container item xs={12} sm={12} md={6} lg={4} xl={6}>
-                                                        <Button onClick={() => navigateToRealTimeCharts(property.id)}  color={'secondary'} variant={'contained'} sx={{marginRight:'10px'}}>RealTime power usage</Button>
+                                                        <Button onClick={() => navigateToRealTimeConsumptionCharts(property.id)}  color={'secondary'} variant={'contained'} sx={{marginRight:'10px'}}>RealTime power usage</Button>
                                                     </Grid>
                                                     <Grid container item xs={12} sm={12} md={6} lg={4} xl={6}>
-                                                        <Button onClick={() => navigateToHistoricalCharts(property.id)}  color={'secondary'} variant={'contained'} sx={{marginRight:'10px'}}>Historical power usage</Button>
+                                                        <Button onClick={() => navigateToHistoricalConsumptionCharts(property.id)}  color={'secondary'} variant={'contained'} sx={{marginRight:'10px'}}>Historical power usage</Button>
+                                                    </Grid>
+                                                </Grid>
+                                                <Grid container item mb={1}>
+                                                    <Grid container item xs={12} sm={12} md={6} lg={4} xl={6}>
+                                                        <Button onClick={() => navigateToRealTimeProductionCharts(property.id)}  color={'secondary'} variant={'contained'} sx={{marginRight:'10px'}}>RealTime power production</Button>
+                                                    </Grid>
+                                                    <Grid container item xs={12} sm={12} md={6} lg={4} xl={6}>
+                                                        <Button onClick={() => navigateToHistoricalProductionCharts(property.id)}  color={'secondary'} variant={'contained'} sx={{marginRight:'10px'}}>Historical power production</Button>
                                                     </Grid>
                                                 </Grid>
                                             </Grid>

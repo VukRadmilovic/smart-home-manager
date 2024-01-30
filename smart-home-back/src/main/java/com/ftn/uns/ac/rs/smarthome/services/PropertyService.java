@@ -117,6 +117,24 @@ public class PropertyService implements IPropertyService {
     }
 
     @Override
+    public List<PropertyDTO> getAllApprovedProperties() {
+        List<Property> properties = propertyRepository.findAll();
+        List<PropertyDTO> propertyDTOS = new ArrayList<>();
+        List<Town> towns = townRepository.findAll();
+        for (Property property : properties) {
+            if (!property.getStatus().equals(PropertyStatus.APPROVED)) {
+                continue;
+            }
+            for (Town town : towns) {
+                if (town.getProperties().contains(property)) {
+                    propertyDTOS.add(new PropertyDTO(property.getAddress(), property.getName(), town.getName(), property.getSize(), property.getFloors(), property.getStatus(), property.getPropertyType(), property.getOwner().getUsername(), property.getId()));
+                }
+            }
+        }
+        return propertyDTOS;
+    }
+
+    @Override
     public void approveProperty(Integer id) {
         Optional<Property> property = propertyRepository.findById(id);
         if(property.isPresent()){

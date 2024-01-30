@@ -105,9 +105,12 @@ public class PowerReportTask {
             try {
                 DecimalFormat df = new DecimalFormat("#.###", new DecimalFormatSymbols(Locale.ENGLISH));
                 df.setRoundingMode(RoundingMode.CEILING);
-                String msg = "totalConsumption," + df.format(powerManager.getPowerConsumption(propertyId)) + "p," + propertyId;
-                log.info("Publishing power message: " + msg);
-                this.mqttService.publishPowerMessage(msg);
+                String consumptionMsg = "totalConsumption," + df.format(powerManager.getPowerConsumption(propertyId)) + "p," + propertyId;
+                String productionMsg = "totalProduction," + df.format(powerManager.getPowerProduction(propertyId)) + "p," + propertyId;
+                log.info("Publishing power consumption message: " + consumptionMsg);
+                log.info("Publishing power production message: " + productionMsg);
+                this.mqttService.publishPowerMessage(consumptionMsg);
+                this.mqttService.publishPowerMessage(productionMsg);
             } catch (MqttException ex) {
                 log.error("Error publishing power message: " + ex.getMessage());
             }

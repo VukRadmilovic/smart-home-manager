@@ -16,6 +16,20 @@ export class PropertyService {
             throw err
         });
     }
+
+    public getAllApprovedProperties():Promise<Property[]>{
+        return axios({
+            method: 'GET',
+            url: `${this.api_host}/api/property/approvedProperties`,
+            headers: {
+                'Authorization': 'Bearer ' + sessionStorage.getItem('user')
+            },
+        }).then((response) => response.data
+        ).catch((err) => {
+            throw err
+        });
+    }
+
     public getAllUnapprovedProperty():Promise<Property[]>{
         return axios({
             method: 'GET',

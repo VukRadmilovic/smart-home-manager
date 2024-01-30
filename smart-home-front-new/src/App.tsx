@@ -19,6 +19,8 @@ import {ACCommandsReport} from "./components/ACCommandsReport/ACCommandsReport.t
 import {PowerConsumptionChart} from "./components/PowerConsumptionChart/PowerConsumptionChart";
 import {PowerConsumptionChartsHistory} from "./components/PowerConsumptionHistoryChart/PowerConsumptionHistoryCharts";
 import {AdminProperties} from "./components/AdminProperties/AdminProperties";
+import {PowerProductionChart} from "./components/PowerProductionChart/PowerProductionChart";
+import {PowerProductionChartsHistory} from "./components/PowerProductionHistoryChart/PowerProductionHistoryCharts";
 
 
 function App() {
@@ -134,6 +136,8 @@ function App() {
                         <Route path="/thermoChartsHistory/:id" element={<ThermometerChartsHistory userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>
                         <Route path="/consumptionCharts/:id" element={<PowerConsumptionChart userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>
                         <Route path="/consumptionChartsHistory/:id" element={<PowerConsumptionChartsHistory userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>
+                        <Route path="/productionCharts/:id" element={<PowerProductionChart userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>
+                        <Route path="/productionChartsHistory/:id" element={<PowerProductionChartsHistory userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>
                         <Route path="/acCommands/:id" element={<ACCommandsReport userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>
                     </Routes>
                 </BrowserRouter>
