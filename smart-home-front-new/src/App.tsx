@@ -22,6 +22,7 @@ import {AdminProperties} from "./components/AdminProperties/AdminProperties";
 import {PowerProductionChart} from "./components/PowerProductionChart/PowerProductionChart";
 import {PowerProductionChartsHistory} from "./components/PowerProductionHistoryChart/PowerProductionHistoryCharts";
 import {CityPowerOverlook} from "./components/CityPowerOverlook/CityPowerOverlook";
+import {UnifyingPowerCharts} from "./components/UnifyingPowerChart/UnifyingPowerCharts";
 
 
 function App() {
@@ -142,6 +143,7 @@ function App() {
                         <Route path="/acCommands/:id" element={<ACCommandsReport userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>
                         <Route path="/cityPowerOverlook/:id" element={<CityPowerOverlook userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>
                         <Route path="/cityPowerOverlook" element={<CityPowerOverlook userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>
+                        <Route path="/unifyingPowerCharts/:id" element={<UnifyingPowerCharts userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>
                     </Routes>
                 </BrowserRouter>
             </ThemeProvider>

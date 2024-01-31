@@ -100,24 +100,8 @@ export function AdminProperties({userService, deviceService, propertyService} : 
         });
     })*/
 
-    const navigateToRealTimeConsumptionCharts = (propertyId: number) => {
-        navigate('/consumptionCharts/' + propertyId);
-    }
-
-    const navigateToHistoricalConsumptionCharts = (propertyId: number) => {
-        navigate('/consumptionChartsHistory/' + propertyId);
-    }
-
-    const navigateToRealTimeProductionCharts = (propertyId: number) => {
-        navigate('/productionCharts/' + propertyId);
-    }
-
-    const navigateToHistoricalProductionCharts = (propertyId: number) => {
-        navigate('/productionChartsHistory/' + propertyId);
-    }
-
-    const navigateToAddDevice = (propertyId: number) => {
-        navigate('/userRegisterDevice/' + propertyId);
+    const navigateToUnifyingPowerChart = (propertyId: number) => {
+        navigate('/unifyingPowerCharts/' + propertyId);
     }
 
     const handleControlSharingOpen = (property: Property) => {
@@ -196,23 +180,8 @@ export function AdminProperties({userService, deviceService, propertyService} : 
                                             </Typography>
                                         </CardContent>
                                         <Grid container>
-                                            <Grid item container xs={12} sm={12} md={12} lg={12} xl={12}>
-                                                <Grid container item mb={1}>
-                                                    <Grid container item xs={12} sm={12} md={6} lg={4} xl={6}>
-                                                        <Button onClick={() => navigateToRealTimeConsumptionCharts(property.id)}  color={'secondary'} variant={'contained'} sx={{marginRight:'10px'}}>RealTime power usage</Button>
-                                                    </Grid>
-                                                    <Grid container item xs={12} sm={12} md={6} lg={4} xl={6}>
-                                                        <Button onClick={() => navigateToHistoricalConsumptionCharts(property.id)}  color={'secondary'} variant={'contained'} sx={{marginRight:'10px'}}>Historical power usage</Button>
-                                                    </Grid>
-                                                </Grid>
-                                                <Grid container item mb={1}>
-                                                    <Grid container item xs={12} sm={12} md={6} lg={4} xl={6}>
-                                                        <Button onClick={() => navigateToRealTimeProductionCharts(property.id)}  color={'secondary'} variant={'contained'} sx={{marginRight:'10px'}}>RealTime power production</Button>
-                                                    </Grid>
-                                                    <Grid container item xs={12} sm={12} md={6} lg={4} xl={6}>
-                                                        <Button onClick={() => navigateToHistoricalProductionCharts(property.id)}  color={'secondary'} variant={'contained'} sx={{marginRight:'10px'}}>Historical power production</Button>
-                                                    </Grid>
-                                                </Grid>
+                                            <Grid item container xs={12} sm={12} md={12} lg={12} xl={12} justifyContent={"center"}>
+                                                <Button onClick={() => navigateToUnifyingPowerChart(property.id)}  color={'secondary'} variant={'contained'} sx={{marginRight:'10px'}}>Power charts</Button>
                                             </Grid>
                                         </Grid>
                                     </Box>
