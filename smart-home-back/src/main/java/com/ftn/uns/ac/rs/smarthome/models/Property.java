@@ -46,7 +46,7 @@ public class Property {
     @OneToMany(mappedBy = "property")
     private List<Device> devices;
 
-    public Property(String address, String size, String picture, User owner, String floors, String propertyType){
+    public Property(String address, String size, String picture, User owner, String floors, String propertyType, long name){
         this.address = address;
         this.size = size;
         this.status = PropertyStatus.UNAPPROVED;
@@ -58,6 +58,6 @@ public class Property {
             this.propertyType = PropertyType.HOUSE;
         else
             this.propertyType = PropertyType.APARTMENT;
-        this.name = "idk";
+        this.name = Long.toString(name);
     }
 }

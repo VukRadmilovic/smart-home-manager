@@ -70,7 +70,7 @@ public class PropertyService implements IPropertyService {
                     pathToImage,
                     owner.get(),
                     propertyDTO.getFloors(),
-                    propertyDTO.getPropertyType());
+                    propertyDTO.getPropertyType(), 9999 - this.propertyRepository.count());
             this.propertyRepository.save(propertyToSave);
             List<Property> list = town.get().getProperties();
             list.add(propertyToSave);
