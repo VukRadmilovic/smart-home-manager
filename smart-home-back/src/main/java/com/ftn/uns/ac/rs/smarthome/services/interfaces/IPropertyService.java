@@ -21,4 +21,5 @@ public interface IPropertyService {
 
     Object getAllUnapprovedProperty();
     Optional<Property> getById(Integer id);
+    List<Integer> getPropertyIdsByCityId(Integer id);
 }

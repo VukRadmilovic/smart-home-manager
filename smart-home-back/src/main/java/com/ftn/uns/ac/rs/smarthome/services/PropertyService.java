@@ -9,6 +9,7 @@ import com.ftn.uns.ac.rs.smarthome.repositories.TownRepository;
 import com.ftn.uns.ac.rs.smarthome.repositories.UserRepository;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IPropertyService;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IUserService;
+import org.slf4j.Logger;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import com.ftn.uns.ac.rs.smarthome.models.User;
@@ -22,6 +23,7 @@ import java.util.Optional;
 
 @Service
 public class PropertyService implements IPropertyService {
+    private final Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
     private final MessageSource messageSource;
     private IUserService userService;
     private final PropertyRepository propertyRepository;
@@ -170,5 +172,20 @@ public class PropertyService implements IPropertyService {
     @Override
     public Optional<Property> getById(Integer id) {
         return propertyRepository.findById(id);
+    }
+
+    @Override
+    public List<Integer> getPropertyIdsByCityId(Integer id) {
+        Optional<Town> town = townRepository.findById(id);
+        if (town.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("town.notExisting", null, Locale.getDefault()));
+        }
+        List<Property> properties = town.get().getProperties();
+        logger.info(properties.toString());
+        List<Integer> ids = new ArrayList<>();
+        for (Property property : properties) {
+            ids.add(property.getId());
+        }
+        return ids;
     }
 }

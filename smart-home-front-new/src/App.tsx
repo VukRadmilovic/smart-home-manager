@@ -21,6 +21,7 @@ import {PowerConsumptionChartsHistory} from "./components/PowerConsumptionHistor
 import {AdminProperties} from "./components/AdminProperties/AdminProperties";
 import {PowerProductionChart} from "./components/PowerProductionChart/PowerProductionChart";
 import {PowerProductionChartsHistory} from "./components/PowerProductionHistoryChart/PowerProductionHistoryCharts";
+import {CityPowerOverlook} from "./components/CityPowerOverlook/CityPowerOverlook";
 
 
 function App() {
@@ -139,6 +140,8 @@ function App() {
                         <Route path="/productionCharts/:id" element={<PowerProductionChart userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>
                         <Route path="/productionChartsHistory/:id" element={<PowerProductionChartsHistory userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>
                         <Route path="/acCommands/:id" element={<ACCommandsReport userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>
+                        <Route path="/cityPowerOverlook/:id" element={<CityPowerOverlook userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>
+                        <Route path="/cityPowerOverlook" element={<CityPowerOverlook userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>
                     </Routes>
                 </BrowserRouter>
             </ThemeProvider>

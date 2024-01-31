@@ -112,7 +112,28 @@ public class DeviceService implements IDeviceService {
         }
 
         return batches;
+    }
 
+    @Override
+    public List<List<Measurement>> findPowerAggregation(PowerMeasurementsStreamRequestDTO requestDTO) {
+        if(requestDTO.getFrom() >= requestDTO.getTo()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("dateRange.invalid", null, Locale.getDefault()));
+        }
+        int batchSize = 5000, page = 0;
+        List<List<Measurement>> batches = new ArrayList<>();
+        requestDTO.setLimit(batchSize);
+        while (true) {
+            requestDTO.setOffset(page * batchSize);
+            MeasurementsDTO batch = influxService.findPowerAggregation(requestDTO);
+            batches.add(batch.getBatch());
+            if(!batch.isHasMore()) {
+                break;
+            } else {
+                page += 1;
+            }
+        }
+
+        return batches;
     }
 
     @Override

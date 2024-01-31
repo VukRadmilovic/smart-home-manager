@@ -23,6 +23,6 @@ public class Town {
     @NotBlank(message = "Name cannot be empty")
     private String name;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private List<Property> properties;
 }

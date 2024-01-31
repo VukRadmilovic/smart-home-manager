@@ -22,6 +22,7 @@ import './SideNav.css'
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import {UserService} from "../../services/UserService";
 import AddHomeIcon from '@mui/icons-material/AddHome';
+import {House, HouseSiding, LocationCity} from "@mui/icons-material";
 
 interface SideNavProps {
     userService: UserService
@@ -93,11 +94,22 @@ export function SideNav({userService, isSuperadmin, isAdmin} : SideNavProps) {
                 {(isAdmin || isSuperadmin) ? <Link to={'/properties'} className={'white-text'}>
                     <ListItem key='/properties' disablePadding selected={pathname.includes('properties')}>
                         <ListItemButton>
-                            <ListItemIcon><HomeIcon className={'white-text'}/></ListItemIcon>
-                            <ListItemText primary='Properties'/>
+                            <ListItemIcon><House className={'white-text'}/></ListItemIcon>
+                            <ListItemText primary='Properties overlook'/>
                         </ListItemButton>
                     </ListItem>
                 </Link> :
+                    null
+                }
+
+                {(isAdmin || isSuperadmin) ? <Link to={'/cityPowerOverlook'} className={'white-text'}>
+                        <ListItem key='/cityPowerOverlook' disablePadding selected={pathname.includes('cityPowerOverlook')}>
+                            <ListItemButton>
+                                <ListItemIcon><LocationCity className={'white-text'}/></ListItemIcon>
+                                <ListItemText primary='City power overlook'/>
+                            </ListItemButton>
+                        </ListItem>
+                    </Link> :
                     null
                 }
 

@@ -38,7 +38,7 @@ public class DeviceController {
     private final ILampService lampService;
     private final IGateService gateService;
     private final ISprinklerSystemService sprinklerSystemService;
-
+    private final IPropertyService propertyService;
     private final IDeviceControlService deviceControlService;
 
     public DeviceController(IDeviceService deviceService,
@@ -52,6 +52,7 @@ public class DeviceController {
                             ILampService lampService,
                             IGateService gateService,
                             ISprinklerSystemService sprinklerSystemService,
+                            IPropertyService propertyService,
                             IDeviceControlService deviceControlService) {
         this.deviceService = deviceService;
         this.messageSource = messageSource;
@@ -64,6 +65,7 @@ public class DeviceController {
         this.lampService = lampService;
         this.gateService = gateService;
         this.sprinklerSystemService = sprinklerSystemService;
+        this.propertyService = propertyService;
         this.deviceControlService = deviceControlService;
     }
 
@@ -204,6 +206,18 @@ public class DeviceController {
         try {
             MeasurementsStreamRequestDTO dto = new MeasurementsStreamRequestDTO(from, to, 5000,0,deviceId,measurement);
             List<List<Measurement>> measurements = this.deviceService.getStreamByMeasurementNameAndDeviceIdInTimeRange(dto);
+            return Flux.fromIterable(measurements);
+        } catch(ResponseStatusException ex) {
+            return Flux.error(new ResponseStatusException(ex.getStatus(), ex.getMessage()));
+        }
+    }
+
+    @GetMapping(value = "/powerMeasurements", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<List<Measurement>> getPowerMeasurements(@RequestParam Long from, @RequestParam Long to, @RequestParam Integer cityId, @RequestParam String measurement) {
+        try {
+            List<Integer> propertyIds = this.propertyService.getPropertyIdsByCityId(cityId);
+            PowerMeasurementsStreamRequestDTO dto = new PowerMeasurementsStreamRequestDTO(from, to, 5000,0, propertyIds, measurement);
+            List<List<Measurement>> measurements = this.deviceService.findPowerAggregation(dto);
             return Flux.fromIterable(measurements);
         } catch(ResponseStatusException ex) {
             return Flux.error(new ResponseStatusException(ex.getStatus(), ex.getMessage()));
