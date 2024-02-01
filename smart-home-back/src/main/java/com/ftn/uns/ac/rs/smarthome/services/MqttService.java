@@ -14,6 +14,7 @@ public class MqttService {
 
     public MqttService(MqttConfiguration mqttConfiguration) throws MqttException {
         this.mqttConfiguration = mqttConfiguration;
+        this.mqttConfiguration.getClient().subscribe("$share/group/charger",2);
         this.mqttConfiguration.getClient().subscribe("$share/group/measurements",2);
         this.mqttConfiguration.getClient().subscribe("$share/group/statuses",2);
         this.mqttConfiguration.getClient().subscribe("$share/group/states",2);
