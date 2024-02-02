@@ -49,7 +49,7 @@ public abstract class GenericDeviceService<D extends Device, DDTO extends Device
 
     @Override
     public void register(@Valid DDTO dto) throws IOException {
-        Optional<Property> property = propertyRepository.findById(dto.getPropertyId());
+        Optional<Property> property = propertyRepository.findByName(dto.getPropertyId().toString());
         if (property.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("property.notFound", null, Locale.getDefault()));
         }

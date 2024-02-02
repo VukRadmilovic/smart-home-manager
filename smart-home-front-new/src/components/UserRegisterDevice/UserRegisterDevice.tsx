@@ -65,7 +65,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
 
     let propertyId = Number(location.pathname.split('/').pop());
     if (!propertyId) {
-        propertyId = 1;
+        propertyId = 9999;
     }
 
     const {register, handleSubmit, setValue, formState: {errors}} = useForm<DeviceForm>({
