@@ -5,6 +5,7 @@ import com.ftn.uns.ac.rs.smarthome.models.UserIdUsernamePair;
 import com.ftn.uns.ac.rs.smarthome.models.devices.*;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.*;
 import com.ftn.uns.ac.rs.smarthome.models.enums.ACState;
+import com.ftn.uns.ac.rs.smarthome.models.enums.ChargerState;
 import com.ftn.uns.ac.rs.smarthome.repositories.DeviceRepository;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IDeviceService;
 import org.slf4j.Logger;
@@ -57,6 +58,7 @@ public class DeviceService implements IDeviceService {
             if (device instanceof SolarPanelSystem) type = "SPS";
             if (device instanceof AirConditioner) type = "AC";
             if (device instanceof WashingMachine) type = "WM";
+            if (device instanceof Charger) type = "CHARGER";
             DeviceDetailsDTO details = new DeviceDetailsDTO(
                     device.getId(),
                     type,
@@ -150,7 +152,17 @@ public class DeviceService implements IDeviceService {
         List<CommandSummaryInternal> commandsInternal = influxService.findPaginatedByTimeSpanAndUserIdAndDeviceId(request);
         for(CommandSummaryInternal command : commandsInternal) {
             String commandDesc = "";
-            if(command.getCommand().equals(ACState.ON.toString())) {
+            if (command.getCommand().equals(ChargerState.START_CHARGE.toString())) {
+                float carCharge = Float.parseFloat(command.getTags().get("carCharge"));
+                float carCapacity = Float.parseFloat(command.getTags().get("carCapacity"));
+                float percentage = (carCharge / carCapacity) * 100;
+                String port = command.getTags().get("portNum");
+                commandDesc += "Started charging at port " + port + ". Car currently at " + String.format("%.2f", percentage) + "%";
+            } else if (command.getCommand().equals(ChargerState.END_CHARGE.toString())) {
+                String port = command.getTags().get("portNum");
+                float expendedEnergy = Float.parseFloat(command.getTags().get("spentEnergy"));
+                commandDesc += "Stopped charging at port " + port + ". Expended " + String.format("%.2f", expendedEnergy) + " kWh";
+            } else if(command.getCommand().equals(ACState.ON.toString())) {
                 commandDesc = "Turned on the device";
                 if(command.getTags().get("mode") != null) {
                     commandDesc += " (Mode: " + command.getTags().get("mode") + ", \nTemperature: " + command.getTags().get("temp") + ",\nCentrifuge Speed: " + command.getTags().get("centrifuge") + ")";

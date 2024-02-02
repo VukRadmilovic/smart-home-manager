@@ -105,6 +105,14 @@ public class InfluxService {
                     optTags.put("target", fluxRecord.getValueByKey("target").toString());
                 if(fluxRecord.getValueByKey("fanSpeed") != null)
                     optTags.put("fanSpeed", fluxRecord.getValueByKey("fanSpeed").toString());
+                if(fluxRecord.getValueByKey("carCapacity") != null)
+                    optTags.put("carCapacity", fluxRecord.getValueByKey("carCapacity").toString());
+                if(fluxRecord.getValueByKey("carCharge") != null)
+                    optTags.put("carCharge", fluxRecord.getValueByKey("carCharge").toString());
+                if(fluxRecord.getValueByKey("portNum") != null)
+                    optTags.put("portNum", fluxRecord.getValueByKey("portNum").toString());
+                if(fluxRecord.getValueByKey("spentEnergy") != null)
+                    optTags.put("spentEnergy", fluxRecord.getValueByKey("spentEnergy").toString());
                 result.add(new CommandSummaryInternal(
                         fluxRecord.getValue() == null ? "" : fluxRecord.getValue().toString(),
                         fluxRecord.getTime() == null ? null : Date.from(fluxRecord.getTime()),
