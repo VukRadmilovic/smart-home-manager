@@ -14,15 +14,12 @@ import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class ChargerThread implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(ChargerThread.class);
-    public static final int INTERVAL = 15;
-    public static final int PROBABILITY = 5;
+    public static final int INTERVAL = 30;
+    public static final int PROBABILITY = 500;
     private final Charger charger;
     private final PortInfo[] ports;
     private int portsInUse = 0;
