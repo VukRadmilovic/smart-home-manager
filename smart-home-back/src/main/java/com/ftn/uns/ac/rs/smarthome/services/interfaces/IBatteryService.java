@@ -9,9 +9,9 @@ import java.util.List;
 public interface IBatteryService {
     void register(BatteryDTO batteryDTO) throws IOException;
 
-    List<Battery> getAll();
+    List<Battery> getAllNonEmpty(int propertyId);
 
-    List<Battery> getAllNonFull();
+    List<Battery> getAllNonFull(int propertyId);
 
     void update(Battery battery);
 }

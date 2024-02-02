@@ -19,7 +19,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component
 public class PowerReportTask {
@@ -56,7 +55,7 @@ public class PowerReportTask {
             double powerBalance = originalPowerBalance;
             if (originalPowerBalance > 0) {
                 log.info("Power balance is positive.");
-                List<Battery> batteries = batteryService.getAllNonFull();
+                List<Battery> batteries = batteryService.getAllNonFull(propertyId);
                 if (batteries.isEmpty()) {
                     log.info("No batteries found to distribute power to. Sending power to grid.");
                 } else {
@@ -90,7 +89,38 @@ public class PowerReportTask {
             } else if (originalPowerBalance == 0) {
                 log.info("Power balance is perfectly balanced.");
             } else {
-                log.info("Power balance is negative, taking power from grid");
+                log.info("Power balance is negative.");
+                List<Battery> batteries = batteryService.getAllNonEmpty(propertyId);
+                if (batteries.isEmpty()) {
+                    log.info("No batteries found to take power from. Taking power from grid.");
+                } else {
+                    log.info("Attempting to take power from batteries.");
+                    double totalOccupiedCapacity = batteries.stream().mapToDouble(Battery::getOccupiedCapacity).sum();
+
+                    for (Battery battery : batteries) {
+                        double powerWeWantToTake = Math.abs(originalPowerBalance * (battery.getOccupiedCapacity() / totalOccupiedCapacity));
+                        // take as much as possible
+                        double powerWeActuallyTake = Math.min(powerWeWantToTake, battery.getOccupiedCapacity());
+                        battery.setOccupiedCapacity(battery.getOccupiedCapacity() - powerWeActuallyTake); // take power
+                        powerBalance += powerWeActuallyTake;
+                        if (powerWeActuallyTake < powerWeWantToTake) {
+                            log.info("Battery " + battery.getId() + " is EMPTY, taking " + powerWeActuallyTake + " kWh");
+                        } else {
+                            log.info("From battery " + battery.getId() + " took " + powerWeActuallyTake + " kWh");
+                        }
+                        batteryService.update(battery);
+                    }
+
+                    if (Math.abs(powerBalance) < 0.001) {
+                        powerBalance = 0;
+                    }
+                    log.info("Power balance before taking from batteries: " + originalPowerBalance);
+                    log.info("Power taken from batteries: " + (Math.abs(originalPowerBalance) - Math.abs(powerBalance)));
+                    log.info("Power balance after taking from batteries: " + powerBalance + ".");
+                    if (powerBalance < 0) {
+                        log.info("Power balance is still negative, taking remaining power from grid.");
+                    }
+                }
             }
             influxService.save("totalConsumption", powerManager.getPowerConsumption(propertyId), new Date(),
                     Map.of("unit", "kWh", "deviceId", String.valueOf(propertyId)));

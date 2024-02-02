@@ -9,6 +9,8 @@ import java.util.List;
 
 @Repository
 public interface BatteryRepository extends JpaRepository<Battery, Integer> {
-    @Query("SELECT b FROM Battery b WHERE b.capacity > b.occupiedCapacity")
-    List<Battery> findAllNonFull();
+    @Query("SELECT b FROM Battery b WHERE b.capacity > b.occupiedCapacity AND b.property.id = ?1")
+    List<Battery> findAllNonFull(int propertyId);
+
+    List<Battery> findAllByPropertyIdAndOccupiedCapacityGreaterThan(int propertyId, double occupiedCapacity);
 }
