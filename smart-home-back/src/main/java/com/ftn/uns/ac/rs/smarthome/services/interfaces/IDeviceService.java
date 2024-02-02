@@ -15,6 +15,7 @@ public interface IDeviceService {
     void update(Device device);
     void setDeviceStillThere(int id);
     List<List<Measurement>> getStreamByMeasurementNameAndDeviceIdInTimeRange(MeasurementsStreamRequestDTO requestDTO);
+    List<List<Measurement>> findPowerAggregation(PowerMeasurementsStreamRequestDTO requestDTO);
     CommandsDTO getCommandsByTimeRangeAndUserId(CommandsRequestDTO request);
 
 }

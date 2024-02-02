@@ -24,6 +24,7 @@ import {LocalizationProvider, MobileDateTimePicker} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {ChartData} from "../../models/ChartData.ts";
 import {Dayjs} from "dayjs";
+import {RoleEnum} from "../../models/enums/RoleEnum";
 
 interface PowerConsumptionChartsProps {
     userService: UserService
@@ -54,6 +55,7 @@ export function PowerConsumptionChartsHistory({userService, deviceService} : Pow
     const [isCustom, setIsCustom] = React.useState<boolean>(false);
     const [isTimeFormatter, setIsTimeFormatter] = React.useState<boolean>(true);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const propertyId = String(location.pathname.split('/').pop());
 
     const downsample = (data: ChartDataShort[], targetLength : number) => {
         const dataPoints : DataPoint[] = [];
@@ -196,7 +198,7 @@ export function PowerConsumptionChartsHistory({userService, deviceService} : Pow
         const request : MeasurementRequest = {
             from: Math.floor(from / 1000),
             to: Math.floor(to / 1000),
-            deviceId: -1,
+            deviceId: propertyId,
             measurementName: measurement
         }
         return deviceService.getDeviceMeasurements(request).then((response => {
@@ -240,7 +242,8 @@ export function PowerConsumptionChartsHistory({userService, deviceService} : Pow
                   justifyContent={"center"}>
                 <Grid container className={'dark-background'} height={'100%'} justifyContent={'flex-start'}>
                     <Grid item xs={0} sm={0} md={2} lg={2} xl={2}>
-                        <SideNav userService={userService} isAdmin={false} isSuperadmin={false}/>
+                        <SideNav userService={userService} isAdmin={sessionStorage.getItem("role") == RoleEnum.ROLE_ADMIN ||
+                            sessionStorage.getItem("role") == RoleEnum.ROLE_SUPERADMIN} isSuperadmin={sessionStorage.getItem("role") == RoleEnum.ROLE_SUPERADMIN}/>
                     </Grid>
                     <Grid
                         item

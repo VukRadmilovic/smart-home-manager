@@ -64,6 +64,15 @@ public class PropertyController {
         }
     }
 
+    @GetMapping(value = "/approvedProperties")
+    public ResponseEntity<?> getAllApprovedProperties(){
+        try{
+            return new ResponseEntity<>(this.propertyService.getAllApprovedProperties(), HttpStatus.OK);
+        } catch(ResponseStatusException ex) {
+            return new ResponseEntity<>(ex.getReason(), ex.getStatus());
+        }
+    }
+
     @GetMapping(value = "/getAllUnapprovedProperty")
     public ResponseEntity<?> getAllUnapprovedProperty(){
         try{

@@ -38,7 +38,7 @@ public class DeviceController {
     private final ILampService lampService;
     private final IGateService gateService;
     private final ISprinklerSystemService sprinklerSystemService;
-
+    private final IPropertyService propertyService;
     private final IDeviceControlService deviceControlService;
 
     public DeviceController(IDeviceService deviceService,
@@ -52,6 +52,7 @@ public class DeviceController {
                             ILampService lampService,
                             IGateService gateService,
                             ISprinklerSystemService sprinklerSystemService,
+                            IPropertyService propertyService,
                             IDeviceControlService deviceControlService) {
         this.deviceService = deviceService;
         this.messageSource = messageSource;
@@ -64,13 +65,15 @@ public class DeviceController {
         this.lampService = lampService;
         this.gateService = gateService;
         this.sprinklerSystemService = sprinklerSystemService;
+        this.propertyService = propertyService;
         this.deviceControlService = deviceControlService;
     }
 
     @PostMapping(value = "/registerThermometer", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> registerThermometer(@Valid @ModelAttribute ThermometerDTO thermometerDTO) {
         try {
-            this.thermometerService.register(thermometerDTO);
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            this.thermometerService.register(thermometerDTO, user);
             return new ResponseEntity<>(messageSource.getMessage("device.registration.success", null, Locale.getDefault()), HttpStatus.OK);
         } catch(ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());
@@ -82,7 +85,8 @@ public class DeviceController {
     @PostMapping(value = "/registerAirConditioner", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> registerAirConditioner(@Valid @ModelAttribute AirConditionerDTO airConditionerDTO) {
         try {
-            this.airConditionerService.register(airConditionerDTO);
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            this.airConditionerService.register(airConditionerDTO, user);
             return new ResponseEntity<>(messageSource.getMessage("device.registration.success", null, Locale.getDefault()), HttpStatus.OK);
         } catch(ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());
@@ -94,7 +98,8 @@ public class DeviceController {
     @PostMapping(value = "/registerWashingMachine", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> registerWashingMachine(@Valid @ModelAttribute WashingMachineDTO washingMachineDTO) {
         try {
-            this.washingMachineService.register(washingMachineDTO);
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            this.washingMachineService.register(washingMachineDTO, user);
             return new ResponseEntity<>(messageSource.getMessage("device.registration.success", null, Locale.getDefault()), HttpStatus.OK);
         } catch(ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());
@@ -106,7 +111,8 @@ public class DeviceController {
     @PostMapping(value = "/registerSolarPanelSystem", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> registerSolarPanelSystem(@Valid @ModelAttribute SolarPanelSystemDTO solarPanelSystemDTO) {
         try {
-            this.solarPanelSystemService.register(solarPanelSystemDTO);
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            this.solarPanelSystemService.register(solarPanelSystemDTO, user);
             return new ResponseEntity<>(messageSource.getMessage("device.registration.success", null, Locale.getDefault()), HttpStatus.OK);
         } catch(ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());
@@ -118,7 +124,8 @@ public class DeviceController {
     @PostMapping(value = "/registerBattery", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> registerBattery(@Valid @ModelAttribute BatteryDTO batteryDTO) {
         try {
-            this.batteryService.register(batteryDTO);
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            this.batteryService.register(batteryDTO, user);
             return new ResponseEntity<>(messageSource.getMessage("device.registration.success", null, Locale.getDefault()), HttpStatus.OK);
         } catch(ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());
@@ -130,7 +137,8 @@ public class DeviceController {
     @PostMapping(value = "/registerCharger", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> registerCharger(@Valid @ModelAttribute ChargerDTO chargerDTO) {
         try {
-            this.chargerService.register(chargerDTO);
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            this.chargerService.register(chargerDTO, user);
             return new ResponseEntity<>(messageSource.getMessage("device.registration.success", null, Locale.getDefault()), HttpStatus.OK);
         } catch(ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());
@@ -142,7 +150,8 @@ public class DeviceController {
     @PostMapping(value = "/registerLamp", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> registerLamp(@Valid @ModelAttribute DeviceDTO lampDTO) {
         try {
-            this.lampService.register(lampDTO);
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            this.lampService.register(lampDTO, user);
             return new ResponseEntity<>(messageSource.getMessage("device.registration.success", null, Locale.getDefault()), HttpStatus.OK);
         } catch(ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());
@@ -154,7 +163,8 @@ public class DeviceController {
     @PostMapping(value = "/registerGate", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> registerGate(@Valid @ModelAttribute GateDTO gateDTO) {
         try {
-            this.gateService.register(gateDTO);
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            this.gateService.register(gateDTO, user);
             return new ResponseEntity<>(messageSource.getMessage("device.registration.success", null, Locale.getDefault()), HttpStatus.OK);
         } catch(ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());
@@ -166,7 +176,8 @@ public class DeviceController {
     @PostMapping(value = "/registerSprinklerSystem", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> registerSprinklerSystem(@Valid @ModelAttribute SprinklerSystemDTO sprinklerSystemDTO) {
         try {
-            this.sprinklerSystemService.register(sprinklerSystemDTO);
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            this.sprinklerSystemService.register(sprinklerSystemDTO, user);
             return new ResponseEntity<>(messageSource.getMessage("device.registration.success", null, Locale.getDefault()), HttpStatus.OK);
         } catch(ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());
@@ -210,11 +221,24 @@ public class DeviceController {
         }
     }
 
+    @GetMapping(value = "/powerMeasurements", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<List<Measurement>> getPowerMeasurements(@RequestParam Long from, @RequestParam Long to, @RequestParam Integer cityId, @RequestParam String measurement) {
+        try {
+            List<Integer> propertyIds = this.propertyService.getPropertyIdsByCityId(cityId);
+            PowerMeasurementsStreamRequestDTO dto = new PowerMeasurementsStreamRequestDTO(from, to, 5000,0, propertyIds, measurement);
+            List<List<Measurement>> measurements = this.deviceService.findPowerAggregation(dto);
+            return Flux.fromIterable(measurements);
+        } catch(ResponseStatusException ex) {
+            return Flux.error(new ResponseStatusException(ex.getStatus(), ex.getMessage()));
+        }
+    }
+
 
     @PutMapping(value = "/sps/{id}/off")
     public ResponseEntity<?> turnOffSolarPanelSystem(@PathVariable("id") Integer id) {
         try {
-            this.solarPanelSystemService.turnOffSolarPanelSystem(id);
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            this.solarPanelSystemService.turnOffSolarPanelSystem(id, user.getId());
             return new ResponseEntity<>(messageSource.getMessage("sps.turn.off.success", null, Locale.getDefault()), HttpStatus.OK);
         } catch(ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());
@@ -224,7 +248,8 @@ public class DeviceController {
     @PutMapping(value = "/sps/{id}/on")
     public ResponseEntity<?> turnOnSolarPanelSystem(@PathVariable("id") Integer id) {
         try {
-            this.solarPanelSystemService.turnOnSolarPanelSystem(id);
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            this.solarPanelSystemService.turnOnSolarPanelSystem(id, user.getId());
             return new ResponseEntity<>(messageSource.getMessage("sps.turn.on.success", null, Locale.getDefault()), HttpStatus.OK);
         } catch(ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());

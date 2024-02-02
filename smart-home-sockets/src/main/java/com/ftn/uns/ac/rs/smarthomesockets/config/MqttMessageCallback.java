@@ -110,8 +110,11 @@ public class MqttMessageCallback implements MqttCallback {
                 messagingTemplate.convertAndSend("/thermometer/freshest/" + deviceId, toSend);
          //       log.info("Temperature changed to: " + toSend + " for device: " + deviceId);
             } else if (message.contains("totalConsumption")) {
-                messagingTemplate.convertAndSend("/consumption/freshest", toSend);
-          //      log.info("Consumption changed to: " + toSend);
+                messagingTemplate.convertAndSend("/consumption/freshest/" + deviceId, toSend);
+                log.info("Consumption changed to: " + toSend);
+            } else if (message.contains("totalProduction")) {
+                messagingTemplate.convertAndSend("/production/freshest/" + deviceId, toSend);
+                log.info("Production changed to: " + toSend);
             }
         }
         //System.out.println("Message received. ID:" + mqttMessage.getId() + ", Message: " + message + ", Topic: " + topic);

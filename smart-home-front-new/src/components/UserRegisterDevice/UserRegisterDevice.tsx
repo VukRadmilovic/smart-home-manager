@@ -32,6 +32,7 @@ import 'react-tagsinput/react-tagsinput.css';
 import {LocalizationProvider, TimeField} from "@mui/x-date-pickers";
 import {Dayjs} from "dayjs";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import {RoleEnum} from "../../models/enums/RoleEnum";
 
 function isInt(value) {
     return !isNaN(value) &&
@@ -61,11 +62,17 @@ export function UserRegisterDevice({userService}: UserMainProps) {
     const [errorMessage, setErrorMessage] = React.useState<string>("");
     const [errorPopupOpen, setErrorPopupOpen] = React.useState<boolean>(false);
     const [isSuccess, setIsSuccess] = React.useState(true);
+
+    let propertyId = Number(location.pathname.split('/').pop());
+    if (!propertyId) {
+        propertyId = 9999;
+    }
+
     const {register, handleSubmit, setValue, formState: {errors}} = useForm<DeviceForm>({
         defaultValues: {
             name: "",
             type: "thermometer",
-            propertyId: 1,
+            propertyId: propertyId,
             energySource: "AUTONOMOUS",
             energyExpenditure: 2,
             measuringUnit: "CELSIUS",
@@ -1079,7 +1086,8 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                       justifyContent={"center"}>
                     <Grid container className={'dark-background'} height={'100%'} justifyContent={'flex-start'}>
                         <Grid item xs={0} sm={0} md={2} lg={2} xl={2}>
-                            <SideNav userService={userService} isAdmin={false} isSuperadmin={false}/>
+                            <SideNav userService={userService} isAdmin={sessionStorage.getItem("role") == RoleEnum.ROLE_ADMIN ||
+                                sessionStorage.getItem("role") == RoleEnum.ROLE_SUPERADMIN} isSuperadmin={sessionStorage.getItem("role") == RoleEnum.ROLE_SUPERADMIN}/>
                         </Grid>
                         <Grid item height={'100%'} xl={10} lg={10} md={10} sm={12} xs={12} p={2}
                               className={'white-background'} style={{

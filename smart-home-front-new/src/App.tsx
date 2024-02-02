@@ -19,6 +19,12 @@ import {ACCommandsReport} from "./components/ACCommandsReport/ACCommandsReport.t
 import {PowerConsumptionChart} from "./components/PowerConsumptionChart/PowerConsumptionChart";
 import {PowerConsumptionChartsHistory} from "./components/PowerConsumptionHistoryChart/PowerConsumptionHistoryCharts";
 import {WebsocketsSimulator} from "./components/WebsocketsSimulator/WebsocketsSimulator.tsx";
+import {AdminProperties} from "./components/AdminProperties/AdminProperties";
+import {PowerProductionChart} from "./components/PowerProductionChart/PowerProductionChart";
+import {PowerProductionChartsHistory} from "./components/PowerProductionHistoryChart/PowerProductionHistoryCharts";
+import {CityPowerOverlook} from "./components/CityPowerOverlook/CityPowerOverlook";
+import {UnifyingPowerCharts} from "./components/UnifyingPowerChart/UnifyingPowerCharts";
+
 
 
 function App() {
@@ -124,8 +130,10 @@ function App() {
                         <Route path="/sim" element={<WebsocketsSimulator/>}/>
                         <Route path="/adminMain" element={<AdminMain userService={userServiceSingleton} propertyService={propertyServiceSingleton}/>}/>
                         <Route path="/userMain" element={<UserMain userService={userServiceSingleton} deviceService={deviceServiceSingleton} propertyService={propertyServiceSingleton}/>}/>
+                        <Route path="/properties" element={<AdminProperties userService={userServiceSingleton} deviceService={deviceServiceSingleton} propertyService={propertyServiceSingleton}/>}/>
                         <Route path="/newAdmin" element={<NewAdmin userService={userServiceSingleton}/>}/>
                         <Route path="/userRegisterProperty" element={<UserRegisterProperty userService={userServiceSingleton} propertyService={propertyServiceSingleton}/>}/>
+                        <Route path="/userRegisterDevice/:propertyId" element={<UserRegisterDevice userService={userServiceSingleton}/>}/>
                         <Route path="/userRegisterDevice" element={<UserRegisterDevice userService={userServiceSingleton}/>}/>
                         <Route path="/passwordReset/:id" element={<PasswordReset userService={userServiceSingleton}/>}/>
                         <Route path="/devices" element={<UserDevices userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>
@@ -133,7 +141,12 @@ function App() {
                         <Route path="/thermoChartsHistory/:id" element={<ThermometerChartsHistory userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>
                         <Route path="/consumptionCharts/:id" element={<PowerConsumptionChart userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>
                         <Route path="/consumptionChartsHistory/:id" element={<PowerConsumptionChartsHistory userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>
+                        <Route path="/productionCharts/:id" element={<PowerProductionChart userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>
+                        <Route path="/productionChartsHistory/:id" element={<PowerProductionChartsHistory userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>
                         <Route path="/acCommands/:id" element={<ACCommandsReport userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>
+                        <Route path="/cityPowerOverlook/:id" element={<CityPowerOverlook userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>
+                        <Route path="/cityPowerOverlook" element={<CityPowerOverlook userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>
+                        <Route path="/unifyingPowerCharts/:id" element={<UnifyingPowerCharts userService={userServiceSingleton} deviceService={deviceServiceSingleton}/>}/>
                     </Routes>
                 </BrowserRouter>
             </ThemeProvider>

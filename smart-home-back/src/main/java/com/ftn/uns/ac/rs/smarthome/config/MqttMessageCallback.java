@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 
 @Service
@@ -71,6 +72,31 @@ public class MqttMessageCallback implements MqttCallback {
             catch (Exception ex) {
                 System.out.println(ex.getMessage());
             }
+        } else if (topic.contains("charger")) {
+            String[] data = message.split(",");
+            String state = data[0];
+            String portNum = data[1];
+            String deviceId = data[4];
+
+            Map<String,String> map = new HashMap<>();
+            map.put("portNum", portNum);
+            map.put("userId", "0");
+            map.put("deviceId", deviceId);
+            if (state.equals("START")) {
+                String carCapacity = data[2];
+                String carCharge = data[3];
+
+                map.put("carCapacity", carCapacity);
+                map.put("carCharge", carCharge);
+                influxService.save("states", "START_CHARGE", new Date(), map);
+            } else if (state.equals("END")) {
+                String carCharge = data[2];
+                String spentEnergy = data[3];
+
+                map.put("carCharge", carCharge);
+                map.put("spentEnergy", spentEnergy);
+                influxService.save("states", "END_CHARGE", new Date(), map);
+            }
         } else {
             String[] data = message.split(",");
             String measurementObject = data[0];
@@ -78,8 +104,7 @@ public class MqttMessageCallback implements MqttCallback {
             float value = Float.parseFloat(valueWithUnit.substring(0, valueWithUnit.length() - 1));
             char unit = valueWithUnit.charAt(valueWithUnit.length() - 1);
             String deviceIdStr = data[2];
-            influxService.save(measurementObject, value, new Date(),
-                    Map.of("deviceId", deviceIdStr, "unit", String.valueOf(unit)));
+
             int deviceId = Integer.parseInt(deviceIdStr);
             if (measurementObject.equals("status") && value >= 1 &&
                     stillThereDevicesManager.isntThere(deviceId)) {
@@ -88,9 +113,22 @@ public class MqttMessageCallback implements MqttCallback {
             }
 
             if (measurementObject.equals("produced")) {
-                powerManager.addProduction(value);
+                String propertyIdStr = data[3];
+                int propertyId = Integer.parseInt(propertyIdStr);
+                log.info("Adding production for property " + propertyId + " with value " + value);
+                powerManager.addProduction(propertyId, value);
+                influxService.save(measurementObject, value, new Date(),
+                        Map.of("deviceId", deviceIdStr, "unit", String.valueOf(unit), "property", propertyIdStr));
             } else if (measurementObject.equals("consumed")) {
-                powerManager.addConsumption(value);
+                String propertyIdStr = data[3];
+                int propertyId = Integer.parseInt(propertyIdStr);
+                log.info("Adding consumption for property " + propertyId + " with value " + value);
+                powerManager.addConsumption(propertyId, value);
+                influxService.save(measurementObject, value, new Date(),
+                        Map.of("deviceId", deviceIdStr, "unit", String.valueOf(unit), "property", propertyIdStr));
+            } else {
+                influxService.save(measurementObject, value, new Date(),
+                        Map.of("deviceId", deviceIdStr, "unit", String.valueOf(unit)));
             }
         }
     }

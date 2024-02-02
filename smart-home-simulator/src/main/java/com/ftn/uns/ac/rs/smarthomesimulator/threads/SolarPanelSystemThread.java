@@ -27,7 +27,7 @@ public class SolarPanelSystemThread implements Runnable {
     private MqttConfiguration mqttConfiguration;
     private ThreadMqttService mqttService;
     private boolean isOff = false;
-    private int count = 1;
+    private int count = 0;
 
     private static final double[] sunlightStarts = {6.5, 6.5, 6, 5.5, 5, 5, 5, 5.5, 6, 7, 7, 6.5};
     private static final double[] sunlightEnds = {16, 17, 17.5, 19, 20, 20, 20, 19.5, 19, 18, 17, 16};
@@ -129,7 +129,9 @@ public class SolarPanelSystemThread implements Runnable {
 
     public void generatePower() throws InterruptedException {
         while (true) {
-            if (!isOff) {
+            sendStatusUpdate();
+            if (!isOff && count % 2 == 0) {
+                count = 0;
                 sendInternalState();
                 // kWh = (number of panels * panel size * panel efficiency * (sunlight length today / 3 `peak sun hours only`)
                 // amount of power which will be produced today
@@ -140,7 +142,17 @@ public class SolarPanelSystemThread implements Runnable {
                 sendAndDisplayPower(kWhProduced);
             }
 
-            Thread.sleep(INTERVAL * 1000);
+            Thread.sleep((INTERVAL / 2) * 1000);
+            count++;
+        }
+    }
+
+    private void sendStatusUpdate() {
+        try {
+            logger.info("Sending status message");
+            this.mqttService.publishStatusMessageLite("status,1T," + deviceId);
+        } catch (MqttException e) {
+            logger.error("Error while publishing status message: " + e.getMessage());
         }
     }
 
@@ -158,20 +170,12 @@ public class SolarPanelSystemThread implements Runnable {
     private void sendAndDisplayPower(double kWProduced) {
         DecimalFormat df = new DecimalFormat("#.###", new DecimalFormatSymbols(Locale.ENGLISH));
         df.setRoundingMode(RoundingMode.CEILING);
-        String msg = "produced," + df.format(kWProduced) + "p," + deviceId;
+        String msg = "produced," + df.format(kWProduced) + "p," + deviceId + "," + system.getProperty().getId();
 
         logger.info("Sending message: " + msg);
 
         try {
             this.mqttService.publishMessageLite(msg,"measurements");
-
-            if (count % 2 == 0) {
-                count = 1;
-                logger.info("Sending status message");
-                this.mqttService.publishStatusMessageLite("status,1T," + deviceId);
-            } else {
-                count++;
-            }
         } catch (MqttException e) {
             logger.error("Error while sending message: " + msg);
         }

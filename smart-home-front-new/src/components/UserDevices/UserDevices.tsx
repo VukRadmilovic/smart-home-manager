@@ -32,6 +32,7 @@ import {AirConditionerRemote} from "../AirConditionerRemote/AirConditionerRemote
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import {WashingMachineRemote} from "../WashingMachineRemote/WashingMachineRemote.tsx";
 import {ControlSharing} from "../ControlSharing/ControlSharing.tsx";
+import {RoleEnum} from "../../models/enums/RoleEnum";
 
 interface UserDevicesProps {
     userService: UserService
@@ -250,7 +251,8 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
                   justifyContent={"center"}>
                 <Grid container className={'dark-background'} height={'100%'} justifyContent={'flex-start'}>
                     <Grid item xs={0} sm={0} md={2} lg={2} xl={2}>
-                        <SideNav userService={userService} isAdmin={false} isSuperadmin={false}/>
+                        <SideNav userService={userService} isAdmin={sessionStorage.getItem("role") == RoleEnum.ROLE_ADMIN ||
+                            sessionStorage.getItem("role") == RoleEnum.ROLE_SUPERADMIN} isSuperadmin={sessionStorage.getItem("role") == RoleEnum.ROLE_SUPERADMIN}/>
                     </Grid>
                     <Grid
                         item
@@ -350,7 +352,7 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
                                                     Control
                                                 </MenuItem> : null
                                                 }
-                                                {device.type == "AC" || device.type == "WM" ? <MenuItem onClick={() => navigate("/acCommands/" + device.id)} disableRipple>
+                                                {device.type == "AC" || device.type == "WM" || device.type == "SPS" || device.type == "CHARGER" ? <MenuItem onClick={() => navigate("/acCommands/" + device.id)} disableRipple>
                                                         <AssessmentIcon />
                                                         Commands History
                                                     </MenuItem> :

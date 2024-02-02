@@ -34,13 +34,13 @@ public class BatteryService extends GenericDeviceService<Battery, BatteryDTO> im
     }
 
     @Override
-    public List<Battery> getAll() {
-        return batteryRepository.findAll();
+    public List<Battery> getAllNonEmpty(int propertyId) {
+        return batteryRepository.findAllByPropertyIdAndOccupiedCapacityGreaterThan(propertyId, 0.0);
     }
 
     @Override
-    public List<Battery> getAllNonFull() {
-        return batteryRepository.findAllNonFull();
+    public List<Battery> getAllNonFull(int propertyId) {
+        return batteryRepository.findAllNonFull(propertyId);
     }
 
     @Override

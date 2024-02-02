@@ -12,6 +12,7 @@ import {useNavigate} from "react-router";
 import {Property} from "../../models/Property";
 import {ControlSharing} from "../ControlSharing/ControlSharing.tsx";
 import {DeviceService} from "../../services/DeviceService.ts";
+import {RoleEnum} from "../../models/enums/RoleEnum";
 
 interface PropertyProps {
     userService: UserService,
@@ -107,6 +108,10 @@ export function UserMain({userService, deviceService, propertyService} : Propert
         navigate('/consumptionChartsHistory/' + propertyId);
     }
 
+    const navigateToAddDevice = (propertyId: string) => {
+        navigate('/userRegisterDevice/' + propertyId);
+    }
+
     const handleControlSharingOpen = (property: Property) => {
         console.log(property)
         setActiveProperty(property);
@@ -126,7 +131,8 @@ export function UserMain({userService, deviceService, propertyService} : Propert
                   justifyContent={"center"}>
                 <Grid container className={'dark-background'} height={'100%'} justifyContent={'flex-start'}>
                     <Grid item xs={0} sm={0} md={2} lg={2} xl={2}>
-                        <SideNav userService={userService} isAdmin={false} isSuperadmin={false}/>
+                        <SideNav userService={userService} isAdmin={sessionStorage.getItem("role") == RoleEnum.ROLE_ADMIN ||
+                            sessionStorage.getItem("role") == RoleEnum.ROLE_SUPERADMIN} isSuperadmin={sessionStorage.getItem("role") == RoleEnum.ROLE_SUPERADMIN}/>
                     </Grid>
                     <Grid
                         item
@@ -193,6 +199,8 @@ export function UserMain({userService, deviceService, propertyService} : Propert
                                             <Grid item container xs={12} sm={12} md={12} lg={12} xl={12} justifyContent={'center'}>
                                                 <Button  color={'primary'} variant={'contained'} sx={{marginRight:'10px'}}
                                                          onClick={() => handleControlSharingOpen(property)}>Share</Button>
+                                                <Button  color={'primary'} variant={'contained'} sx={{marginRight:'10px'}}
+                                                         onClick={() => navigateToAddDevice(property.name)}>Add device</Button>
                                             </Grid>
                                         </Grid>
                                     </Box>

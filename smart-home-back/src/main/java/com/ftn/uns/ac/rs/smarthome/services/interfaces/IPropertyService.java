@@ -13,10 +13,13 @@ public interface IPropertyService {
 
     Object getAllProperty();
 
+    List<PropertyDTO> getAllApprovedProperties();
+
     void approveProperty(Integer id);
 
     void denyProperty(Integer id);
 
     Object getAllUnapprovedProperty();
     Optional<Property> getById(Integer id);
+    List<Integer> getPropertyIdsByCityId(Integer id);
 }

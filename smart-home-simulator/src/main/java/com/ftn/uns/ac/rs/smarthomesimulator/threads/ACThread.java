@@ -200,7 +200,7 @@ public class ACThread implements Runnable {
     }
 
     private void sendPowerConsumption() {
-        String message = "consumed," + powerConsumption + "p," + ac.getId();
+        String message = "consumed," + powerConsumption + "p," + ac.getId() + "," + ac.getProperty().getId();
         //log.info("Sending power consumption: " + message);
         try {
             this.mqttConfiguration.getClient().publish("consumed", new MqttMessage(message.getBytes()));

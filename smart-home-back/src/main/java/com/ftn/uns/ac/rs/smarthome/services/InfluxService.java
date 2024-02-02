@@ -16,7 +16,6 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 public class InfluxService {
-
     private final InfluxDBClient influxDbClient;
 
     public InfluxService(InfluxDBClient influxDbClient, Environment env) {
@@ -119,6 +118,14 @@ public class InfluxService {
                     optTags.put("target", fluxRecord.getValueByKey("target").toString());
                 if(fluxRecord.getValueByKey("fanSpeed") != null)
                     optTags.put("fanSpeed", fluxRecord.getValueByKey("fanSpeed").toString());
+                if(fluxRecord.getValueByKey("carCapacity") != null)
+                    optTags.put("carCapacity", fluxRecord.getValueByKey("carCapacity").toString());
+                if(fluxRecord.getValueByKey("carCharge") != null)
+                    optTags.put("carCharge", fluxRecord.getValueByKey("carCharge").toString());
+                if(fluxRecord.getValueByKey("portNum") != null)
+                    optTags.put("portNum", fluxRecord.getValueByKey("portNum").toString());
+                if(fluxRecord.getValueByKey("spentEnergy") != null)
+                    optTags.put("spentEnergy", fluxRecord.getValueByKey("spentEnergy").toString());
                 result.add(new CommandSummaryInternal(
                         fluxRecord.getValue() == null ? "" : fluxRecord.getValue().toString(),
                         fluxRecord.getTime() == null ? null : Date.from(fluxRecord.getTime()),
@@ -158,6 +165,28 @@ public class InfluxService {
                 requestDTO.getLimit() + 1,
                 requestDTO.getOffset());
         return this.query(fluxQuery,requestDTO.getLimit());
+    }
+
+    public MeasurementsDTO findPowerAggregation(PowerMeasurementsStreamRequestDTO requestDTO) {
+        StringBuilder fluxQuery = new StringBuilder(String.format(
+                "from(bucket: \"%s\") " +
+                        "  |> range(start: %d, stop: %d) " +
+                        "  |> filter(fn: (r) => r[\"_measurement\"] == \"%s\")",
+                this.bucket,
+                requestDTO.getFrom(),
+                requestDTO.getTo(),
+                requestDTO.getMeasurementName()));
+        fluxQuery.append("  |> filter(fn: (r) => contains(value: r[\"deviceId\"] , set: [");
+        for (int i = 0; i < requestDTO.getDeviceIds().size(); i++) {
+            fluxQuery.append("\"").append(requestDTO.getDeviceIds().get(i)).append("\"");
+            if(i != requestDTO.getDeviceIds().size() - 1)
+                fluxQuery.append(",");
+        }
+        fluxQuery.append("]))");
+        fluxQuery.append("  |> aggregateWindow(every: 1s, fn: sum, createEmpty: false)");
+        fluxQuery.append("  |> group(columns: [\"_time\"])");
+        fluxQuery.append("  |> sum()");
+        return this.query(fluxQuery.toString(), requestDTO.getLimit());
     }
 
     public List<CommandSummaryInternal> findPaginatedByTimeSpanAndUserIdAndDeviceId(CommandsRequestDTO request) {

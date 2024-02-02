@@ -7,6 +7,7 @@ import {DeviceCapabilities} from "../models/DeviceCapabilities.ts";
 import {CommandsDTO} from "../models/CommandsDTO.ts";
 import {UserSearchInfo} from "../models/UserSearchInfo.ts";
 import {DeviceControlDto} from "../models/DeviceControlDto.ts";
+import {PowerMeasurementRequest} from "../models/PowerMeasurementRequest";
 
 export class DeviceService {
     private api_host = "http://localhost:80"
@@ -45,7 +46,24 @@ export class DeviceService {
             es.addEventListener("message", (event) => {
                 result.push(...JSON.parse(event.data as string))
                 es.close();
+            });
+            es.addEventListener("close", () => {
+                resolve(result)
+            });
+        })
+        return promise.then((val) => {
+            return val})
+    }
 
+    public getPowerMeasurements(request: PowerMeasurementRequest): Promise<ChartData[]> {
+        const result : ChartData[] = [];
+        const eventSourceHeader = {headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('user')}};
+        const promise : Promise<ChartData[]> = new Promise((resolve) => {
+            const  url = `${this.api_host}/api/devices/powerMeasurements?from=${request.from}&to=${request.to}&cityId=${request.cityId}&measurement=${request.measurementName}`
+            const  es = new EventSource(url, eventSourceHeader);
+            es.addEventListener("message", (event) => {
+                result.push(...JSON.parse(event.data as string))
+                es.close();
             });
             es.addEventListener("close", () => {
                 resolve(result)

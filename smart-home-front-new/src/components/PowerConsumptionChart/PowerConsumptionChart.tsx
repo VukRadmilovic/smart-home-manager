@@ -16,6 +16,7 @@ import {LineChart} from "@mui/x-charts";
 import {ChartData} from "../../models/ChartData.ts";
 import {DataPoint, LTTB} from 'downsample';
 import {useNavigate} from "react-router-dom";
+import {RoleEnum} from "../../models/enums/RoleEnum";
 
 interface PowerConsumptionChartProps {
     userService: UserService
@@ -37,6 +38,7 @@ export function PowerConsumptionChart({userService, deviceService} : PowerConsum
     const navigate = useNavigate();
     const [latestConsumption, setLatestConsumption] = React.useState<string>("Latest Value: ");
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
+    const propertyId = String(location.pathname.split('/').pop());
 
     const onMessageReceived = (payload) => {
         console.log('test2');
@@ -72,7 +74,7 @@ export function PowerConsumptionChart({userService, deviceService} : PowerConsum
                 {},
                 () => {
                     console.log(':::::: SOCKET CONNECTED ::::::');
-                    client.subscribe('/consumption/freshest', onMessageReceived);
+                    client.subscribe('/consumption/freshest/' + propertyId, onMessageReceived);
                     console.log('test/?');
                 },
                 () => {
@@ -117,11 +119,11 @@ export function PowerConsumptionChart({userService, deviceService} : PowerConsum
         const request : MeasurementRequest = {
             from: Math.floor(from / 1000),
             to: Math.floor(Date.now() / 1000),
-            deviceId: -1,
+            deviceId: propertyId,
             measurementName: measurement
         }
         deviceService.getDeviceMeasurements(request).then((response => {
-            console.log(response)
+            console.log('response is: ' + response)
             if (response.length == 0) {
                 return;
             }
@@ -181,7 +183,8 @@ export function PowerConsumptionChart({userService, deviceService} : PowerConsum
                   justifyContent={"center"}>
                 <Grid container className={'dark-background'} height={'100%'} justifyContent={'flex-start'}>
                     <Grid item xs={0} sm={0} md={2} lg={2} xl={2}>
-                        <SideNav userService={userService} isAdmin={false} isSuperadmin={false}/>
+                        <SideNav userService={userService} isAdmin={sessionStorage.getItem("role") == RoleEnum.ROLE_ADMIN ||
+                            sessionStorage.getItem("role") == RoleEnum.ROLE_SUPERADMIN} isSuperadmin={sessionStorage.getItem("role") == RoleEnum.ROLE_SUPERADMIN}/>
                     </Grid>
                     <Grid
                         item

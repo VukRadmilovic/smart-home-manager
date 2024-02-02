@@ -1,5 +1,6 @@
 package com.ftn.uns.ac.rs.smarthome.services;
 
+import com.ftn.uns.ac.rs.smarthome.models.ACStateChange;
 import com.ftn.uns.ac.rs.smarthome.models.Property;
 import com.ftn.uns.ac.rs.smarthome.models.devices.SolarPanelSystem;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.devices.SolarPanelSystemDTO;
@@ -11,18 +12,24 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class SolarPanelSystemService extends GenericDeviceService<SolarPanelSystem, SolarPanelSystemDTO> implements ISolarPanelSystemService {
     private final MqttService mqttService;
+    private final InfluxService influxService;
 
     public SolarPanelSystemService(PropertyRepository propertyRepository,
                                    DeviceRepository deviceRepository,
                                    MessageSource messageSource,
                                    S3API fileServerService,
-                                   MqttService mqttService) throws IOException {
+                                   MqttService mqttService,
+                                   InfluxService influxService) throws IOException {
         super(propertyRepository, deviceRepository, messageSource, fileServerService);
         this.mqttService = mqttService;
+        this.influxService = influxService;
     }
 
     @Override
@@ -31,7 +38,7 @@ public class SolarPanelSystemService extends GenericDeviceService<SolarPanelSyst
     }
 
     @Override
-    public void turnOffSolarPanelSystem(Integer id) {
+    public void turnOffSolarPanelSystem(Integer id, Integer userId) {
         SolarPanelSystem solarPanelSystem = (SolarPanelSystem) deviceRepository.findById(id).orElse(null);
         if (solarPanelSystem != null) {
             solarPanelSystem.setIsOn(false);
@@ -42,11 +49,17 @@ public class SolarPanelSystemService extends GenericDeviceService<SolarPanelSyst
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+            Map<String,String> map = new HashMap<>();
+            map.put("userId", String.valueOf(userId));
+            map.put("deviceId", String.valueOf(id));
+
+            influxService.save("states", "OFF", new Date(), map);
         }
     }
 
     @Override
-    public void turnOnSolarPanelSystem(Integer id) {
+    public void turnOnSolarPanelSystem(Integer id, Integer userId) {
         SolarPanelSystem solarPanelSystem = (SolarPanelSystem) deviceRepository.findById(id).orElse(null);
         if (solarPanelSystem != null) {
             solarPanelSystem.setIsOn(true);
@@ -57,6 +70,12 @@ public class SolarPanelSystemService extends GenericDeviceService<SolarPanelSyst
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+            Map<String,String> map = new HashMap<>();
+            map.put("userId", String.valueOf(userId));
+            map.put("deviceId", String.valueOf(id));
+
+            influxService.save("states", "ON", new Date(), map);
         }
     }
 }

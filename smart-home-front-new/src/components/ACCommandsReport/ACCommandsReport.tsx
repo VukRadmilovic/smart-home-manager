@@ -12,6 +12,7 @@ import {PopupMessage} from "../PopupMessage/PopupMessage.tsx";
 import {useNavigate} from "react-router-dom";
 import {UserIdUsernamePair} from "../../models/UserIdUsernamePair.ts";
 import CloseIcon from "@mui/icons-material/Close";
+import {RoleEnum} from "../../models/enums/RoleEnum";
 
 interface ACCommandsReportProps {
     userService: UserService,
@@ -191,7 +192,8 @@ export function ACCommandsReport({userService, deviceService} : ACCommandsReport
             <CssBaseline/>
             <Grid container className={'dark-background'} height={'100%'}  justifyContent={'flex-start'}>
                 <Grid item xs={0} sm={0} md={2} lg={2} xl={2}>
-                    <SideNav userService={userService} isAdmin={false} isSuperadmin={false}/>
+                    <SideNav userService={userService} isAdmin={sessionStorage.getItem("role") == RoleEnum.ROLE_ADMIN ||
+                        sessionStorage.getItem("role") == RoleEnum.ROLE_SUPERADMIN} isSuperadmin={sessionStorage.getItem("role") == RoleEnum.ROLE_SUPERADMIN}/>
                 </Grid>
                 <Grid item height={'100%'}  xl={10} lg={10} md={10} sm={12} xs={12}
                       p={2}

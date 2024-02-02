@@ -55,6 +55,11 @@ public class DeviceThreadManager {
                 addDeviceThreadInternal(device.getId(),
                         new BatteryThread(battery, batteryRepository).getNewSimulatorThread());
             }
+            case "Charger" -> {
+                Charger charger = (Charger) device;
+                addDeviceThreadInternal(device.getId(),
+                        new ChargerThread(charger).getNewSimulatorThread());
+            }
             default -> {}
         }
     }

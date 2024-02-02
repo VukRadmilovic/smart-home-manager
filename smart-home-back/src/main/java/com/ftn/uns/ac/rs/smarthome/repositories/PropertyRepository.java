@@ -12,6 +12,7 @@ import java.util.Optional;
 @Repository
 public interface PropertyRepository extends JpaRepository<Property, Integer> {
     Optional<Property> findByAddress(String address);
+    Optional<Property> findByName(String name);
     List<Property> findAllByOwner(User owner);
     List<Property> findAllByStatus(PropertyStatus status);
 }
