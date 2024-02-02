@@ -155,6 +155,9 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
     const [isScheduleSuccess, setIsScheduleSuccess] = React.useState<number>(0);
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
     const firstStatusLoad = useRef(true);
+    const [onOffOrdinal, setOnOffOrdinal] = React.useState<number>(1);
+    const [changeOrdinal, setChangeOrdinal] = React.useState<number>(1);
+    const [schedulesOrdinal, setSchedulesOrdinal] = React.useState<number>(1);
     const defaultParams : CommandParams = {
         userId: -1,
         unit: 'C',
@@ -280,6 +283,7 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
                     client.current!.subscribe('/ac/freshest/' + deviceId, onMessageReceived);
                     client.current!.subscribe("/ac/status/" + deviceId, onStatusReceived);
                     client.current!.send("/app/capabilities/ac", {}, deviceId.toString());
+                    console.log("Sent capabilities request: " + new Date());
                     client.current!.subscribe("/ac/schedules/" + deviceId,onSchedulesReceived);
                     client.current!.subscribe("/ac/capabilities/" + deviceId,onCapabilitiesReceived);
                     getSchedules();
@@ -358,6 +362,7 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
     }
 
     const onCapabilitiesReceived = (payload : Message) => {
+       console.log("Received capabilities: " + new Date())
        const capabilities  = JSON.parse(payload.body);
        const map = new Map<string,string>();
        for(let val in capabilities.capabilities) {

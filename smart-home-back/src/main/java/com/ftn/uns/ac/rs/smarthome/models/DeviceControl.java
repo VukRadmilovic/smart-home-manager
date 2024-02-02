@@ -7,7 +7,8 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
-@Table(name="DEVICE_CONTROL")
+@Table(name="DEVICE_CONTROL", indexes = {@Index(name = "deviceIdx", columnList = "device_id"),
+                                         @Index(name = "ownerId", columnList = "owner_id")})
 @Getter
 @Setter
 @ToString

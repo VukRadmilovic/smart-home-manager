@@ -11,6 +11,8 @@ import com.ftn.uns.ac.rs.smarthome.utils.ImageCompressor;
 import com.ftn.uns.ac.rs.smarthome.utils.S3API;
 import com.ftn.uns.ac.rs.smarthome.utils.SuperadminPasswordGenerator;
 import com.ftn.uns.ac.rs.smarthome.utils.TokenUtils;
+import net.coobird.thumbnailator.Thumbnails;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.MessageSource;
 import org.springframework.context.event.EventListener;
@@ -124,25 +126,26 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void register(UserInfoRegister userInfo) {
+    public Integer register(UserInfoRegister userInfo) {
         try {
             if(this.userRepository.findByUsername(userInfo.getUsername()).isPresent()) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("username.alreadyUsed", null, Locale.getDefault()));
             }
             if(this.userRepository.findByEmail(userInfo.getEmail()).isPresent()) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("email.alreadyUsed", null, Locale.getDefault()));
+                //throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("email.alreadyUsed", null, Locale.getDefault()));
             }
             Optional<Role> role = this.roleService.getByName(userInfo.getRole());
             if(role.isEmpty()) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("role.notExisting", null, Locale.getDefault()));
             }
+            Integer id = -1;
             String path = env.getProperty("tempfolder.path");
-            Path filepath = Paths.get(path, userInfo.getProfilePicture().getOriginalFilename());
+            String[] tokens = userInfo.getProfilePicture().getOriginalFilename().split("\\.");
+            Path filepath = Paths.get(path, userInfo.getUsername() + "." + tokens[tokens.length - 1]);
             userInfo.getProfilePicture().transferTo(filepath);
             File file = new File(filepath.toString());
-            File compressed = ImageCompressor.compressImage(file, 0.4f, userInfo.getUsername());
-            String[] tokens = compressed.getName().split("/");
-            String key = tokens[tokens.length - 1];
+            String key = userInfo.getUsername() + "." + FilenameUtils.getExtension(file.getName());
+            Thumbnails.of(file.getAbsolutePath()).scale(1.0f).outputQuality(0.4f).toFile(file);
             String type = userInfo.getProfilePicture().getContentType();
             String bucket = "images";
             String pathToImage = "http://127.0.0.1:9000/" + bucket + '/' + "profilePictures/" + key;
@@ -159,6 +162,7 @@ public class UserService implements IUserService {
             if(role.get().getName().equals("ROLE_ADMIN"))
                 toSave.setIsConfirmed(true);
             User saved = this.userRepository.save(toSave);
+            id = saved.getId();
             if(role.get().getName().equals("ROLE_USER")) {
                 String  mailMessage =
                 """
@@ -182,23 +186,23 @@ public class UserService implements IUserService {
                  </body>
                </html>
                 """;
-                boolean sentEmail = this.mailService.sendTextEmail(
+                /*boolean sentEmail = this.mailService.sendTextEmail(
                         userInfo.getEmail(),
                         "Account activation",
-                        mailMessage
+                        mailMessagey
                 );
                 if (!sentEmail) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("activation.notSent", null, Locale.getDefault()));
-                }
+                }*/
             }
-            fileServerService.put(bucket, "profilePictures/" + key, compressed, type)
+            fileServerService.put(bucket, "profilePictures/" + key, file, type)
                     .thenApply(lol ->
-                            compressed.delete())
+                        file.delete()
+                    )
                     .exceptionally(e -> false);
-
+            return id;
         }
         catch(IOException ex) {
-            System.out.println(ex.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("compression.error", null, Locale.getDefault()));
         }
         catch(ResponseStatusException ex) {
@@ -292,8 +296,10 @@ public class UserService implements IUserService {
 
     @Override
     public List<UserSearchInfo> findByKey(String key, Integer userId) {
-        List<String> keywords = Arrays.stream(key.toLowerCase().split(" ")).map(String::trim).toList();
+        List<String> keywords = Arrays.stream(key.toLowerCase().split(" ")).toList();
+        System.out.println("start");
         Optional<List<User>> users = userRepository.findTop10ByUsernameInIgnoreCaseOrNameInIgnoreCaseOrSurnameInIgnoreCase(keywords,keywords,keywords);
+        System.out.println("end");
         List<UserSearchInfo> transformedUsers = new ArrayList<>();
         if(users.isPresent()) {
             for(User user : users.get()) {

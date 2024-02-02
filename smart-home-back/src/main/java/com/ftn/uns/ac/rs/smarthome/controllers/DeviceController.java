@@ -210,6 +210,7 @@ public class DeviceController {
         }
     }
 
+
     @PutMapping(value = "/sps/{id}/off")
     public ResponseEntity<?> turnOffSolarPanelSystem(@PathVariable("id") Integer id) {
         try {

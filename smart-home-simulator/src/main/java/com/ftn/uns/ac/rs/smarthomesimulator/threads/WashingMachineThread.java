@@ -48,6 +48,9 @@ public class WashingMachineThread implements Runnable {
     private final int INTERVAL = 5;
     private double powerConsumption = -1;
 
+    private int onOffOrdinal = 1;
+    private int scheduleOrdinal = 1;
+
     private class MqttWMMessageCallback implements MqttCallback {
 
         @Override
@@ -63,6 +66,10 @@ public class WashingMachineThread implements Runnable {
                 WMCommand receivedCommand = mapper.readValue(message, WMCommand.class);
                 CommandType commandType = receivedCommand.getCommandType();
                 if(commandType == CommandType.ON) {
+                    if(wm.getId() == 1001) {
+                        System.out.println("Received ON (" + onOffOrdinal + ") - " + new Date());
+                        onOffOrdinal += 1;
+                    }
                     publishOn(receivedCommand);
                     isOff = false;
                     settings = receivedCommand;
@@ -77,13 +84,25 @@ public class WashingMachineThread implements Runnable {
                 }
 
                 else if(commandType == CommandType.CANCEL_SCHEDULED) {
+                    if(wm.getId() == 1001) {
+                        System.out.println("Received CANCEL (" + scheduleOrdinal + ") - " + new Date());
+                        scheduleOrdinal += 1;
+                    }
                     removeScheduledThread(receivedCommand);
                     getSchedules();
                 }
                 else if(commandType == CommandType.GET_SCHEDULES) {
+                    if(wm.getId() == 1001) {
+                        System.out.println("Received GET SCHEDULES (" + scheduleOrdinal + ") - " + new Date());
+                        scheduleOrdinal += 1;
+                    }
                     getSchedules();
                 }
                 else {
+                    if(wm.getId() == 1001) {
+                        System.out.println("Received SCHEDULE (" + scheduleOrdinal + ") - " + new Date());
+                        scheduleOrdinal += 1;
+                    }
                     scheduleThread(receivedCommand);
                     getSchedules();
                 }
@@ -125,7 +144,7 @@ public class WashingMachineThread implements Runnable {
             System.err.println("Simulator thread interrupted");
         }
         catch(MqttException ex) {
-            System.err.println("MQTT Error: " + ex.getMessage());
+            //System.err.println("MQTT Error: " + ex.getMessage());
         }
     }
 
@@ -149,7 +168,7 @@ public class WashingMachineThread implements Runnable {
 
     private void sendPowerConsumption() {
         String message = "consumed," + powerConsumption + "p," + wm.getId();
-        log.info("Sending power consumption: " + message);
+        //log.info("Sending power consumption: " + message);
         try {
             this.mqttConfiguration.getClient().publish("consumed", new MqttMessage(message.getBytes()));
         } catch (MqttException e) {
@@ -284,6 +303,10 @@ public class WashingMachineThread implements Runnable {
 
     private void publishOnOff(String message) throws MqttException {
         this.mqttConfiguration.getClient().publish("status/wm", new MqttMessage(message.getBytes()));
+        if(wm.getId() == 1001) {
+            System.out.println("Sending STATUS (" + onOffOrdinal + ") - " + new Date());
+            onOffOrdinal += 1;
+        }
     }
 
     private void publishStatusMessageLite(String message) throws MqttException {

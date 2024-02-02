@@ -28,7 +28,9 @@ public class ACThread implements Runnable {
     private boolean isOff = true;
     private MqttConfiguration mqttConfiguration;
     private boolean hasConfigChanged = true;
-
+    private int onOffOrdinal = 1;
+    private int changeOrdinal = 1;
+    private int schedulesOrdinal = 1;
     private final Map<Long, ScheduledFuture<?>> scheduledThread = new ConcurrentHashMap<>();
     private final Map<Long,Scheduled> scheduledDetails = new ConcurrentHashMap<>();
     private final ScheduledExecutorService scheduler =  Executors.newScheduledThreadPool(5);
@@ -54,8 +56,16 @@ public class ACThread implements Runnable {
                 if(commandType == CommandType.ON || commandType == CommandType.CHANGE) {
                     if(commandType == CommandType.CHANGE) {
                         publishChanges(receivedCommand);
+                        if(ac.getId() == 1001) {
+                            System.out.println("Received CHANGE (" + changeOrdinal + ") - " + new Date());
+                            changeOrdinal += 1;
+                        }
                     }
                     else {
+                        if(ac.getId() == 1001) {
+                            System.out.println("Received ON (" + onOffOrdinal + ") - " + new Date());
+                            onOffOrdinal += 1;
+                        }
                         publishStateMessage(new ACStateChange(receivedCommand.getCommandParams().getUserId(),
                                 ac.getId(),
                                 ACState.ON.toString(),null));
@@ -64,19 +74,35 @@ public class ACThread implements Runnable {
                     settings = receivedCommand;
                 }
                 else if(commandType == CommandType.OFF){
+                    if(ac.getId() == 1001) {
+                        System.out.println("Received OFF (" + onOffOrdinal + ") - " + new Date());
+                        onOffOrdinal += 1;
+                    }
                     publishStateMessage(new ACStateChange(receivedCommand.getCommandParams().getUserId(),
                             ac.getId(),
                             ACState.OFF.toString(),null));
                     isOff = true;
                 }
                 else if(commandType == CommandType.CANCEL_SCHEDULED) {
+                    if(ac.getId() == 1001) {
+                        System.out.println("Received CANCEL (" + schedulesOrdinal + ") - " + new Date());
+                        schedulesOrdinal += 1;
+                    }
                     removeScheduledThread(receivedCommand);
                     getSchedules();
                 }
                 else if(commandType == CommandType.GET_SCHEDULES) {
+                    if(ac.getId() == 1001) {
+                        System.out.println("Received GET SCHEDULES (" + schedulesOrdinal + ") - " + new Date());
+                        schedulesOrdinal += 1;
+                    }
                     getSchedules();
                 }
                 else {
+                    if(ac.getId() == 1001) {
+                        System.out.println("Received SCHEDULE (" + schedulesOrdinal + ") - " + new Date());
+                        schedulesOrdinal += 1;
+                    }
                     scheduleThread(receivedCommand);
                     getSchedules();
                 }
@@ -116,10 +142,10 @@ public class ACThread implements Runnable {
             generateValues();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            System.err.println("Simulator thread interrupted");
+            //System.err.println("Simulator thread interrupted");
         }
         catch(MqttException ex) {
-            System.err.println("MQTT Error: " + ex.getMessage());
+            //System.err.println("MQTT Error: " + ex.getMessage());
         }
     }
     public void generateValues() throws InterruptedException {
@@ -175,12 +201,12 @@ public class ACThread implements Runnable {
 
     private void sendPowerConsumption() {
         String message = "consumed," + powerConsumption + "p," + ac.getId();
-        log.info("Sending power consumption: " + message);
+        //log.info("Sending power consumption: " + message);
         try {
             this.mqttConfiguration.getClient().publish("consumed", new MqttMessage(message.getBytes()));
         } catch (MqttException e) {
             e.printStackTrace();
-            log.error("Error while sending power consumption: " + e.getMessage());
+            //log.error("Error while sending power consumption: " + e.getMessage());
         }
     }
 
@@ -224,7 +250,7 @@ public class ACThread implements Runnable {
             }
         }
         //currentTemp -= (0.01 + Math.random() * (0.02 - 0.01)); //random temp dropout
-        System.out.println(currentTemp);
+        //System.out.println(currentTemp);
         return new ACValueDigest(ac.getId(),
                 currentTemp,
                 settings.getCommandParams().getTarget(),
@@ -290,7 +316,6 @@ public class ACThread implements Runnable {
                 }, stopTime, TimeUnit.MILLISECONDS);
             }, init, TimeUnit.DAYS.toMillis(1), TimeUnit.MILLISECONDS);
             Long id = scheduledThreadCount.incrementAndGet();
-            System.out.println(id);
             scheduledThread.put(id, everyDay);
             scheduledDetails.put(id, new Scheduled(id,from, to, received.getCommandParams().isEveryDay()));
         } else {
@@ -327,7 +352,6 @@ public class ACThread implements Runnable {
         Long scheduledTaskId = received.getCommandParams().getTaskId();
         if(scheduledThread.containsKey(scheduledTaskId)) {
             scheduledThread.get(scheduledTaskId).cancel(true);
-            System.out.println("yes");
             scheduledThread.remove(scheduledTaskId);
 
             Map<String,String> extraInfo = new HashMap<>();
@@ -365,6 +389,10 @@ public class ACThread implements Runnable {
 
     private void publishOnOff(String message) throws MqttException {
         this.mqttConfiguration.getClient().publish("status/ac", new MqttMessage(message.getBytes()));
+        if(ac.getId() == 1001) {
+            System.out.println("Sending STATUS (" + onOffOrdinal + ") - " + new Date());
+            onOffOrdinal += 1;
+        }
     }
 
     private void publishStatusMessageLite(String message) throws MqttException {

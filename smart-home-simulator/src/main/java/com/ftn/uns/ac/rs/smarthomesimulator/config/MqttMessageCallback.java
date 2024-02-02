@@ -21,7 +21,7 @@ public class MqttMessageCallback implements MqttCallback {
      * Callback in case the server disconnected from MQTT client.
      */
     public void disconnected(MqttDisconnectResponse mqttDisconnectResponse) {
-        System.out.println("Disconnected");
+        //System.out.println("Disconnected");
     }
 
     /*
@@ -29,27 +29,26 @@ public class MqttMessageCallback implements MqttCallback {
      */
     @Override
     public void mqttErrorOccurred(MqttException e) {
-        System.out.println("MQTT error occurred.");
+        //System.out.println("MQTT error occurred.");
     }
 
     @Override public void messageArrived(String topic, MqttMessage mqttMessage) {
         String message = new String(mqttMessage.getPayload());
-        System.out.println("Message received. ID (1):" + mqttMessage.getId() + ", Message: " + message);
     }
 
     @Override
     public void deliveryComplete(IMqttToken iMqttToken) {
-        System.out.println("Delivery complete, message ID: " + iMqttToken.getMessageId());
+        //System.out.println("Delivery complete, message ID: " + iMqttToken.getMessageId());
     }
 
     @Override
     public void connectComplete(boolean b, String s) {
 
-        System.out.println("Connect complete, status:" + b + " " + s);
+        //System.out.println("Connect complete, status:" + b + " " + s);
     }
 
     @Override
     public void authPacketArrived(int i, MqttProperties mqttProperties) {
-        System.out.println("Auth packet arrived , status:" +  i + " " + mqttProperties.getAuthenticationMethod());
+        //System.out.println("Auth packet arrived , status:" +  i + " " + mqttProperties.getAuthenticationMethod());
     }
 }

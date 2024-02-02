@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users", indexes = {@Index(name = "searchIdx", columnList = "username, name, surname")})
 @Getter
 @Setter
 @ToString

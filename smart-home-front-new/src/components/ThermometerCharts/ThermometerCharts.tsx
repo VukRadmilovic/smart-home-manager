@@ -180,8 +180,8 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
                 downsampled = downsample(data,60);
             if(measurement == "temperature") {
                setTempData(downsampled);
-               setUnitA(response[0].tags.get("unit")!)
-               units.current = response[0].tags.get("unit")!
+               setUnitA(response[0].tags['unit']!)
+               units.current = response[0].tags['unit']!
                setLatestTemp("Latest Value: " + downsampled[downsampled.length - 1].value!.toFixed(3) + units.current)
             }
             else {
@@ -217,16 +217,20 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
             navigate("/")
         }
     });
-
+    const [ordinalTemp, setOrdinalTemp] = React.useState<number>(1);
+    const [ordinalHum, setOrdinalHum] = React.useState<number>(1);
     const onMessageReceived = (payload : Message) => {
+        const timestamp = new Date();
         const val : ChartData =  JSON.parse(payload.body);
         const newVal : ChartDataShort = {
             timestamp : new Date(+val.timestamp),
             value: val.value,
         };
         if(val.name == "temperature"){
-            if(val.tags.get("unit") != units.current) {
-                if(val.tags.get("unit") == "C")
+            console.log(ordinalTemp + ". (temp) - " + timestamp);
+            setOrdinalTemp(ordinalTemp + 1);
+            if(val.tags['unit'] != units.current) {
+                if(val.tags['unit'] == "C")
                     newVal.value = (val.value * 9/5) + 32
                 else
                     newVal.value = (val.value - 32) * 5 / 9
@@ -250,6 +254,8 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
             });
         }
         else {
+            console.log(ordinalHum + ". (hum) - " + timestamp);
+            setOrdinalHum(ordinalHum + 1);
             setLatestHum("Latest Value: " + newVal.value!.toFixed(3) + "%")
             setHumidityData((prevHumData) => {
                 if(prevHumData.length > 0 ) {

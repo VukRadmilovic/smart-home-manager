@@ -2,17 +2,17 @@ package com.ftn.uns.ac.rs.smarthome.services;
 
 import com.ftn.uns.ac.rs.smarthome.models.Measurement;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.*;
-import com.influxdb.client.InfluxDBClient;
-import com.influxdb.client.QueryApi;
-import com.influxdb.client.WriteApiBlocking;
+import com.influxdb.client.*;
 import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.client.write.Point;
 import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
+import okhttp3.OkHttpClient;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class InfluxService {
@@ -20,7 +20,19 @@ public class InfluxService {
     private final InfluxDBClient influxDbClient;
 
     public InfluxService(InfluxDBClient influxDbClient, Environment env) {
-        this.influxDbClient = influxDbClient;
+        OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                .readTimeout(60, TimeUnit.SECONDS)
+                .writeTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(60, TimeUnit.SECONDS);
+
+        InfluxDBClientOptions options = InfluxDBClientOptions.builder()
+                .url("http://" + env.getProperty("influxdb.host") + ":" + env.getProperty("influxdb.port"))
+                .authenticateToken(env.getProperty("influxdb.token").toCharArray())
+                .okHttpClient(builder)
+                .bucket(env.getProperty("influxdb.bucket"))
+                .org(env.getProperty("influxdb.organization"))
+                .build();
+        this.influxDbClient = InfluxDBClientFactory.create(options);
         this.bucket = env.getProperty("influxdb.bucket");
     }
     private final String bucket;
@@ -69,6 +81,7 @@ public class InfluxService {
                         optTags));
             }
         }
+
         boolean hasMore = false;
         if(result.size() > maxData) {
             hasMore = true;

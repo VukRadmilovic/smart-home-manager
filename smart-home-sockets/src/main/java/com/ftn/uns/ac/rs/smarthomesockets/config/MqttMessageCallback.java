@@ -51,7 +51,6 @@ public class MqttMessageCallback implements MqttCallback {
     //TODO Menjaj mapu tagova ako ti treba nesto
     @Override public void messageArrived(String topic, MqttMessage mqttMessage) throws JsonProcessingException {
         String message = new String(mqttMessage.getPayload());
-        System.out.println(topic);
         if(topic.equals("ac")){
             try {
                 ACValueDigest received = jsonMapper.readValue(message, ACValueDigest.class);
@@ -64,7 +63,7 @@ public class MqttMessageCallback implements MqttCallback {
         else if(topic.contains("status/ac")) {
             String[] data = message.split(",");
             messagingTemplate.convertAndSend("/ac/status/" + data[1],data[0]);
-            log.info("AC status changed to: " + data[0] + " for device: " + data[1]);
+            //log.info("AC status changed to: " + data[0] + " for device: " + data[1]);
         }
 
         else if(topic.equals("wm")){
@@ -81,22 +80,22 @@ public class MqttMessageCallback implements MqttCallback {
             System.out.println(message);
             String[] data = message.split(",");
             messagingTemplate.convertAndSend("/wm/status/" + data[1],data[0]);
-            log.info("WM status changed to: " + data[0] + " for device: " + data[1]);
+            //log.info("WM status changed to: " + data[0] + " for device: " + data[1]);
         }
 
         else if(topic.contains("status/sps")) {
             String[] data = message.split(",");
             messagingTemplate.convertAndSend("/sps/status/" + data[1],data[0]);
-            log.info("SPS status changed to: " + data[0] + " for device: " + data[1]);
+          //  log.info("SPS status changed to: " + data[0] + " for device: " + data[1]);
         }
         else if (topic.contains("status/battery")) {
             String[] data = message.split(",");
             messagingTemplate.convertAndSend("/battery/status/" + data[1],data[0]);
-            log.info("Battery status changed to: " + data[0] + " for device: " + data[1]);
+         //   log.info("Battery status changed to: " + data[0] + " for device: " + data[1]);
         }
         else if(topic.contains("scheduled")) {
             SchedulesPerUser schedules = jsonMapper.readValue(message, SchedulesPerUser.class);
-            messagingTemplate.convertAndSend("/ac/schedules/" + schedules.getDeviceId(),schedules.getSchedules());
+         //   messagingTemplate.convertAndSend("/ac/schedules/" + schedules.getDeviceId(),schedules.getSchedules());
         } else {
             String[] data = message.split(",");
             String valueWithUnit = data[1];
@@ -109,18 +108,18 @@ public class MqttMessageCallback implements MqttCallback {
 
             if (message.contains("temperature") || message.contains("humidity")) {
                 messagingTemplate.convertAndSend("/thermometer/freshest/" + deviceId, toSend);
-                log.info("Temperature changed to: " + toSend + " for device: " + deviceId);
+         //       log.info("Temperature changed to: " + toSend + " for device: " + deviceId);
             } else if (message.contains("totalConsumption")) {
                 messagingTemplate.convertAndSend("/consumption/freshest", toSend);
-                log.info("Consumption changed to: " + toSend);
+          //      log.info("Consumption changed to: " + toSend);
             }
         }
-        System.out.println("Message received. ID:" + mqttMessage.getId() + ", Message: " + message + ", Topic: " + topic);
+        //System.out.println("Message received. ID:" + mqttMessage.getId() + ", Message: " + message + ", Topic: " + topic);
     }
 
     @Override
     public void deliveryComplete(IMqttToken iMqttToken) {
-        System.out.println("Delivery complete, message ID: " + iMqttToken.getMessageId());
+       // System.out.println("Delivery complete, message ID: " + iMqttToken.getMessageId());
     }
 
     @Override

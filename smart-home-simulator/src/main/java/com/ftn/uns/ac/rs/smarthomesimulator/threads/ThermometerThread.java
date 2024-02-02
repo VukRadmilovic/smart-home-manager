@@ -11,6 +11,7 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Locale;
 
 public class ThermometerThread implements Runnable {
@@ -22,6 +23,8 @@ public class ThermometerThread implements Runnable {
     private int count = 1;
     private final int INTERVAL = 5;
     private double powerConsumption = -1;
+    private int humOrdinal = 1;
+    private int tempOrdinal = 1;
 
     public ThermometerThread(Thermometer thermometer,
                              MqttService mqttService) {
@@ -38,7 +41,7 @@ public class ThermometerThread implements Runnable {
             generateValues();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            System.err.println("Simulator thread interrupted");
+            //System.err.println("Simulator thread interrupted");
         }
     }
 
@@ -144,26 +147,34 @@ public class ThermometerThread implements Runnable {
             msgTemp = "temperature," + df.format(temp) + "F," + deviceId;
         }
 
-        System.out.println(msgTemp + "\n" + msgHumidity);
+        //System.out.println(msgTemp + "\n" + msgHumidity);
 
         try {
             this.mqttService.publishMessageLite(msgTemp,"measurements");
+            if(this.thermometer.getId() == 1001) {
+                System.out.println("Sent TEMPERATURE (" + tempOrdinal + ") - " + new Date());
+                tempOrdinal += 1;
+            }
             this.mqttService.publishMessageLite(msgHumidity,"measurements");
+            if(this.thermometer.getId() == 1001) {
+                System.out.println("Sent HUMIDITY (" + humOrdinal + ") - " + new Date());
+                humOrdinal += 1;
+            }
 
             if (count % 2 == 0) {
                 count = 1;
-                System.out.println("Sending status message");
+                //System.out.println("Sending status message");
                 this.mqttService.publishStatusMessageLite("status,1T," + deviceId);
                 if (thermometer.getPowerSource().equals(PowerSource.HOUSE)) {
                     String message = "consumed," + powerConsumption + "p," + deviceId;
                     this.mqttService.publishPowerConsumptionMessage(message);
-                    logger.info("Sending power consumption: " + message);
+                    //logger.info("Sending power consumption: " + message);
                 }
             } else {
                 count++;
             }
         } catch (MqttException e) {
-            System.out.println("Error publishing message");
+            //System.out.println("Error publishing message");
         }
     }
 

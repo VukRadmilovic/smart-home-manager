@@ -41,8 +41,8 @@ public class UserController {
     @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> register(@Valid @ModelAttribute UserInfoRegister userInfoRegister) {
         try{
-            this.userService.register(userInfoRegister);
-            return new ResponseEntity<>(messageSource.getMessage("registration.success", null, Locale.getDefault()), HttpStatus.OK);
+            Integer id = this.userService.register(userInfoRegister);
+            return new ResponseEntity<>(id, HttpStatus.OK);
         }
         catch(ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());

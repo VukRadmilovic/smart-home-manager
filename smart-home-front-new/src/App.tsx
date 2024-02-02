@@ -18,6 +18,7 @@ import {ThermometerChartsHistory} from "./components/ThermometerHistoryCharts/Th
 import {ACCommandsReport} from "./components/ACCommandsReport/ACCommandsReport.tsx";
 import {PowerConsumptionChart} from "./components/PowerConsumptionChart/PowerConsumptionChart";
 import {PowerConsumptionChartsHistory} from "./components/PowerConsumptionHistoryChart/PowerConsumptionHistoryCharts";
+import {WebsocketsSimulator} from "./components/WebsocketsSimulator/WebsocketsSimulator.tsx";
 
 
 function App() {
@@ -120,6 +121,7 @@ function App() {
                 <BrowserRouter>
                     <Routes>
                         <Route path="/" element={<Login userService={userServiceSingleton}/>}/>
+                        <Route path="/sim" element={<WebsocketsSimulator/>}/>
                         <Route path="/adminMain" element={<AdminMain userService={userServiceSingleton} propertyService={propertyServiceSingleton}/>}/>
                         <Route path="/userMain" element={<UserMain userService={userServiceSingleton} deviceService={deviceServiceSingleton} propertyService={propertyServiceSingleton}/>}/>
                         <Route path="/newAdmin" element={<NewAdmin userService={userServiceSingleton}/>}/>
