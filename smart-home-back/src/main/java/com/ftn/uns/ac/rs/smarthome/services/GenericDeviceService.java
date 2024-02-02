@@ -3,6 +3,7 @@ package com.ftn.uns.ac.rs.smarthome.services;
 import com.ftn.uns.ac.rs.smarthome.config.MqttConfiguration;
 import com.ftn.uns.ac.rs.smarthome.models.Property;
 import com.ftn.uns.ac.rs.smarthome.models.PropertyStatus;
+import com.ftn.uns.ac.rs.smarthome.models.User;
 import com.ftn.uns.ac.rs.smarthome.models.devices.Device;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.devices.DeviceDTO;
 import com.ftn.uns.ac.rs.smarthome.repositories.DeviceRepository;
@@ -48,10 +49,14 @@ public abstract class GenericDeviceService<D extends Device, DDTO extends Device
     }
 
     @Override
-    public void register(@Valid DDTO dto) throws IOException {
+    public void register(@Valid DDTO dto, User user) throws IOException {
         Optional<Property> property = propertyRepository.findByName(dto.getPropertyId().toString());
         if (property.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("property.notFound", null, Locale.getDefault()));
+        }
+
+        if (!property.get().getOwner().equals(user)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("property.notOwner", null, Locale.getDefault()));
         }
 
         if (!property.get().getStatus().equals(PropertyStatus.APPROVED)) {
