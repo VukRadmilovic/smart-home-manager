@@ -188,16 +188,6 @@ public class DeviceController {
         }
     }
 
-    @PutMapping(value = "/thermometer/{id}/{unit}")
-    public ResponseEntity<?> changeTemperatureUnit(@PathVariable("id") Integer id, @PathVariable("unit") TemperatureUnit unit) {
-        try {
-            this.thermometerService.changeThermometerTempUnit(id, unit);
-            return new ResponseEntity<>(messageSource.getMessage("thermometer.temperature.unit.change.success", null, Locale.getDefault()), HttpStatus.OK);
-        } catch(ResponseStatusException ex) {
-            return new ResponseEntity<>(ex.getReason(), ex.getStatus());
-        }
-    }
-
     @GetMapping(value = "/ownerAll")
     public ResponseEntity<?> getAllOwnersDevices() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
