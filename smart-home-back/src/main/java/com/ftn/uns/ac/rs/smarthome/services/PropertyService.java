@@ -11,15 +11,14 @@ import com.ftn.uns.ac.rs.smarthome.repositories.UserRepository;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IPropertyService;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IUserService;
 import org.slf4j.Logger;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class PropertyService implements IPropertyService {
@@ -29,17 +28,20 @@ public class PropertyService implements IPropertyService {
     private final PropertyRepository propertyRepository;
     private final UserRepository userRepository;
     private final TownRepository townRepository;
+    private final CacheManager cacheManager;
 
     public PropertyService(MessageSource messageSource,
                            PropertyRepository propertyRepository,
                            IUserService userService,
                            UserRepository userRepository,
-                           TownRepository townRepository) {
+                           TownRepository townRepository,
+                           CacheManager cacheManager) {
         this.messageSource = messageSource;
         this.propertyRepository = propertyRepository;
         this.userService = userService;
         this.userRepository = userRepository;
         this.townRepository = townRepository;
+        this.cacheManager = cacheManager;
     }
 
     public void registerProperty(PropertyDTO propertyDTO) {
@@ -85,6 +87,7 @@ public class PropertyService implements IPropertyService {
     }
 
     @Override
+    @Cacheable(value = "approvedProperties", key = "#username")
     public List<PropertyDTO> getApprovedProperties(String username) {
         Optional<User> owner = userRepository.findByUsername(username);
         if (owner.isEmpty()) {
@@ -142,7 +145,18 @@ public class PropertyService implements IPropertyService {
         if(property.isPresent()){
             property.get().setStatus(PropertyStatus.APPROVED);
             propertyRepository.save(property.get());
+            evictCacheForProperty(property.get().getOwner().getUsername());
         }
+    }
+
+    private void evictCacheForProperty(String username) {
+//        logger.info("Evicting cache for user: " + username);
+        try {
+            Objects.requireNonNull(cacheManager.getCache("approvedProperties")).evict(username);
+        } catch (NullPointerException e) {
+            logger.error("approvedProperties cache not found for user: " + username);
+        }
+//        logger.info("Cache evicted for user: " + username);
     }
 
     @Override
