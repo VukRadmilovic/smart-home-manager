@@ -24,7 +24,7 @@ public class Device {
     @JoinColumn(name = "property_id", referencedColumnName = "id", nullable = false)
     private Property property;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String name;
 
     @Column
