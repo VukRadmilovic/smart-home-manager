@@ -183,7 +183,7 @@ public class InfluxService {
                 fluxQuery.append(",");
         }
         fluxQuery.append("]))");
-        fluxQuery.append("  |> aggregateWindow(every: 1s, fn: sum, createEmpty: false)");
+        fluxQuery.append("  |> aggregateWindow(every: 15s, fn: sum, createEmpty: false)");
         fluxQuery.append("  |> group(columns: [\"_time\"])");
         fluxQuery.append("  |> sum()");
         return this.query(fluxQuery.toString(), requestDTO.getLimit());

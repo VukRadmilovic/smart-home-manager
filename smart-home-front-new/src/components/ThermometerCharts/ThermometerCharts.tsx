@@ -177,6 +177,7 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
                 data.push(newVal);
             })
             let downsampled : ChartDataShort[] = data;
+            console.log('data length: ' + data.length);
             if(data.length > 60)
                 downsampled = downsample(data,60);
             if(measurement == "temperature") {
@@ -259,6 +260,7 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
             setOrdinalHum(ordinalHum + 1);
             setLatestHum("Latest Value: " + newVal.value!.toFixed(3) + "%")
             setHumidityData((prevHumData) => {
+                console.log(prevHumData.length + " " + newVal.timestamp.getTime() + " " + prevHumData[prevHumData.length - 1].timestamp.getTime() + " " + (newVal.timestamp.getTime() - prevHumData[prevHumData.length - 1].timestamp.getTime()));
                 if(prevHumData.length > 0 ) {
                     if (newVal.timestamp.getTime() - prevHumData[0].timestamp.getTime() > 3900000)
                         prevHumData.shift();
