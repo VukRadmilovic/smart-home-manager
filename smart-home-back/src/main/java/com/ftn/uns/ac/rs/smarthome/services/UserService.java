@@ -14,6 +14,7 @@ import com.ftn.uns.ac.rs.smarthome.utils.TokenUtils;
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
@@ -280,6 +281,7 @@ public class UserService implements IUserService {
     }
 
     @Override
+    @Cacheable(value = "user", key = "#userId")
     public UserInfoDTO getUserInfo(Integer userId) {
         Optional<User> user = this.userRepository.findById(userId);
         if(user.isEmpty()) {
