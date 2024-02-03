@@ -210,7 +210,9 @@ public class DeviceController {
     @GetMapping(value = "/shared")
     public ResponseEntity<?> getAllSharedDevicesWithOwner() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        log.info("User: " + user.getId() + " is fetching all shared devices.");
         List<DeviceDetailsDTO> devices = this.deviceControlService.findByShared(user.getId());
+//        log.info("User: " + user.getId() + " fetched all shared devices.");
         return new ResponseEntity<>(devices, HttpStatus.OK);
     }
 

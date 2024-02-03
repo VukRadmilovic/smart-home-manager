@@ -12,33 +12,40 @@ import com.ftn.uns.ac.rs.smarthome.services.interfaces.IDeviceControlService;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IDeviceService;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IPropertyService;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IUserService;
+import org.slf4j.Logger;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.constraints.Null;
 import java.util.*;
 
 @Service
 public class DeviceControlService implements IDeviceControlService {
-
+    private final Logger log = org.slf4j.LoggerFactory.getLogger(this.getClass());
     private final DeviceControlRepository deviceControlRepository;
     private final IDeviceService deviceService;
     private final MessageSource messageSource;
     private final IPropertyService propertyService;
     private final IUserService userService;
+    private final CacheManager cacheManager;
 
     public DeviceControlService(DeviceControlRepository deviceControlRepository,
                                 IDeviceService deviceService,
                                 MessageSource messageSource,
                                 IPropertyService propertyService,
-                                IUserService userService) {
+                                IUserService userService,
+                                CacheManager cacheManager) {
         this.deviceControlRepository = deviceControlRepository;
         this.deviceService = deviceService;
         this.messageSource = messageSource;
         this.propertyService = propertyService;
         this.userService = userService;
+        this.cacheManager = cacheManager;
     }
 
     @Override
@@ -54,11 +61,14 @@ public class DeviceControlService implements IDeviceControlService {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, messageSource.getMessage("user.notFound", null, Locale.getDefault()));
             }
             if(detail.getAction().equals("a")) {
-                if(dc.isEmpty())
+                if(dc.isEmpty()) {
                     deviceControlRepository.save(new DeviceControl(user.get(), device.get()));
+                    evictCacheForUser(user.get().getId());
+                }
             }
             if(detail.getAction().equals("d")) {
                 dc.ifPresent(deviceControlRepository::delete);
+                evictCacheForUser(detail.getUserId());
             }
         }
     }
@@ -77,17 +87,30 @@ public class DeviceControlService implements IDeviceControlService {
             }
             if (detail.getAction().equals("a")) {
                 for(Device device : property.get().getDevices()) {
-                    if(deviceControlRepository.findByDevice_IdAndOwner_Id(device.getId(), user.get().getId()).isEmpty())
+                    if(deviceControlRepository.findByDevice_IdAndOwner_Id(device.getId(), user.get().getId()).isEmpty()) {
                         deviceControlRepository.save(new DeviceControl(user.get(), device));
+                        evictCacheForUser(user.get().getId());
+                    }
                 }
             }
             if (detail.getAction().equals("d")) {
                 for(Device device : property.get().getDevices()) {
                     Optional<DeviceControl> dc = deviceControlRepository.findByDevice_IdAndOwner_Id(device.getId(), detail.getUserId());
                     dc.ifPresent(deviceControlRepository::delete);
+                    evictCacheForUser(detail.getUserId());
                 }
             }
         }
+    }
+
+    public void evictCacheForUser(Integer userId) {
+//        log.info("Evicting cache for user with id: " + userId);
+        try {
+            Objects.requireNonNull(cacheManager.getCache("sharedDevices")).evict(userId);
+        } catch (NullPointerException e) {
+            log.error("sharedDevices cache not found for user with id: " + userId);
+        }
+//        log.info("Cache evicted for user with id: " + userId);
     }
 
     @Override
@@ -106,6 +129,7 @@ public class DeviceControlService implements IDeviceControlService {
     }
 
     @Override
+    @Cacheable(value = "sharedDevices", key = "#userId")
     public List<DeviceDetailsDTO> findByShared(Integer userId) {
         List<DeviceDetailsDTO> devices = new ArrayList<>();
         List<DeviceControl> shared = deviceControlRepository.findByOwner_Id(userId);
