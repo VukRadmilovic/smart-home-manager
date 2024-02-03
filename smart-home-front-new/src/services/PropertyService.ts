@@ -7,7 +7,7 @@ export class PropertyService {
     public getAllProperty():Promise<Property[]>{
         return axios({
             method: 'GET',
-            url: `${this.api_host}/api/property/getAllProperty`,
+            url: `${this.api_host}/api/property/allProperties`,
             headers: {
                 'Authorization': 'Bearer ' + sessionStorage.getItem('user')
             },
@@ -33,7 +33,7 @@ export class PropertyService {
     public getAllUnapprovedProperty():Promise<Property[]>{
         return axios({
             method: 'GET',
-            url: `${this.api_host}/api/property/getAllUnapprovedProperty`,
+            url: `${this.api_host}/api/property/unapprovedProperties`,
             headers: {
                 'Authorization': 'Bearer ' + sessionStorage.getItem('user')
             },
@@ -58,7 +58,7 @@ export class PropertyService {
     public async getAllUserProperty(): Promise<Property[]> {
         return axios({
             method: 'GET',
-            url: `${this.api_host}/api/property/getApprovedProperties/` + sessionStorage.getItem('username'),
+            url: `${this.api_host}/api/property/approvedProperties/` + sessionStorage.getItem('username'),
             headers: {
                 'Authorization': 'Bearer ' + sessionStorage.getItem('user')
             },

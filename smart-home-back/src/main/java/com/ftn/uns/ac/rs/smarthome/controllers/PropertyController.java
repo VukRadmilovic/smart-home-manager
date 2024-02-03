@@ -4,7 +4,6 @@ import com.ftn.uns.ac.rs.smarthome.models.dtos.PropertyDTO;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IPropertyService;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IUserService;
 import org.slf4j.Logger;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -50,7 +49,7 @@ public class PropertyController {
         }
     }
 
-    @GetMapping(value = "/getApprovedProperties/{username}")
+    @GetMapping(value = "/approvedProperties/{username}")
     public ResponseEntity<?> getApprovedProperties(@PathVariable String username){
         try{
 //            log.info("Fetching approved properties for user: " + username);
@@ -63,8 +62,8 @@ public class PropertyController {
         }
     }
 
-    @GetMapping(value = "/getAllProperty")
-    public ResponseEntity<?> getAllProperty(){
+    @GetMapping(value = "/allProperties")
+    public ResponseEntity<?> getAllProperties(){
         try{
             return new ResponseEntity<>(this.propertyService.getAllProperty(), HttpStatus.OK);
         }
@@ -82,8 +81,8 @@ public class PropertyController {
         }
     }
 
-    @GetMapping(value = "/getAllUnapprovedProperty")
-    public ResponseEntity<?> getAllUnapprovedProperty(){
+    @GetMapping(value = "/unapprovedProperties")
+    public ResponseEntity<?> getAllUnapprovedProperties(){
         try{
             return new ResponseEntity<>(this.propertyService.getAllUnapprovedProperty(), HttpStatus.OK);
         }

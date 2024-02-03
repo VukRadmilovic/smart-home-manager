@@ -51,11 +51,11 @@ public class PropertyService implements IPropertyService {
             }
             Optional<User> owner = this.userRepository.findByUsername(propertyDTO.getOwner());
             if (owner.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("user.notExisting", null, Locale.getDefault()));
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, messageSource.getMessage("user.notExisting", null, Locale.getDefault()));
             }
             Optional<Town> town = townRepository.findByName(propertyDTO.getCity());
             if (town.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("town.notExisting", null, Locale.getDefault()));
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, messageSource.getMessage("town.notExisting", null, Locale.getDefault()));
             }
 //            Path filepath = Paths.get("../temp/", propertyDTO.getPicture().getOriginalFilename());
 //            propertyDTO.getPicture().transferTo(filepath);
@@ -146,6 +146,8 @@ public class PropertyService implements IPropertyService {
             property.get().setStatus(PropertyStatus.APPROVED);
             propertyRepository.save(property.get());
             evictCacheForProperty(property.get().getOwner().getUsername());
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, messageSource.getMessage("property.notExisting", null, Locale.getDefault()));
         }
     }
 
@@ -165,6 +167,8 @@ public class PropertyService implements IPropertyService {
         if(property.isPresent()){
             property.get().setStatus(PropertyStatus.DENIED);
             propertyRepository.save(property.get());
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, messageSource.getMessage("property.notExisting", null, Locale.getDefault()));
         }
     }
 

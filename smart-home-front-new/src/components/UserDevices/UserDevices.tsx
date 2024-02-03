@@ -252,7 +252,7 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
             setIsSuccess(false);
             setErrorPopupOpen(true);
         }
-        
+
         return;
     }
 

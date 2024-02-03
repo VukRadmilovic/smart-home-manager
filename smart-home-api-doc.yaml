@@ -11,51 +11,59 @@ paths:
       tags:
         - property-controller
       operationId: denyProperty
+      description: Endpoint for denying a property.
       parameters:
         - name: propertyId
           in: path
           required: true
+          description: ID of the property
           schema:
             type: integer
             format: int32
       responses:
         '200':
-          description: OK
+          description: Property denied.
           content:
-            '*/*':
+            'text/plain':
               schema:
                 type: object
-        '400':
-          description: Bad Request
+                description: Property denied!
+        '404':
+          description: Property does not exist.
           content:
-            '*/*':
+            'text/plain':
               schema:
                 type: string
+                example: Property does not exist!
   /api/property/approve/{propertyId}:
     put:
       tags:
         - property-controller
       operationId: approveProperty
+      description: Endpoint for approving a property.
       parameters:
         - name: propertyId
           in: path
           required: true
+          description: ID of the property
           schema:
             type: integer
             format: int32
       responses:
         '200':
-          description: OK
+          description: Property approved.
           content:
-            '*/*':
+            'text/plain':
               schema:
                 type: object
-        '400':
-          description: Bad Request
+                example: Property approved!
+        '404':
+          description: Property does not exist.
           content:
-            '*/*':
+            'text/plain':
               schema:
                 type: string
+                example: Property does not exist!
   /api/devices/sps/{id}/on:
     put:
       tags:
@@ -399,6 +407,7 @@ paths:
       tags:
         - property-controller
       operationId: register_1
+      description: Endpoint for registering new property.
       requestBody:
         content:
           multipart/form-data:
@@ -406,17 +415,30 @@ paths:
               $ref: '#/components/schemas/PropertyDTO'
       responses:
         '200':
-          description: OK
+          description: Property successfully registered! Waiting for admin to approve.
           content:
-            '*/*':
-              schema:
-                type: object
-        '400':
-          description: Bad Request
-          content:
-            '*/*':
+            'text/plain':
               schema:
                 type: string
+                example: Property successfully registered! Waiting for admin to approve.
+        '400':
+          description: Address already exists.
+          content:
+            'text/plain':
+              schema:
+                type: string
+                example: Address already exists!
+        '404':
+          description: Error caused by user or town not existing.
+          content:
+            'text/plain':
+              schema:
+                type: string
+              examples:
+                User not existing:
+                  value: User does not exist!
+                Town not existing:
+                  value: Town does not exist!
   /api/devices/registerWashingMachine:
     post:
       tags:
@@ -864,11 +886,11 @@ paths:
               schema:
                 type: string
               example: User not found!
-  /api/property/getApprovedProperties/{username}:
+  /api/property/approvedProperties/{username}:
     get:
       tags:
         - property-controller
-      operationId: getApprovedProperties
+      operationId: approvedProperties
       parameters:
         - name: username
           in: path
@@ -888,11 +910,11 @@ paths:
             '*/*':
               schema:
                 type: string
-  /api/property/getAllUnapprovedProperty:
+  /api/property/unapprovedProperties:
     get:
       tags:
         - property-controller
-      operationId: getAllUnapprovedProperty
+      operationId: unapprovedProperties
       responses:
         '200':
           description: OK
@@ -906,11 +928,11 @@ paths:
             '*/*':
               schema:
                 type: string
-  /api/property/getAllProperty:
+  /api/property/allProperties:
     get:
       tags:
         - property-controller
-      operationId: getAllProperty
+      operationId: allProperties
       responses:
         '200':
           description: OK
@@ -929,6 +951,7 @@ paths:
       tags:
         - property-controller
       operationId: getAllApprovedProperties
+      description: Endpoint for retrieving all approved properties.
       responses:
         '200':
           description: OK
