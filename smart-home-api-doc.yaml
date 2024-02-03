@@ -891,61 +891,53 @@ paths:
       tags:
         - property-controller
       operationId: approvedProperties
+      description: Endpoint for retrieving all approved properties of a user.
       parameters:
         - name: username
           in: path
           required: true
+          description: Username of the user whose properties are being retrieved.
           schema:
             type: string
       responses:
         '200':
-          description: OK
+          description: Successful properties retrieval.
           content:
-            '*/*':
+            'application/json':
               schema:
-                type: object
-        '400':
-          description: Bad Request
-          content:
-            '*/*':
-              schema:
-                type: string
+                type: array
+                items:
+                  $ref: '#/components/schemas/PropertyDTO'
   /api/property/unapprovedProperties:
     get:
       tags:
         - property-controller
       operationId: unapprovedProperties
+      description: Endpoint for retrieving all unapproved properties.
       responses:
         '200':
-          description: OK
+          description: Successful properties retrieval.
           content:
-            '*/*':
+            'application/json':
               schema:
-                type: object
-        '400':
-          description: Bad Request
-          content:
-            '*/*':
-              schema:
-                type: string
+                type: array
+                items:
+                  $ref: '#/components/schemas/PropertyDTO'
   /api/property/allProperties:
     get:
       tags:
         - property-controller
       operationId: allProperties
+      description: Endpoint for retrieving all properties.
       responses:
         '200':
-          description: OK
+          description: Successful properties retrieval.
           content:
-            '*/*':
+            'application/json':
               schema:
-                type: object
-        '400':
-          description: Bad Request
-          content:
-            '*/*':
-              schema:
-                type: string
+                type: array
+                items:
+                  $ref: '#/components/schemas/PropertyDTO'
   /api/property/approvedProperties:
     get:
       tags:
@@ -954,17 +946,13 @@ paths:
       description: Endpoint for retrieving all approved properties.
       responses:
         '200':
-          description: OK
+          description: Successful properties retrieval.
           content:
-            '*/*':
+            'application/json':
               schema:
-                type: object
-        '400':
-          description: Bad Request
-          content:
-            '*/*':
-              schema:
-                type: string
+                type: array
+                items:
+                  $ref: '#/components/schemas/PropertyDTO'
   /api/devices/shared:
     get:
       security:
