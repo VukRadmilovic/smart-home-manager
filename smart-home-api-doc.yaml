@@ -56,39 +56,6 @@ paths:
             '*/*':
               schema:
                 type: string
-  /api/devices/thermometer/{id}/{unit}:
-    put:
-      tags:
-        - device-controller
-      operationId: changeTemperatureUnit
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int32
-        - name: unit
-          in: path
-          required: true
-          schema:
-            type: string
-            enum:
-              - CELSIUS
-              - FAHRENHEIT
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: object
-        '400':
-          description: Bad Request
-          content:
-            '*/*':
-              schema:
-                type: string
   /api/devices/sps/{id}/on:
     put:
       tags:
@@ -428,90 +395,6 @@ paths:
             '*/*':
               schema:
                 type: string
-  /api/image/{name}:
-    get:
-      tags:
-        - image-controller
-      operationId: getImage
-      parameters:
-        - name: name
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: string
-        '400':
-          description: Bad Request
-          content:
-            '*/*':
-              schema:
-                type: string
-    post:
-      tags:
-        - image-controller
-      operationId: uploadImage
-      parameters:
-        - name: name
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              required:
-                - image
-                - type
-              type: object
-              properties:
-                image:
-                  type: string
-                  format: binary
-                type:
-                  type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: string
-        '400':
-          description: Bad Request
-          content:
-            '*/*':
-              schema:
-                type: string
-    delete:
-      tags:
-        - image-controller
-      operationId: deleteImage
-      parameters:
-        - name: name
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: string
-        '400':
-          description: Bad Request
-          content:
-            '*/*':
-              schema:
-                type: string
   /api/devices/registerWashingMachine:
     post:
       tags:
@@ -798,11 +681,11 @@ paths:
               schema:
                 type: string
               example: User not found!
-  /api/property/getProperty/{username}:
+  /api/property/getApprovedProperties/{username}:
     get:
       tags:
         - property-controller
-      operationId: getProperty
+      operationId: getApprovedProperties
       parameters:
         - name: username
           in: path
@@ -845,6 +728,24 @@ paths:
       tags:
         - property-controller
       operationId: getAllProperty
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: string
+  /api/property/approvedProperties:
+    get:
+      tags:
+        - property-controller
+      operationId: getAllApprovedProperties
       responses:
         '200':
           description: OK
