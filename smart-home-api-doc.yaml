@@ -11,134 +11,131 @@ paths:
       tags:
         - property-controller
       operationId: denyProperty
+      description: Endpoint for denying a property.
       parameters:
         - name: propertyId
           in: path
           required: true
+          description: ID of the property
           schema:
             type: integer
             format: int32
       responses:
         '200':
-          description: OK
+          description: Property denied.
           content:
-            '*/*':
+            'text/plain':
               schema:
                 type: object
-        '400':
-          description: Bad Request
+                description: Property denied!
+        '404':
+          description: Property does not exist.
           content:
-            '*/*':
+            'text/plain':
               schema:
                 type: string
+                example: Property does not exist!
   /api/property/approve/{propertyId}:
     put:
       tags:
         - property-controller
       operationId: approveProperty
+      description: Endpoint for approving a property.
       parameters:
         - name: propertyId
           in: path
           required: true
+          description: ID of the property
           schema:
             type: integer
             format: int32
       responses:
         '200':
-          description: OK
+          description: Property approved.
           content:
-            '*/*':
+            'text/plain':
               schema:
                 type: object
-        '400':
-          description: Bad Request
+                example: Property approved!
+        '404':
+          description: Property does not exist.
           content:
-            '*/*':
+            'text/plain':
               schema:
                 type: string
-  /api/devices/thermometer/{id}/{unit}:
-    put:
-      tags:
-        - device-controller
-      operationId: changeTemperatureUnit
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int32
-        - name: unit
-          in: path
-          required: true
-          schema:
-            type: string
-            enum:
-              - CELSIUS
-              - FAHRENHEIT
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: object
-        '400':
-          description: Bad Request
-          content:
-            '*/*':
-              schema:
-                type: string
+                example: Property does not exist!
   /api/devices/sps/{id}/on:
     put:
       tags:
         - device-controller
       operationId: turnOnSolarPanelSystem
+      description: Endpoint for turning on a solar panel system.
       parameters:
         - name: id
           in: path
           required: true
+          description: ID of the solar panel system
           schema:
             type: integer
             format: int32
       responses:
         '200':
-          description: OK
+          description: Device successfully turned on.
           content:
-            '*/*':
+            'text/plain':
               schema:
                 type: object
+                example: Device successfully turned on!
         '400':
-          description: Bad Request
+          description: Device is already on.
           content:
-            '*/*':
+            'text/plain':
               schema:
                 type: string
+                example: Device is already on!
+        '404':
+          description: Device not found.
+          content:
+            'text/plain':
+              schema:
+                type: string
+                example: Device not found!
   /api/devices/sps/{id}/off:
     put:
       tags:
         - device-controller
       operationId: turnOffSolarPanelSystem
+      description: Endpoint for turning off a solar panel system.
       parameters:
         - name: id
           in: path
           required: true
+          description: ID of the solar panel system
           schema:
             type: integer
             format: int32
       responses:
         '200':
-          description: OK
+          description: Device successfully turned off.
           content:
-            '*/*':
+            'text/plain':
               schema:
                 type: object
+                example: Device successfully turned off!
         '400':
-          description: Bad Request
+          description: Device is already off.
           content:
-            '*/*':
+            'text/plain':
               schema:
                 type: string
+                example: Device is already off!
+        '404':
+          description: Device not found.
+          content:
+            'text/plain':
+              schema:
+                type: string
+                example: Device not found!
   /api/devices/shareControl/{deviceId}:
     put:
       tags:
@@ -410,6 +407,7 @@ paths:
       tags:
         - property-controller
       operationId: register_1
+      description: Endpoint for registering new property.
       requestBody:
         content:
           multipart/form-data:
@@ -417,106 +415,36 @@ paths:
               $ref: '#/components/schemas/PropertyDTO'
       responses:
         '200':
-          description: OK
+          description: Property successfully registered! Waiting for admin to approve.
           content:
-            '*/*':
+            'text/plain':
               schema:
-                type: object
+                type: string
+                example: Property successfully registered! Waiting for admin to approve.
         '400':
-          description: Bad Request
+          description: Address already exists.
           content:
-            '*/*':
+            'text/plain':
               schema:
                 type: string
-  /api/image/{name}:
-    get:
-      tags:
-        - image-controller
-      operationId: getImage
-      parameters:
-        - name: name
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
+                example: Address already exists!
+        '404':
+          description: Error caused by user or town not existing.
           content:
-            '*/*':
+            'text/plain':
               schema:
                 type: string
-        '400':
-          description: Bad Request
-          content:
-            '*/*':
-              schema:
-                type: string
-    post:
-      tags:
-        - image-controller
-      operationId: uploadImage
-      parameters:
-        - name: name
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              required:
-                - image
-                - type
-              type: object
-              properties:
-                image:
-                  type: string
-                  format: binary
-                type:
-                  type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: string
-        '400':
-          description: Bad Request
-          content:
-            '*/*':
-              schema:
-                type: string
-    delete:
-      tags:
-        - image-controller
-      operationId: deleteImage
-      parameters:
-        - name: name
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: string
-        '400':
-          description: Bad Request
-          content:
-            '*/*':
-              schema:
-                type: string
+              examples:
+                User not existing:
+                  value: User does not exist!
+                Town not existing:
+                  value: Town does not exist!
   /api/devices/registerWashingMachine:
     post:
       tags:
         - device-controller
       operationId: registerWashingMachine
+      description: Endpoint for registering new washing machine.
       requestBody:
         content:
           multipart/form-data:
@@ -524,22 +452,40 @@ paths:
               $ref: '#/components/schemas/WashingMachineDTO'
       responses:
         '200':
-          description: OK
+          description: Device successfully registered!
           content:
-            '*/*':
-              schema:
-                type: object
-        '400':
-          description: Bad Request
-          content:
-            '*/*':
+            'text/plain':
               schema:
                 type: string
+                example: Device successfully registered!
+        '400':
+          description: Error caused by the user not being the owner of this property, the property not being approved or image upload failing.
+          content:
+            'text/plain':
+              schema:
+                type: string
+              examples:
+                Not property's owner:
+                  value: You are not the owner of this property!
+                Property not approved:
+                  value: The property hasn't been approved!
+                Image upload filed:
+                  value: Image upload failed!
+                Image format not supported:
+                  value: Image format not supported!
+        '404':
+          description: Error caused by property ID being invalid.
+          content:
+            'text/plain':
+              schema:
+                type: string
+              example: Property not found!
   /api/devices/registerThermometer:
     post:
       tags:
         - device-controller
       operationId: registerThermometer
+      description: Endpoint for registering new thermometer.
       requestBody:
         content:
           multipart/form-data:
@@ -547,22 +493,40 @@ paths:
               $ref: '#/components/schemas/ThermometerDTO'
       responses:
         '200':
-          description: OK
+          description: Device successfully registered!
           content:
-            '*/*':
-              schema:
-                type: object
-        '400':
-          description: Bad Request
-          content:
-            '*/*':
+            'text/plain':
               schema:
                 type: string
+                example: Device successfully registered!
+        '400':
+          description: Error caused by the user not being the owner of this property, the property not being approved or image upload failing.
+          content:
+            'text/plain':
+              schema:
+                type: string
+              examples:
+                Not property's owner:
+                  value: You are not the owner of this property!
+                Property not approved:
+                  value: The property hasn't been approved!
+                Image upload filed:
+                  value: Image upload failed!
+                Image format not supported:
+                  value: Image format not supported!
+        '404':
+          description: Error caused by property ID being invalid.
+          content:
+            'text/plain':
+              schema:
+                type: string
+              example: Property not found!
   /api/devices/registerSprinklerSystem:
     post:
       tags:
         - device-controller
       operationId: registerSprinklerSystem
+      description: Endpoint for registering new sprinkler system.
       requestBody:
         content:
           multipart/form-data:
@@ -570,22 +534,40 @@ paths:
               $ref: '#/components/schemas/SprinklerSystemDTO'
       responses:
         '200':
-          description: OK
+          description: Device successfully registered!
           content:
-            '*/*':
-              schema:
-                type: object
-        '400':
-          description: Bad Request
-          content:
-            '*/*':
+            'text/plain':
               schema:
                 type: string
+                example: Device successfully registered!
+        '400':
+          description: Error caused by the user not being the owner of this property, the property not being approved or image upload failing.
+          content:
+            'text/plain':
+              schema:
+                type: string
+              examples:
+                Not property's owner:
+                  value: You are not the owner of this property!
+                Property not approved:
+                  value: The property hasn't been approved!
+                Image upload filed:
+                  value: Image upload failed!
+                Image format not supported:
+                  value: Image format not supported!
+        '404':
+          description: Error caused by property ID being invalid.
+          content:
+            'text/plain':
+              schema:
+                type: string
+              example: Property not found!
   /api/devices/registerSolarPanelSystem:
     post:
       tags:
         - device-controller
       operationId: registerSolarPanelSystem
+      description: Endpoint for registering new solar panel system.
       requestBody:
         content:
           multipart/form-data:
@@ -593,22 +575,40 @@ paths:
               $ref: '#/components/schemas/SolarPanelSystemDTO'
       responses:
         '200':
-          description: OK
+          description: Device successfully registered!
           content:
-            '*/*':
-              schema:
-                type: object
-        '400':
-          description: Bad Request
-          content:
-            '*/*':
+            'text/plain':
               schema:
                 type: string
+                example: Device successfully registered!
+        '400':
+          description: Error caused by the user not being the owner of this property, the property not being approved or image upload failing.
+          content:
+            'text/plain':
+              schema:
+                type: string
+              examples:
+                Not property's owner:
+                  value: You are not the owner of this property!
+                Property not approved:
+                  value: The property hasn't been approved!
+                Image upload filed:
+                  value: Image upload failed!
+                Image format not supported:
+                  value: Image format not supported!
+        '404':
+          description: Error caused by property ID being invalid.
+          content:
+            'text/plain':
+              schema:
+                type: string
+              example: Property not found!
   /api/devices/registerLamp:
     post:
       tags:
         - device-controller
       operationId: registerLamp
+      description: Endpoint for registering new lamp.
       requestBody:
         content:
           multipart/form-data:
@@ -616,22 +616,40 @@ paths:
               $ref: '#/components/schemas/DeviceDTO'
       responses:
         '200':
-          description: OK
+          description: Device successfully registered!
           content:
-            '*/*':
-              schema:
-                type: object
-        '400':
-          description: Bad Request
-          content:
-            '*/*':
+            'text/plain':
               schema:
                 type: string
+                example: Device successfully registered!
+        '400':
+          description: Error caused by the user not being the owner of this property, the property not being approved or image upload failing.
+          content:
+            'text/plain':
+              schema:
+                type: string
+              examples:
+                Not property's owner:
+                  value: You are not the owner of this property!
+                Property not approved:
+                  value: The property hasn't been approved!
+                Image upload filed:
+                  value: Image upload failed!
+                Image format not supported:
+                  value: Image format not supported!
+        '404':
+          description: Error caused by property ID being invalid.
+          content:
+            'text/plain':
+              schema:
+                type: string
+              example: Property not found!
   /api/devices/registerGate:
     post:
       tags:
         - device-controller
       operationId: registerGate
+      description: Endpoint for registering new gate.
       requestBody:
         content:
           multipart/form-data:
@@ -639,22 +657,40 @@ paths:
               $ref: '#/components/schemas/GateDTO'
       responses:
         '200':
-          description: OK
+          description: Device successfully registered!
           content:
-            '*/*':
-              schema:
-                type: object
-        '400':
-          description: Bad Request
-          content:
-            '*/*':
+            'text/plain':
               schema:
                 type: string
+                example: Device successfully registered!
+        '400':
+          description: Error caused by the user not being the owner of this property, the property not being approved or image upload failing.
+          content:
+            'text/plain':
+              schema:
+                type: string
+              examples:
+                Not property's owner:
+                  value: You are not the owner of this property!
+                Property not approved:
+                  value: The property hasn't been approved!
+                Image upload filed:
+                  value: Image upload failed!
+                Image format not supported:
+                  value: Image format not supported!
+        '404':
+          description: Error caused by property ID being invalid.
+          content:
+            'text/plain':
+              schema:
+                type: string
+              example: Property not found!
   /api/devices/registerCharger:
     post:
       tags:
         - device-controller
       operationId: registerCharger
+      description: Endpoint for registering new charger.
       requestBody:
         content:
           multipart/form-data:
@@ -662,22 +698,40 @@ paths:
               $ref: '#/components/schemas/ChargerDTO'
       responses:
         '200':
-          description: OK
+          description: Device successfully registered!
           content:
-            '*/*':
-              schema:
-                type: object
-        '400':
-          description: Bad Request
-          content:
-            '*/*':
+            'text/plain':
               schema:
                 type: string
+                example: Device successfully registered!
+        '400':
+          description: Error caused by the user not being the owner of this property, the property not being approved or image upload failing.
+          content:
+            'text/plain':
+              schema:
+                type: string
+              examples:
+                Not property's owner:
+                  value: You are not the owner of this property!
+                Property not approved:
+                  value: The property hasn't been approved!
+                Image upload filed:
+                  value: Image upload failed!
+                Image format not supported:
+                  value: Image format not supported!
+        '404':
+          description: Error caused by property ID being invalid.
+          content:
+            'text/plain':
+              schema:
+                type: string
+              example: Property not found!
   /api/devices/registerBattery:
     post:
       tags:
         - device-controller
       operationId: registerBattery
+      description: Endpoint for registering new battery.
       requestBody:
         content:
           multipart/form-data:
@@ -685,22 +739,40 @@ paths:
               $ref: '#/components/schemas/BatteryDTO'
       responses:
         '200':
-          description: OK
+          description: Device successfully registered!
           content:
-            '*/*':
-              schema:
-                type: object
-        '400':
-          description: Bad Request
-          content:
-            '*/*':
+            'text/plain':
               schema:
                 type: string
+                example: Device successfully registered!
+        '400':
+          description: Error caused by the user not being the owner of this property, the property not being approved or image upload failing.
+          content:
+            'text/plain':
+              schema:
+                type: string
+              examples:
+                Not property's owner:
+                  value: You are not the owner of this property!
+                Property not approved:
+                  value: The property hasn't been approved!
+                Image upload filed:
+                  value: Image upload failed!
+                Image format not supported:
+                  value: Image format not supported!
+        '404':
+          description: Error caused by property ID being invalid.
+          content:
+            'text/plain':
+              schema:
+                type: string
+              example: Property not found!
   /api/devices/registerAirConditioner:
     post:
       tags:
         - device-controller
       operationId: registerAirConditioner
+      description: Endpoint for registering new air conditioner.
       requestBody:
         content:
           multipart/form-data:
@@ -708,18 +780,34 @@ paths:
               $ref: '#/components/schemas/AirConditionerDTO'
       responses:
         '200':
-          description: OK
+          description: Device successfully registered!
           content:
-            '*/*':
-              schema:
-                type: object
-        '400':
-          description: Bad Request
-          content:
-            '*/*':
+            'text/plain':
               schema:
                 type: string
-                
+                example: Device successfully registered!
+        '400':
+          description: Error caused by the user not being the owner of this property, the property not being approved or image upload failing.
+          content:
+            'text/plain':
+              schema:
+                type: string
+              examples:
+                Not property's owner:
+                  value: You are not the owner of this property!
+                Property not approved:
+                  value: The property hasn't been approved!
+                Image upload filed:
+                  value: Image upload failed!
+                Image format not supported:
+                  value: Image format not supported!
+        '404':
+          description: Error caused by property ID being invalid.
+          content:
+            'text/plain':
+              schema:
+                type: string
+              example: Property not found!
   /api/user/info:
     get:
       tags:
@@ -798,66 +886,73 @@ paths:
               schema:
                 type: string
               example: User not found!
-  /api/property/getProperty/{username}:
+  /api/property/approvedProperties/{username}:
     get:
       tags:
         - property-controller
-      operationId: getProperty
+      operationId: approvedProperties
+      description: Endpoint for retrieving all approved properties of a user.
       parameters:
         - name: username
           in: path
           required: true
+          description: Username of the user whose properties are being retrieved.
           schema:
             type: string
       responses:
         '200':
-          description: OK
+          description: Successful properties retrieval.
           content:
-            '*/*':
+            'application/json':
               schema:
-                type: object
-        '400':
-          description: Bad Request
-          content:
-            '*/*':
-              schema:
-                type: string
-  /api/property/getAllUnapprovedProperty:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PropertyDTO'
+  /api/property/unapprovedProperties:
     get:
       tags:
         - property-controller
-      operationId: getAllUnapprovedProperty
+      operationId: unapprovedProperties
+      description: Endpoint for retrieving all unapproved properties.
       responses:
         '200':
-          description: OK
+          description: Successful properties retrieval.
           content:
-            '*/*':
+            'application/json':
               schema:
-                type: object
-        '400':
-          description: Bad Request
-          content:
-            '*/*':
-              schema:
-                type: string
-  /api/property/getAllProperty:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PropertyDTO'
+  /api/property/allProperties:
     get:
       tags:
         - property-controller
-      operationId: getAllProperty
+      operationId: allProperties
+      description: Endpoint for retrieving all properties.
       responses:
         '200':
-          description: OK
+          description: Successful properties retrieval.
           content:
-            '*/*':
+            'application/json':
               schema:
-                type: object
-        '400':
-          description: Bad Request
+                type: array
+                items:
+                  $ref: '#/components/schemas/PropertyDTO'
+  /api/property/approvedProperties:
+    get:
+      tags:
+        - property-controller
+      operationId: getAllApprovedProperties
+      description: Endpoint for retrieving all approved properties.
+      responses:
+        '200':
+          description: Successful properties retrieval.
           content:
-            '*/*':
+            'application/json':
               schema:
-                type: string
+                type: array
+                items:
+                  $ref: '#/components/schemas/PropertyDTO'
   /api/devices/shared:
     get:
       security:
@@ -1038,6 +1133,90 @@ paths:
               schema:
                 type: string
               example: Device not found!
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /api/devices/powerMeasurements:
+    get:
+      tags:
+        - device-controller
+      operationId: getPowerMeasurements
+      security:
+        - bearerAuth: []
+      description: Endpoint for retrieving all the power-related measurements collected for the specified city in the specified time span of the specified measurement type.
+      parameters:
+        - name: from
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: Timestamp marking the start of the desired time span
+        - name: to
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: Timestamp marking the end of the desired time span
+        - name: cityId
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+          description: ID of the city
+        - name: measurement
+          in: query
+          required: true
+          description: Measurement type name
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful measurements retrieval. Return value is a stream of packages containing up to 5000 measurement values each.
+          content:
+            text/event-stream:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Measurement'
+              example:
+                - name: 'powerConsumption'
+                  value: 0.5
+                  timestamp: '2024-01-29T17:10:25.544Z'
+                  tags:
+                    unit: kWh
+                - name: 'powerConsumption'
+                  value: 1.0
+                  timestamp: '2024-01-29T17:11:25.544Z'
+                  tags:
+                    unit: kWh
+                - name: 'powerProduction'
+                  value: 1.0
+                  timestamp: '2024-01-29T17:10:25.544Z'
+                  tags:
+                    unit: kWh
+                - name: 'powerProduction'
+                  value: 1.2
+                  timestamp: '2024-01-29T17:11:25.544Z'
+                  tags:
+                    unit: kWh
+        '400':
+          description: Error caused by invalid date range.
+          content:
+            'text/plain':
+              schema:
+                type: string
+              example: Date range invalid!
+        '404':
+          description: Error caused by the city not existing.
+          content:
+            'text/plain':
+              schema:
+                type: string
+              example: Town does not exist!
         '401':
           $ref: '#/components/responses/UnauthorizedError'
   /api/devices/commands:

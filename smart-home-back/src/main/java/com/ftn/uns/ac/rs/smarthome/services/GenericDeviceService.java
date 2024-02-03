@@ -55,7 +55,7 @@ public abstract class GenericDeviceService<D extends Device, DDTO extends Device
     public void register(@Valid DDTO dto, User user) throws IOException {
         Optional<Property> property = propertyRepository.findByName(dto.getPropertyId().toString());
         if (property.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("property.notFound", null, Locale.getDefault()));
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, messageSource.getMessage("property.notFound", null, Locale.getDefault()));
         }
 
         if (!property.get().getOwner().equals(user)) {
@@ -67,12 +67,7 @@ public abstract class GenericDeviceService<D extends Device, DDTO extends Device
         }
 
         D device = createDevice(dto, property.get());
-        D savedDevice;
-        try {
-            savedDevice = deviceRepository.save(device);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("device.name.unique", null, Locale.getDefault()));
-        }
+        D savedDevice = deviceRepository.save(device);
 
         log.info(dto.getClass().getSimpleName() + " registered: " + savedDevice.getName());
         String path = env.getProperty("tempfolder.path");
