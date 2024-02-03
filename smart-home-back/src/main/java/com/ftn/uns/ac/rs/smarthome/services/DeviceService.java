@@ -10,6 +10,7 @@ import com.ftn.uns.ac.rs.smarthome.repositories.DeviceRepository;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IDeviceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -49,6 +50,7 @@ public class DeviceService implements IDeviceService {
     }
 
     @Override
+    @Cacheable(value = "devices", key = "'user-' + #ownerId")
     public List<DeviceDetailsDTO> findByOwnerId(Integer ownerId) {
         List<Device> ownersDevices =  deviceRepository.findByOwnerId(ownerId);
         List<DeviceDetailsDTO> devicesDetails = new ArrayList<>();

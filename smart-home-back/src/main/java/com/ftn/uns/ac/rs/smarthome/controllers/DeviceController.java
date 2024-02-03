@@ -7,6 +7,7 @@ import com.ftn.uns.ac.rs.smarthome.models.UserSearchInfo;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.*;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.devices.*;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.*;
+import org.slf4j.Logger;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,6 +28,7 @@ import java.util.Locale;
 @RequestMapping("/api/devices")
 @Validated
 public class DeviceController {
+    private final Logger log = org.slf4j.LoggerFactory.getLogger(this.getClass());
     private final IDeviceService deviceService;
     private final MessageSource messageSource;
     private final IThermometerService thermometerService;
@@ -186,27 +188,21 @@ public class DeviceController {
         }
     }
 
-    @PutMapping(value = "/thermometer/{id}/{unit}")
-    public ResponseEntity<?> changeTemperatureUnit(@PathVariable("id") Integer id, @PathVariable("unit") TemperatureUnit unit) {
-        try {
-            this.thermometerService.changeThermometerTempUnit(id, unit);
-            return new ResponseEntity<>(messageSource.getMessage("thermometer.temperature.unit.change.success", null, Locale.getDefault()), HttpStatus.OK);
-        } catch(ResponseStatusException ex) {
-            return new ResponseEntity<>(ex.getReason(), ex.getStatus());
-        }
-    }
-
     @GetMapping(value = "/ownerAll")
     public ResponseEntity<?> getAllOwnersDevices() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        log.info("User: " + user.getUsername() + " is fetching all devices.");
         List<DeviceDetailsDTO> devices = this.deviceService.findByOwnerId(user.getId());
+//        log.info("User: " + user.getUsername() + " fetched all devices.");
         return new ResponseEntity<>(devices, HttpStatus.OK);
     }
 
     @GetMapping(value = "/shared")
     public ResponseEntity<?> getAllSharedDevicesWithOwner() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        log.info("User: " + user.getId() + " is fetching all shared devices.");
         List<DeviceDetailsDTO> devices = this.deviceControlService.findByShared(user.getId());
+//        log.info("User: " + user.getId() + " fetched all shared devices.");
         return new ResponseEntity<>(devices, HttpStatus.OK);
     }
 

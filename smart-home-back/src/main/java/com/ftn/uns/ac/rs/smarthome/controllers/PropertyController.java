@@ -3,6 +3,8 @@ package com.ftn.uns.ac.rs.smarthome.controllers;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.PropertyDTO;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IPropertyService;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IUserService;
+import org.slf4j.Logger;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Locale;
 
 @CrossOrigin("http://localhost:5173/")
@@ -20,6 +23,7 @@ import java.util.Locale;
 @RequestMapping(value = "/api/property")
 @Validated
 public class PropertyController {
+    private final Logger log = org.slf4j.LoggerFactory.getLogger(this.getClass());
     private final AuthenticationManager authenticationManager;
     private final IUserService userService;
     private final MessageSource messageSource;
@@ -45,15 +49,20 @@ public class PropertyController {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());
         }
     }
-    @GetMapping(value = "/getProperty/{username}")
-    public ResponseEntity<?> getProperty(@PathVariable String username){
+
+    @GetMapping(value = "/getApprovedProperties/{username}")
+    public ResponseEntity<?> getApprovedProperties(@PathVariable String username){
         try{
-            return new ResponseEntity<>(this.propertyService.getProperty(username), HttpStatus.OK);
+//            log.info("Fetching approved properties for user: " + username);
+            List<PropertyDTO> approvedProperties = this.propertyService.getApprovedProperties(username);
+//            log.info("Fetched approved properties for user: " + username + " - " + approvedProperties.size() + " properties");
+            return new ResponseEntity<>(approvedProperties, HttpStatus.OK);
         }
         catch(ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());
         }
     }
+
     @GetMapping(value = "/getAllProperty")
     public ResponseEntity<?> getAllProperty(){
         try{
@@ -93,6 +102,7 @@ public class PropertyController {
             return new ResponseEntity<>(ex.getReason(), ex.getStatus());
         }
     }
+
     @PutMapping(value = "/deny/{propertyId}")
     public ResponseEntity<?> denyProperty(@PathVariable Integer propertyId){
         try{

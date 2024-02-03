@@ -65,7 +65,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
 
     let propertyId = Number(location.pathname.split('/').pop());
     if (!propertyId) {
-        propertyId = 9999;
+        propertyId = 0;
     }
 
     const {register, handleSubmit, setValue, formState: {errors}} = useForm<DeviceForm>({
@@ -526,7 +526,11 @@ export function UserRegisterDevice({userService}: UserMainProps) {
     };
 
     const deviceTypeChanged = (event: SelectChangeEvent) => {
-        setDeviceType(event.target.value as string);
+        const value = event.target.value as string;
+        setDeviceType(value);
+        if (value == 'solarPanelSystem' || value == 'battery') {
+            setEnergySource('autonomous');
+        }
     }
 
     /* AC checkboxes */
@@ -1052,6 +1056,7 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                                        })}
                                    error={!!errors.energyExpenditure}
                                    helperText={errors.energyExpenditure ? errors.energyExpenditure?.message : "Required"}
+                                   disabled={energySource === 'autonomous'}
                                    variant="outlined"/>
                     </Grid>
                 </Grid>
@@ -1069,7 +1074,8 @@ export function UserRegisterDevice({userService}: UserMainProps) {
                         >
                             <FormControlLabel value="autonomous" control={<Radio/>}
                                               label="Autonomous"/>
-                            <FormControlLabel value="house" control={<Radio/>} label="House"/>
+                            <FormControlLabel value="house" control={<Radio/>} label="House"
+                                              disabled={deviceType == 'solarPanelSystem' || deviceType == 'battery'}/>
                         </RadioGroup>
                     </FormControl>
                 </Grid>

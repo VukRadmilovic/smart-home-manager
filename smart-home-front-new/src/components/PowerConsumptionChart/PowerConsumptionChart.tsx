@@ -25,7 +25,7 @@ interface PowerConsumptionChartProps {
 
 type ChartDataShort = {
     timestamp: Date,
-    value: number,
+    value: number | null,
 }
 
 export function PowerConsumptionChart({userService, deviceService} : PowerConsumptionChartProps) {
@@ -40,31 +40,6 @@ export function PowerConsumptionChart({userService, deviceService} : PowerConsum
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
     const propertyId = String(location.pathname.split('/').pop());
 
-    const onMessageReceived = (payload) => {
-        console.log('test2');
-        const val: ChartData = JSON.parse(payload.body);
-        const newVal: ChartDataShort = {
-            timestamp: new Date(+val.timestamp),
-            value: val.value,
-        };
-        console.log('test3');
-        setLatestConsumption("Latest Value: " + newVal.value.toFixed(3) + "kWh")
-        setConsumptionData((prevConsumptionData) => {
-            if (prevConsumptionData.length > 0) {
-                if (newVal.timestamp.getTime() - prevConsumptionData[0].timestamp.getTime() > 3900000)
-                    prevConsumptionData.shift();
-                if (newVal.timestamp.getTime() - prevConsumptionData[prevConsumptionData.length - 1].timestamp.getTime() > 60000) {
-                    const nullVal: ChartDataShort = {
-                        timestamp: new Date(val.timestamp),
-                        value: null
-                    }
-                    prevConsumptionData.push(nullVal)
-                }
-            }
-
-            return [...prevConsumptionData, newVal];
-        });
-    }
     const connectSocket = () => {
         try {
             const webChatUrl = "http://localhost:80/realtime";
@@ -136,10 +111,11 @@ export function PowerConsumptionChart({userService, deviceService} : PowerConsum
                 data.push(newVal);
             })
             let downsampled : ChartDataShort[] = data;
+            console.log('data length: ' + data.length);
             if(data.length > 60)
                 downsampled = downsample(data,60);
-               setConsumptionData(downsampled);
-               setLatestConsumption("Latest Value: " + downsampled[downsampled.length - 1].value.toFixed(3) + "kWh");
+            setConsumptionData(downsampled);
+            setLatestConsumption("Latest Value: " + downsampled[downsampled.length - 1].value!.toFixed(3) + "kWh");
             setIsLoading(false);
         })).catch((err) => {
             console.log(err);
@@ -168,6 +144,37 @@ export function PowerConsumptionChart({userService, deviceService} : PowerConsum
             navigate("/")
         }
     });
+
+    const [ordinalPowerConsumption, setOrdinalPowerConsumption] = React.useState<number>(0);
+    const onMessageReceived = (payload) => {
+        const timestamp = new Date();
+        console.log('test2');
+        const val: ChartData = JSON.parse(payload.body);
+        const newVal: ChartDataShort = {
+            timestamp: new Date(+val.timestamp),
+            value: val.value,
+        };
+        console.log('test3');
+        console.log(ordinalPowerConsumption + ". " + timestamp);
+        setOrdinalPowerConsumption(ordinalPowerConsumption + 1);
+        setLatestConsumption("Latest Value: " + newVal.value!.toFixed(3) + "kWh")
+        setConsumptionData((prevConsumptionData) => {
+            console.log(prevConsumptionData.length + " " + newVal.timestamp.getTime() + " " + prevConsumptionData[prevConsumptionData.length - 1].timestamp.getTime() + " " + (newVal.timestamp.getTime() - prevConsumptionData[prevConsumptionData.length - 1].timestamp.getTime()));
+            if (prevConsumptionData.length > 0) {
+                if (newVal.timestamp.getTime() - prevConsumptionData[0].timestamp.getTime() > 3900000)
+                    prevConsumptionData.shift();
+                if (newVal.timestamp.getTime() - prevConsumptionData[prevConsumptionData.length - 1].timestamp.getTime() > 720000) {
+                    const nullVal: ChartDataShort = {
+                        timestamp: new Date(val.timestamp),
+                        value: null
+                    }
+                    prevConsumptionData.push(nullVal)
+                }
+            }
+
+            return [...prevConsumptionData, newVal];
+        });
+    }
 
     const handleErrorPopupClose = (reason?: string) => {
         if (reason === 'clickaway') return;
@@ -213,7 +220,7 @@ export function PowerConsumptionChart({userService, deviceService} : PowerConsum
                             <ResizableBox height={300} width={1100}>
                                 <LineChart
                                     series={[
-                                        { dataKey:'value', showMark: false, label: ('Power consumption (kWh)\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + latestConsumption), color:'#59a14f' },
+                                        { dataKey:'value', showMark: false, label: ('Power consumption (kWh)\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + latestConsumption) as string, color:'#59a14f' },
                                     ]}
                                     xAxis={[{ scaleType:'time', dataKey:'timestamp', label:'Time' }]}
                                     dataset={consumptionData}
