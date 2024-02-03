@@ -151,15 +151,7 @@ public class ThermometerThread implements Runnable {
 
         try {
             this.mqttService.publishMessageLite(msgTemp,"measurements");
-            if(this.thermometer.getId() == 1001) {
-                System.out.println("Sent TEMPERATURE (" + tempOrdinal + ") - " + new Date());
-                tempOrdinal += 1;
-            }
             this.mqttService.publishMessageLite(msgHumidity,"measurements");
-            if(this.thermometer.getId() == 1001) {
-                System.out.println("Sent HUMIDITY (" + humOrdinal + ") - " + new Date());
-                humOrdinal += 1;
-            }
 
             if (count % 2 == 0) {
                 count = 1;

@@ -30,6 +30,7 @@ public class ACThread implements Runnable {
     private boolean hasConfigChanged = true;
     private int onOffOrdinal = 1;
     private int changeOrdinal = 1;
+    private int stateOrdinal = 1;
     private int schedulesOrdinal = 1;
     private final Map<Long, ScheduledFuture<?>> scheduledThread = new ConcurrentHashMap<>();
     private final Map<Long,Scheduled> scheduledDetails = new ConcurrentHashMap<>();
@@ -37,6 +38,7 @@ public class ACThread implements Runnable {
     private final AtomicLong scheduledThreadCount = new AtomicLong(0);
     private final int INTERVAL = 5;
     private double powerConsumption = -1;
+    private final int id = 1001;
 
     private class MqttACMessageCallback implements MqttCallback {
 
@@ -385,6 +387,10 @@ public class ACThread implements Runnable {
 
     private void publishSchedulesLite(String message) throws MqttException {
         this.mqttConfiguration.getClient().publish("scheduled", new MqttMessage(message.getBytes()));
+        if(ac.getId() == id) {
+            System.out.println("Sent SCHEDULES (" + schedulesOrdinal + ") - " + new Date());
+            schedulesOrdinal += 1;
+        }
     }
 
     private void publishOnOff(String message) throws MqttException {
@@ -402,6 +408,10 @@ public class ACThread implements Runnable {
     private void publishStateMessage(ACStateChange state) {
         try {
             this.mqttConfiguration.getClient().publish("states", new MqttMessage(mapper.writeValueAsString(state).getBytes()));
+            if(ac.getId() == id) {
+                System.out.println("Sending " + state.getChange() + " (" + stateOrdinal + ") - " + new Date());
+                stateOrdinal += 1;
+            }
         }
         catch (Exception ex) {
             System.out.println(ex.getMessage());

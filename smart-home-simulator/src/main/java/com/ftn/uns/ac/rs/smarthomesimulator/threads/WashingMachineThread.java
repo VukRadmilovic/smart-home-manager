@@ -25,6 +25,8 @@ public class WashingMachineThread implements Runnable {
     private WMCommand settings;
     private boolean isOff = true;
     private MqttConfiguration mqttConfiguration;
+    private final int id = 1001;
+    private String sent = "";
 
     private final Map<WMMode, Integer> modeInMinutesDuration = new HashMap<>() {{
        put(WMMode.COTTONS, 90);
@@ -50,6 +52,7 @@ public class WashingMachineThread implements Runnable {
 
     private int onOffOrdinal = 1;
     private int scheduleOrdinal = 1;
+    private int stateOrdinal = 1;
 
     private class MqttWMMessageCallback implements MqttCallback {
 
@@ -66,11 +69,12 @@ public class WashingMachineThread implements Runnable {
                 WMCommand receivedCommand = mapper.readValue(message, WMCommand.class);
                 CommandType commandType = receivedCommand.getCommandType();
                 if(commandType == CommandType.ON) {
-                    if(wm.getId() == 1001) {
+                    if(wm.getId() == id) {
                         System.out.println("Received ON (" + onOffOrdinal + ") - " + new Date());
                         onOffOrdinal += 1;
                     }
                     publishOn(receivedCommand);
+                    sent = "ON";
                     isOff = false;
                     settings = receivedCommand;
                     scheduler.schedule( () -> {
@@ -84,25 +88,28 @@ public class WashingMachineThread implements Runnable {
                 }
 
                 else if(commandType == CommandType.CANCEL_SCHEDULED) {
-                    if(wm.getId() == 1001) {
+                    if(wm.getId() == id) {
                         System.out.println("Received CANCEL (" + scheduleOrdinal + ") - " + new Date());
                         scheduleOrdinal += 1;
                     }
+                    sent = "CANCEL";
                     removeScheduledThread(receivedCommand);
                     getSchedules();
                 }
                 else if(commandType == CommandType.GET_SCHEDULES) {
-                    if(wm.getId() == 1001) {
+                    if(wm.getId() == id) {
                         System.out.println("Received GET SCHEDULES (" + scheduleOrdinal + ") - " + new Date());
                         scheduleOrdinal += 1;
                     }
+                    sent = "GET SCHEDULES";
                     getSchedules();
                 }
                 else {
-                    if(wm.getId() == 1001) {
+                    if(wm.getId() == id) {
                         System.out.println("Received SCHEDULE (" + scheduleOrdinal + ") - " + new Date());
                         scheduleOrdinal += 1;
                     }
+                    sent = "SCHEDULE";
                     scheduleThread(receivedCommand);
                     getSchedules();
                 }
@@ -113,7 +120,11 @@ public class WashingMachineThread implements Runnable {
         }
 
         @Override
-        public void deliveryComplete(IMqttToken iMqttToken) {}
+        public void deliveryComplete(IMqttToken iMqttToken) {
+           if(wm.getId() == id) {
+                System.out.println("SENT " + new Date());
+           }
+        }
 
         @Override
         public void connectComplete(boolean b, String s) {}
@@ -137,7 +148,7 @@ public class WashingMachineThread implements Runnable {
     @Override
     public void run() {
         try {
-            mqttConfiguration.getClient().subscribe("command/wm/" + wm.getId(), 2);
+            mqttConfiguration.getClient().subscribe("command/wm/" + wm.getId(), 0);
             loop();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -173,7 +184,7 @@ public class WashingMachineThread implements Runnable {
             this.mqttConfiguration.getClient().publish("consumed", new MqttMessage(message.getBytes()));
         } catch (MqttException e) {
             e.printStackTrace();
-            log.error("Error while sending power consumption: " + e.getMessage());
+            //log.error("Error while sending power consumption: " + e.getMessage());
         }
     }
 
@@ -291,6 +302,7 @@ public class WashingMachineThread implements Runnable {
         catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
+        System.out.println(schedules);
     }
 
     private void publishMessageLite(String message) throws MqttException {
@@ -299,11 +311,15 @@ public class WashingMachineThread implements Runnable {
 
     private void publishSchedulesLite(String message) throws MqttException {
         this.mqttConfiguration.getClient().publish("scheduled", new MqttMessage(message.getBytes()));
+        if(wm.getId() == id) {
+            System.out.println("Sent SCHEDULES (" + scheduleOrdinal + ") - " + new Date());
+            scheduleOrdinal += 1;
+        }
     }
 
     private void publishOnOff(String message) throws MqttException {
         this.mqttConfiguration.getClient().publish("status/wm", new MqttMessage(message.getBytes()));
-        if(wm.getId() == 1001) {
+        if(wm.getId() == id) {
             System.out.println("Sending STATUS (" + onOffOrdinal + ") - " + new Date());
             onOffOrdinal += 1;
         }
@@ -316,6 +332,10 @@ public class WashingMachineThread implements Runnable {
     private void publishStateMessage(ACStateChange state) {
         try {
             this.mqttConfiguration.getClient().publish("states", new MqttMessage(mapper.writeValueAsString(state).getBytes()));
+            if(wm.getId() == id) {
+                System.out.println("Sending " + sent + "(" + stateOrdinal + ") - " + new Date());
+                stateOrdinal += 1;
+            }
         }
         catch (Exception ex) {
             System.out.println(ex.getMessage());

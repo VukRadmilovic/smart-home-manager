@@ -106,6 +106,8 @@ export function WashingMachineRemote ({open,handleClose, deviceId, openSocket} :
     const [canChange, setCanChange] = React.useState<boolean>(true);
     const [disableTemp, setDisableTemp] = React.useState<boolean>(false);
     const [disableCent, setDisableCent] = React.useState<boolean>(false);
+    const onOffOrdinal = React.useRef(1);
+    const schedulesOrdinal= React.useRef(1);
     const defaultParams : WashingMachineCommandParams = {
         userId: -1,
         unit: 'C',
@@ -145,6 +147,8 @@ export function WashingMachineRemote ({open,handleClose, deviceId, openSocket} :
                 }
             }
             client.current!.send("/app/command/wm", {}, JSON.stringify(command));
+            console.log("Sent CANCEL (" + schedulesOrdinal.current + ") - " + new Date());
+            schedulesOrdinal.current += 1;
         });
     }
 
@@ -247,6 +251,8 @@ export function WashingMachineRemote ({open,handleClose, deviceId, openSocket} :
                     client.current!.subscribe('/wm/freshest/' + deviceId, onMessageReceived);
                     client.current!.subscribe("/wm/status/" + deviceId, onStatusReceived);
                     client.current!.send("/app/capabilities/wm", {}, deviceId.toString());
+                    console.log("Sent CAPABILITIES - " + new Date());
+
                     client.current!.subscribe("/ac/schedules/" + deviceId,onSchedulesReceived);
                     client.current!.subscribe("/wm/capabilities/" + deviceId,onCapabilitiesReceived);
                     getSchedules();
@@ -263,6 +269,8 @@ export function WashingMachineRemote ({open,handleClose, deviceId, openSocket} :
     };
 
     const onSchedulesReceived = (payload : Message) => {
+        console.log("Received SCHEDULES (" + schedulesOrdinal.current + ") - " + new Date());
+        schedulesOrdinal.current += 1;
         const schedules : Scheduled[] = JSON.parse(payload.body);
         setSchedules(schedules);
     }
@@ -284,8 +292,12 @@ export function WashingMachineRemote ({open,handleClose, deviceId, openSocket} :
             commandParams: params
         }
         client.current!.send("/app/command/wm", {}, JSON.stringify(command));
+        console.log("Sent SCHEDULES GET (" + schedulesOrdinal.current + ") - " + new Date());
+        schedulesOrdinal.current += 1;
     }
     const onStatusReceived = (payload : Message) => {
+        console.log("Received STATUS (" + onOffOrdinal.current + ") - " + new Date());
+        onOffOrdinal.current += 1;
         lastStatusReceived.current = new Date().getTime();
         setInterval(() => {
             if(Math.abs(lastStatusReceived.current - new Date().getTime()) >= 30 * 1000) {
@@ -323,6 +335,7 @@ export function WashingMachineRemote ({open,handleClose, deviceId, openSocket} :
     }
 
     const onCapabilitiesReceived = (payload : Message) => {
+        console.log("Received CAPABILITIES - " + new Date());
         const capabilities  = JSON.parse(payload.body);
         const map = new Map<string,string>();
         for(let val in capabilities.capabilities) {
@@ -354,6 +367,7 @@ export function WashingMachineRemote ({open,handleClose, deviceId, openSocket} :
     const onMessageReceived = (payload : Message) => {
         const val : WashingMachineValueDigest =  JSON.parse(payload.body);
         setCurrentState(val);
+        setModeName(val.mode)
         if(val.mode == "RINSE_SPIN")
             setModeName("RINSE & SPIN");
         if(val.mode == "SPIN_ONLY")
@@ -400,6 +414,8 @@ export function WashingMachineRemote ({open,handleClose, deviceId, openSocket} :
             commandParams: params
         }
         client.current!.send("/app/command/wm", {}, JSON.stringify(command));
+        console.log("Send ON (" + onOffOrdinal.current + ") - " + new Date());
+        onOffOrdinal.current  += 1;
         currentConfig.commandType = commandType;
         setIsCommandSuccess(1);
     }
@@ -445,6 +461,8 @@ export function WashingMachineRemote ({open,handleClose, deviceId, openSocket} :
             commandParams: params
         }
         client.current!.send("/app/command/wm", {}, JSON.stringify(command));
+        console.log("Sent SCHEDULE (" + schedulesOrdinal.current + ") - " + new Date());
+        schedulesOrdinal.current += 1;
         setIsScheduleSuccess(1);
     }
 

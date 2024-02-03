@@ -203,7 +203,7 @@ class Test(HttpUser):
     @tag("scene9")
     @task
     def device_and_commands_history_retrieval(self):
-        user = random.randint(1, 100002)
+        user = random.randint(1, 1000002)
         login = {
                 "username": "username" + str(user),
                 "password" : "password123"
@@ -232,9 +232,9 @@ class Test(HttpUser):
         users = []
         for i in range(times):
             if random.randint(0,1) == 0:
-                deviceId = random.randint(10002, 20003)
+                deviceId = random.randint(100002, 200003)
             else:
-                deviceId = random.randint(80016, 90017)
+                deviceId = random.randint(800016, 900017)
             if first_fetch:
                 commands_url = "/api/devices/commands?from=0&to=2147483646&page=0&size=100&firstFetch=true&userId=-1&deviceId=" + str(deviceId)
             else:

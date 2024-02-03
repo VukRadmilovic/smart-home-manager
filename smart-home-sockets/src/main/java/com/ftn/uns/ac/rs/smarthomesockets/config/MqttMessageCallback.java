@@ -95,7 +95,7 @@ public class MqttMessageCallback implements MqttCallback {
         }
         else if(topic.contains("scheduled")) {
             SchedulesPerUser schedules = jsonMapper.readValue(message, SchedulesPerUser.class);
-         //   messagingTemplate.convertAndSend("/ac/schedules/" + schedules.getDeviceId(),schedules.getSchedules());
+            messagingTemplate.convertAndSend("/ac/schedules/" + schedules.getDeviceId(),schedules.getSchedules());
         } else {
             String[] data = message.split(",");
             String valueWithUnit = data[1];

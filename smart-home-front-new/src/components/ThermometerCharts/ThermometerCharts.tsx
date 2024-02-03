@@ -164,8 +164,8 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
             measurementName: measurement
         }
         deviceService.getDeviceMeasurements(request).then(response => {
-            console.log(response)
             if (response.length == 0) {
+                setIsLoading(false);
                 return;
             }
             const data : ChartDataShort[] = [];
@@ -218,8 +218,8 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
             navigate("/")
         }
     });
-    const [ordinalTemp, setOrdinalTemp] = React.useState<number>(1);
-    const [ordinalHum, setOrdinalHum] = React.useState<number>(1);
+    const ordinalTemp = React.useRef(1);
+    const ordinalHum = React.useRef(1);
     const onMessageReceived = (payload : Message) => {
         const timestamp = new Date();
         const val : ChartData =  JSON.parse(payload.body);
@@ -228,8 +228,8 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
             value: val.value,
         };
         if(val.name == "temperature"){
-            console.log(ordinalTemp + ". (temp) - " + timestamp);
-            setOrdinalTemp(ordinalTemp + 1);
+            console.log("Received TEMPERATURE (" + ordinalTemp.current + " - " + timestamp);
+            ordinalTemp.current += 1;
             if(val.tags['unit'] != units.current) {
                 if(val.tags['unit'] == "C")
                     newVal.value = (val.value * 9/5) + 32
@@ -255,8 +255,8 @@ export function ThermometerCharts({userService, deviceService} : ThermometerChar
             });
         }
         else {
-            console.log(ordinalHum + ". (hum) - " + timestamp);
-            setOrdinalHum(ordinalHum + 1);
+            console.log("Received HUMIDITY (" + ordinalHum.current + " - " + timestamp);
+            ordinalHum.current += 1;
             setLatestHum("Latest Value: " + newVal.value!.toFixed(3) + "%")
             setHumidityData((prevHumData) => {
                 if(prevHumData.length > 0 ) {

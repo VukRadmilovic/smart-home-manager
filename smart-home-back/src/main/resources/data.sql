@@ -14,7 +14,7 @@ SELECT CONCAT(substr(md5(random()::text), 1, 10), '@mail.com'),
 	   'http://127.0.0.1:9000/images/profilePictures/admin.jpg',
         CONCAT('username',i::text),
        '$2a$10$RkfUMnbazK4E7Uuyqf2fSe.3iVOa/vQB9dAi66ORgzFba1paXp58S'
-FROM generate_series(1, 1000000) i;
+FROM generate_series(1, 1000) i;
 
 INSERT INTO users (email, is_confirmed, name, surname, profile_picture, username, password)
 VALUES ('maya.grudge.12@gmail.com',true, 'Maja', 'Varga', 'http://127.0.0.1:9000/images/profilePictures/admin.jpg', 'maja','$2a$10$RkfUMnbazK4E7Uuyqf2fSe.3iVOa/vQB9dAi66ORgzFba1paXp58S');
@@ -24,7 +24,7 @@ VALUES ('marina.grudge.12@gmail.com',true, 'Marina', 'Varga', 'http://127.0.0.1:
 
 INSERT INTO user_role (user_id, role_id)
 SELECT i,3
-FROM generate_series(1, 1000002) i;
+FROM generate_series(1, 1002) i;
 
 
 INSERT INTO properties (address, floors, name, picture, property_type, size, status, owner_id)
@@ -35,8 +35,8 @@ SELECT 'TestAddress',
 		0,
 		'100',
 		0,
-		floor(random() * 100000 + 1)
-FROM generate_series(1,100000);
+		floor(random() * 1000 + 1)
+FROM generate_series(1,1000);
 
 INSERT INTO properties (address, floors, name, picture, property_type, size, status, owner_id)
 VALUES ('TestAddress',
@@ -46,10 +46,10 @@ VALUES ('TestAddress',
 		0,
 		'100',
 		0,
-		1000001);
+		1001);
 
 
-INSERT INTO thermometers (id, energy_consumption, image, name, online, power_source, still_there, property_id,temperature_unit)
+/*INSERT INTO thermometers (id, energy_consumption, image, name, online, power_source, still_there, property_id,temperature_unit)
 SELECT 
 		i,
 		5,
@@ -58,24 +58,38 @@ SELECT
 	   FALSE,
 	   'AUTONOMOUS',
 	   FALSE,
-	   floor(random() * 100000 + 1),
+	   floor(random() * 1000 + 1),
 	   'CELSIUS'
-FROM generate_series(1, 100000) i;
+FROM generate_series(1, 10000) i;
 
 
 INSERT INTO thermometers (id, energy_consumption, image, name, online, power_source, still_there, property_id,temperature_unit)
-VALUES( 100001,
+VALUES( 10001,
 		5,
 	   'http://127.0.0.1:9000/images/profilePictures/admin.jpg',
 	   CONCAT('Thermometer ', substr(md5(random()::text), 1, 10)),
 	   FALSE,
 	   'AUTONOMOUS',
 	   FALSE,
-	   100001,
+	   1001,
 	   'CELSIUS');
 
 
 INSERT INTO washing_machines
+VALUES (
+           1001,
+           30,
+           'http://127.0.0.1:9000/images/profilePictures/admin.jpg',
+           CONCAT('Washing Machine ', substr(md5(random()::text), 1, 10)),
+           FALSE,
+           'HOUSE',
+           FALSE,
+           1001,
+           1400,
+           1200,
+           TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, 30, 90, 'CELSIUS', TRUE);
+
+INSERT INTO washing_machines
 SELECT 
 		i,
 		30,
@@ -84,28 +98,16 @@ SELECT
 	   FALSE,
 	   'HOUSE',
 	   FALSE,
-	   floor(random() * 100000 + 1),
+	   floor(random() * 1000 + 1),
 	   1400,
 	   800,
 	   TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, 30, 90, 'CELSIUS', TRUE
-FROM generate_series(100002, 200002) i;
+FROM generate_series(1002, 2002) i;*/
 
 
-INSERT INTO washing_machines
-VALUES ( 
-		200003,
-		30,
-	   'http://127.0.0.1:9000/images/profilePictures/admin.jpg',
-	   CONCAT('Washing Machine ', substr(md5(random()::text), 1, 10)),
-	   FALSE,
-	   'HOUSE',
-	   FALSE,
-	   100001,
-	   1400,
-	   1200,
-	   TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, 30, 90, 'CELSIUS', TRUE);
 
-INSERT INTO sprinkler_systems
+
+/*INSERT INTO sprinkler_systems
 SELECT 
 		i,
 		18,
@@ -276,8 +278,20 @@ VALUES (800015,
 	   FALSE,
 	   100001,
 	   100.0,
-	   0.0);
+	   0.0);*/
 
+
+INSERT INTO air_conditioners
+VALUES (1001,
+		50,
+	   'http://127.0.0.1:9000/images/profilePictures/admin.jpg',
+	   CONCAT('Air Conditioner ', substr(md5(random()::text), 1, 10)),
+	   FALSE,
+	   'HOUSE',
+	   FALSE,
+	   1001,
+	   TRUE, TRUE, TRUE, 3, TRUE, TRUE, TRUE, FALSE, 40, 16, 'CELSIUS');
+	   
 
 INSERT INTO air_conditioners
 SELECT 
@@ -288,27 +302,18 @@ SELECT
 	   FALSE,
 	   'HOUSE',
 	   FALSE,
-	   floor(random() * 100000 + 1),
+	   floor(random() * 1000 + 1),
 	   TRUE, TRUE, TRUE, 3, TRUE, TRUE, TRUE, FALSE, 40, 16, 'CELSIUS'
-FROM generate_series(800016, 900016) i;
+FROM generate_series(1, 1000) i;
 
 
-INSERT INTO air_conditioners
-VALUES (900017,
-		50,
-	   'http://127.0.0.1:9000/images/profilePictures/admin.jpg',
-	   CONCAT('Air Conditioner ', substr(md5(random()::text), 1, 10)),
-	   FALSE,
-	   'HOUSE',
-	   FALSE,
-	   100001,
-	   TRUE, TRUE, TRUE, 3, TRUE, TRUE, TRUE, FALSE, 40, 16, 'CELSIUS');
 
 
-INSERT INTO device_control (device_id, owner_id) VALUES (100001, 1000002), (200003, 1000002), (900017, 1000002);
+
+/*INSERT INTO device_control (device_id, owner_id) VALUES (100001, 1000002), (200003, 1000002), (900017, 1000002);
 INSERT INTO device_control (device_id, owner_id)
 SELECT
     floor(random() * (900016-1+1) + 1)::int,
     floor(random() * (1000002-2+1) + 2)::int
-FROM generate_series(1, 100000);
+FROM generate_series(1, 100000);*/
 

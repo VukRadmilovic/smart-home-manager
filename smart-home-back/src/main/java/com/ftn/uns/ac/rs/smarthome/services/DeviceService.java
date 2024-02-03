@@ -148,7 +148,9 @@ public class DeviceService implements IDeviceService {
         }
         List<CommandSummary> commands = new ArrayList<>();
         List<UserIdUsernamePair> allUsers = new ArrayList<>();
+        System.out.println("start");
         List<CommandSummaryInternal> commandsInternal = influxService.findPaginatedByTimeSpanAndUserIdAndDeviceId(request);
+        System.out.println("stop");
         for(CommandSummaryInternal command : commandsInternal) {
             String commandDesc = "";
             if (command.getCommand().equals(ChargerState.START_CHARGE.toString())) {
@@ -213,7 +215,9 @@ public class DeviceService implements IDeviceService {
                     commandDesc += " (repeats every day)";
             }
             if(!command.getTags().get("userId").equals("0")) {
+                System.out.println("start user");
                 UserInfoDTO user = userService.getUserInfo(Integer.parseInt(command.getTags().get("userId")));
+                System.out.println("end user");
                 commands.add(new CommandSummary(command.getTimestamp().getTime(), user.getUsername() + " (" + user.getName() +  " " + user.getSurname() +")", commandDesc));
             }
             else {
@@ -221,10 +225,14 @@ public class DeviceService implements IDeviceService {
             }
         }
         if(request.getFirstFetch()) {
+            System.out.println("start user distinct");
             List<Integer> allUserIds = this.influxService.findAllDistinctUsersForAllRecords(request.getDeviceId());
+            System.out.println("stop user distinct");
             for(Integer id : allUserIds) {
                 if(id == 0) continue;
+                System.out.println("start user info");
                 UserInfoDTO userInfo = this.userService.getUserInfo(id);
+                System.out.println("end user info");
                 allUsers.add(new UserIdUsernamePair(id,userInfo.getUsername() + " (" + userInfo.getName() +  " " + userInfo.getSurname() +")"));
             }
             allUsers.add(new UserIdUsernamePair(0,"Device"));

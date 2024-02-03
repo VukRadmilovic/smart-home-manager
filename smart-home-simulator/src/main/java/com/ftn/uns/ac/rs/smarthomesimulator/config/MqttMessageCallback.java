@@ -37,14 +37,12 @@ public class MqttMessageCallback implements MqttCallback {
     }
 
     @Override
-    public void deliveryComplete(IMqttToken iMqttToken) {
-        //System.out.println("Delivery complete, message ID: " + iMqttToken.getMessageId());
+    public void deliveryComplete(IMqttToken iMqttToken) {    
     }
 
     @Override
     public void connectComplete(boolean b, String s) {
-
-        //System.out.println("Connect complete, status:" + b + " " + s);
+        System.out.println("Connect complete, status:" + b + " " + s);
     }
 
     @Override

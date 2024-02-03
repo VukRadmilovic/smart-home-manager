@@ -210,6 +210,7 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
                 }
             }
             client.current!.send("/app/command/ac", {}, JSON.stringify(command));
+            console.log("Sent CANCEL (" + schedulesOrdinal + ") - " + new Date());
         });
     }
 
@@ -300,6 +301,8 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
     };
 
     const onSchedulesReceived = (payload : Message) => {
+        console.log("Received SCHEDULES (" + schedulesOrdinal + ") - " + new Date());
+        setSchedulesOrdinal(schedulesOrdinal + 1);
         const schedules : Scheduled[] = JSON.parse(payload.body);
         setSchedules(schedules);
     }
@@ -326,8 +329,12 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
             commandParams: params
         }
         client.current!.send("/app/command/ac", {}, JSON.stringify(command));
+        console.log("Sent GET SCHEDULES (" + schedulesOrdinal + ") - " + new Date());
+        setSchedulesOrdinal(schedulesOrdinal + 1);
     }
     const onStatusReceived = (payload : Message) => {
+        console.log("Received STATUS (" + onOffOrdinal + ") - " + new Date());
+        setOnOffOrdinal(onOffOrdinal + 1);
         lastStatusReceived.current = new Date().getTime();
         setInterval(() => {
            if(Math.abs(lastStatusReceived.current - new Date().getTime()) >= 30 * 1000) {
@@ -451,6 +458,8 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
             commandParams: params
         }
         client.current!.send("/app/command/ac", {}, JSON.stringify(command));
+        console.log("Sent CHANGE (" + changeOrdinal + ") - " + new Date());
+        setChangeOrdinal(changeOrdinal + 1);
         currentConfig.commandType = commandType;
         setIsCommandSuccess(1);
     }
@@ -504,6 +513,8 @@ export function AirConditionerRemote ({open,handleClose, deviceId, openSocket} :
             commandParams: params
         }
         client.current!.send("/app/command/ac", {}, JSON.stringify(command));
+        console.log("Sent SCHEDULE (" + schedulesOrdinal + ") - " + new Date());
+        setSchedulesOrdinal(schedulesOrdinal + 1);
         setIsScheduleSuccess(1);
     }
 
