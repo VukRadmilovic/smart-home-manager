@@ -192,7 +192,7 @@ public class PropertyService implements IPropertyService {
     public List<Integer> getPropertyIdsByCityId(Integer id) {
         Optional<Town> town = townRepository.findById(id);
         if (town.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("town.notExisting", null, Locale.getDefault()));
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, messageSource.getMessage("town.notExisting", null, Locale.getDefault()));
         }
         List<Property> properties = town.get().getProperties();
         logger.info(properties.toString());

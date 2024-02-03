@@ -66,6 +66,7 @@ paths:
         - name: id
           in: path
           required: true
+          description: ID of the solar panel system
           schema:
             type: integer
             format: int32
@@ -101,6 +102,7 @@ paths:
         - name: id
           in: path
           required: true
+          description: ID of the solar panel system
           schema:
             type: integer
             format: int32
@@ -1120,6 +1122,90 @@ paths:
               schema:
                 type: string
               example: Device not found!
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /api/devices/powerMeasurements:
+    get:
+      tags:
+        - device-controller
+      operationId: getPowerMeasurements
+      security:
+        - bearerAuth: []
+      description: Endpoint for retrieving all the power-related measurements collected for the specified city in the specified time span of the specified measurement type.
+      parameters:
+        - name: from
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: Timestamp marking the start of the desired time span
+        - name: to
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: Timestamp marking the end of the desired time span
+        - name: cityId
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+          description: ID of the city
+        - name: measurement
+          in: query
+          required: true
+          description: Measurement type name
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful measurements retrieval. Return value is a stream of packages containing up to 5000 measurement values each.
+          content:
+            text/event-stream:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Measurement'
+              example:
+                - name: 'powerConsumption'
+                  value: 0.5
+                  timestamp: '2024-01-29T17:10:25.544Z'
+                  tags:
+                    unit: kWh
+                - name: 'powerConsumption'
+                  value: 1.0
+                  timestamp: '2024-01-29T17:11:25.544Z'
+                  tags:
+                    unit: kWh
+                - name: 'powerProduction'
+                  value: 1.0
+                  timestamp: '2024-01-29T17:10:25.544Z'
+                  tags:
+                    unit: kWh
+                - name: 'powerProduction'
+                  value: 1.2
+                  timestamp: '2024-01-29T17:11:25.544Z'
+                  tags:
+                    unit: kWh
+        '400':
+          description: Error caused by invalid date range.
+          content:
+            'text/plain':
+              schema:
+                type: string
+              example: Date range invalid!
+        '404':
+          description: Error caused by the city not existing.
+          content:
+            'text/plain':
+              schema:
+                type: string
+              example: Town does not exist!
         '401':
           $ref: '#/components/responses/UnauthorizedError'
   /api/devices/commands:
