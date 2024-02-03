@@ -6,11 +6,11 @@ INSERT INTO TOWNS (ID, NAME) VALUES(1, 'Novi Sad') ON CONFLICT (ID) DO NOTHING;
 INSERT INTO TOWNS (ID, NAME) VALUES(2, 'Beograd') ON CONFLICT (ID) DO NOTHING;
 INSERT INTO TOWNS (ID, NAME) VALUES(3, 'Sombor') ON CONFLICT (ID) DO NOTHING;
 
-INSERT INTO users (email, is_confirmed, name, surname, profile_picture, username, password)
-VALUES ('2001vuk2@gmail.com', true, 'Vuk', 'Radmilovic', 'http://127.0.0.1:9000/images/profilePictures/admin.jpg', 'vuk2', '$2a$10$nExLq9vNH8vOk0Aq6H4PW.0RcdVoK95/twx0bUD.sFp96gTABg4da');
+INSERT INTO users (email, is_confirmed, name, surname, profile_picture, username, password, full_text)
+VALUES ('2001vuk2@gmail.com', true, 'Vuk', 'Radmilovic', 'http://127.0.0.1:9000/images/profilePictures/admin.jpg', 'vuk2', '$2a$10$nExLq9vNH8vOk0Aq6H4PW.0RcdVoK95/twx0bUD.sFp96gTABg4da', 'vuk2 vuk radmilovic');
 
-INSERT INTO users (email, is_confirmed, name, surname, profile_picture, username, password)
-VALUES ('2001vuk@gmail.com', true, 'Vuk', 'Radmilovic', 'http://127.0.0.1:9000/images/profilePictures/admin.jpg', 'vuk', '$2a$10$nExLq9vNH8vOk0Aq6H4PW.0RcdVoK95/twx0bUD.sFp96gTABg4da');
+INSERT INTO users (email, is_confirmed, name, surname, profile_picture, username, password, full_text)
+VALUES ('2001vuk@gmail.com', true, 'Vuk', 'Radmilovic', 'http://127.0.0.1:9000/images/profilePictures/admin.jpg', 'vuk', '$2a$10$nExLq9vNH8vOk0Aq6H4PW.0RcdVoK95/twx0bUD.sFp96gTABg4da', 'vuk vuk radmilovic');
 
 INSERT INTO user_role (user_id, role_id)
 VALUES ((SELECT id FROM users WHERE username = 'vuk'), (SELECT id FROM role WHERE name = 'ROLE_USER'));
