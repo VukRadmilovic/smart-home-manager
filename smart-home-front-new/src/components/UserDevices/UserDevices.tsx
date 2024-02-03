@@ -215,30 +215,44 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
     });
 
     async function turnSolarPanelOn(id: number) {
-        await axios.put('http://localhost:80/api/devices/sps/' + id + '/on', {}, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-                'Authorization': 'Bearer ' + sessionStorage.getItem('user')
-            },
-        });
+        try {
+            await axios.put('http://localhost:80/api/devices/sps/' + id + '/on', {}, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('user')
+                },
+            });
 
-        setErrorMessage("Solar panel turned on.");
-        setIsSuccess(true);
-        setErrorPopupOpen(true);
+            setErrorMessage("Solar panel turned on.");
+            setIsSuccess(true);
+            setErrorPopupOpen(true);
+        } catch (err) {
+            setErrorMessage(err.response?.data || "An error occurred while turning solar panel on.");
+            setIsSuccess(false);
+            setErrorPopupOpen(true);
+        }
+
         return;
     }
 
     async function turnSolarPanelOff(id: number) {
-        await axios.put('http://localhost:80/api/devices/sps/' + id + '/off', {}, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-                'Authorization': 'Bearer ' + sessionStorage.getItem('user')
-            },
-        });
+        try {
+            await axios.put('http://localhost:80/api/devices/sps/' + id + '/off', {}, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('user')
+                },
+            });
 
-        setErrorMessage("Solar panel turned off.");
-        setIsSuccess(true);
-        setErrorPopupOpen(true);
+            setErrorMessage("Solar panel turned off.");
+            setIsSuccess(true);
+            setErrorPopupOpen(true);
+        } catch (err) {
+            setErrorMessage(err.response?.data || "An error occurred while turning solar panel off.");
+            setIsSuccess(false);
+            setErrorPopupOpen(true);
+        }
+        
         return;
     }
 

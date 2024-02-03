@@ -61,6 +61,7 @@ paths:
       tags:
         - device-controller
       operationId: turnOnSolarPanelSystem
+      description: Endpoint for turning on a solar panel system.
       parameters:
         - name: id
           in: path
@@ -70,22 +71,32 @@ paths:
             format: int32
       responses:
         '200':
-          description: OK
+          description: Device successfully turned on.
           content:
-            '*/*':
+            'text/plain':
               schema:
                 type: object
+                example: Device successfully turned on!
         '400':
-          description: Bad Request
+          description: Device is already on.
           content:
-            '*/*':
+            'text/plain':
               schema:
                 type: string
+                example: Device is already on!
+        '404':
+          description: Device not found.
+          content:
+            'text/plain':
+              schema:
+                type: string
+                example: Device not found!
   /api/devices/sps/{id}/off:
     put:
       tags:
         - device-controller
       operationId: turnOffSolarPanelSystem
+      description: Endpoint for turning off a solar panel system.
       parameters:
         - name: id
           in: path
@@ -95,17 +106,26 @@ paths:
             format: int32
       responses:
         '200':
-          description: OK
+          description: Device successfully turned off.
           content:
-            '*/*':
+            'text/plain':
               schema:
                 type: object
+                example: Device successfully turned off!
         '400':
-          description: Bad Request
+          description: Device is already off.
           content:
-            '*/*':
+            'text/plain':
               schema:
                 type: string
+                example: Device is already off!
+        '404':
+          description: Device not found.
+          content:
+            'text/plain':
+              schema:
+                type: string
+                example: Device not found!
   /api/devices/shareControl/{deviceId}:
     put:
       tags:
