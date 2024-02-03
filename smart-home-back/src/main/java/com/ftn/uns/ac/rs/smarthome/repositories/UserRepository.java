@@ -12,6 +12,5 @@ public interface UserRepository extends JpaRepository<User,Integer> {
 
     Optional<User> findByUsername(String username);
     Optional<User> findByEmail (String email);
-    Optional<List<User>> findTop10ByUsernameInIgnoreCaseOrNameInIgnoreCaseOrSurnameInIgnoreCase(List<String> keywords, List<String> keywords2, List<String> keywords3);
-
+    Optional<List<User>> findTop10ByFullTextIsContaining(String text);
 }

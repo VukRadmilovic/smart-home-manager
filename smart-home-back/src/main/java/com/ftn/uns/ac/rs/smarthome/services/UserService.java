@@ -87,6 +87,7 @@ public class UserService implements IUserService {
                     "admin",
                     "Admin",
                     "Admin",
+                    "admin admin admin",
                     "smarthome.superadmin@no-reply.com",
                     hashedRandomPassword,
                     false,
@@ -127,13 +128,13 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public Integer register(UserInfoRegister userInfo) {
+    public void register(UserInfoRegister userInfo) {
         try {
             if(this.userRepository.findByUsername(userInfo.getUsername()).isPresent()) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("username.alreadyUsed", null, Locale.getDefault()));
             }
             if(this.userRepository.findByEmail(userInfo.getEmail()).isPresent()) {
-                //throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("email.alreadyUsed", null, Locale.getDefault()));
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("email.alreadyUsed", null, Locale.getDefault()));
             }
             Optional<Role> role = this.roleService.getByName(userInfo.getRole());
             if(role.isEmpty()) {
@@ -187,21 +188,20 @@ public class UserService implements IUserService {
                  </body>
                </html>
                 """;
-                /*boolean sentEmail = this.mailService.sendTextEmail(
+                boolean sentEmail = this.mailService.sendTextEmail(
                         userInfo.getEmail(),
                         "Account activation",
-                        mailMessagey
+                        mailMessage
                 );
                 if (!sentEmail) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("activation.notSent", null, Locale.getDefault()));
-                }*/
+                }
             }
             fileServerService.put(bucket, "profilePictures/" + key, file, type)
                     .thenApply(lol ->
                         file.delete()
                     )
                     .exceptionally(e -> false);
-            return id;
         }
         catch(IOException ex) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("compression.error", null, Locale.getDefault()));
@@ -298,10 +298,7 @@ public class UserService implements IUserService {
 
     @Override
     public List<UserSearchInfo> findByKey(String key, Integer userId) {
-        List<String> keywords = Arrays.stream(key.toLowerCase().split(" ")).toList();
-        System.out.println("start");
-        Optional<List<User>> users = userRepository.findTop10ByUsernameInIgnoreCaseOrNameInIgnoreCaseOrSurnameInIgnoreCase(keywords,keywords,keywords);
-        System.out.println("end");
+        Optional<List<User>> users = userRepository.findTop10ByFullTextIsContaining(key.toLowerCase());
         List<UserSearchInfo> transformedUsers = new ArrayList<>();
         if(users.isPresent()) {
             for(User user : users.get()) {

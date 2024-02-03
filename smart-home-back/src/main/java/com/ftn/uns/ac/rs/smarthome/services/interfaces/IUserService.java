@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface IUserService extends UserDetailsService {
     TokenDTO login(LoginDTO userInfo);
-    Integer register(UserInfoRegister userInfo);
+    void register(UserInfoRegister userInfo);
     void activate(Integer userId);
     void sendPasswordResetEmail(String email);
     void resetPassword(PasswordResetDTO newPassword);

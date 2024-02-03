@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "users", indexes = {@Index(name = "searchIdx", columnList = "username, name, surname")})
+@Table(name = "users", indexes = {@Index(name = "searchIdx", columnList = "fullText")})
 @Getter
 @Setter
 @ToString
@@ -31,6 +31,9 @@ public class User implements UserDetails {
 
     @Column (nullable = false)
     private String surname;
+
+    @Column (nullable = false)
+    private String fullText;
 
     @Column (nullable = false)
     private String email;
@@ -58,6 +61,7 @@ public class User implements UserDetails {
         this.password = password;
         this.isConfirmed = isConfirmed;
         this.profilePicture = profilePicture;
+        this.fullText = username.toLowerCase() + " " + name.toLowerCase() + " " + surname.toLowerCase();
         this.roles = roles;
     }
 

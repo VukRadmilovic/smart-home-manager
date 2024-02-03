@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {UserService} from "../../services/UserService.ts";
 import {Registration} from "../Registration/Registration.tsx";
 import {CssBaseline, Grid} from "@mui/material";

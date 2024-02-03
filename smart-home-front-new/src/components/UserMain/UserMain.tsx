@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {UserService} from "../../services/UserService.ts";
 import {
     Box, Button, Card, CardContent, CardMedia, CssBaseline,

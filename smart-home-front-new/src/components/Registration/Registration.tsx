@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {Button, Grid, Stack, TextField, Typography} from "@mui/material";
 import React, {useEffect, useState} from "react";
 import './Registration.css'

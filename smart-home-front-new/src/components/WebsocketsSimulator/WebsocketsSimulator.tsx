@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Stomp, {Message} from "stompjs";
 import SockJS from "sockjs-client";
 import React, {useEffect} from "react";

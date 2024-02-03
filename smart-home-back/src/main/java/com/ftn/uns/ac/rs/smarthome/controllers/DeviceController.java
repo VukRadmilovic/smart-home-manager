@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-@CrossOrigin("http://localhost:5173/")
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/api/devices")
 @Validated

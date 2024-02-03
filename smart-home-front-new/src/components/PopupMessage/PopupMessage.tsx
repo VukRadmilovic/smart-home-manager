@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {Alert, Snackbar, SnackbarOrigin} from "@mui/material";
 import React from "react";
 

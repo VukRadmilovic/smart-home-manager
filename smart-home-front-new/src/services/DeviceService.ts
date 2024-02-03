@@ -1,3 +1,4 @@
+// @ts-nocheck
 import axios from "axios";
 import {DeviceDetailsDto} from "../models/DeviceDetailsDto.ts";
 import {MeasurementRequest} from "../models/MeasurementRequest.ts";

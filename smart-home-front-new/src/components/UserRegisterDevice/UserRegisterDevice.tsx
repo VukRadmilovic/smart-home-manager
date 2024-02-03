@@ -1,5 +1,5 @@
 // noinspection TypeScriptValidateTypes
-
+// @ts-nocheck
 import {UserService} from "../../services/UserService.ts";
 import {
     Button,

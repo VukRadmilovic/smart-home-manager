@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {UserCredentials} from "../models/UserCredentials.ts";
 import axios from "axios";
 import {Token} from "../models/Token.ts";

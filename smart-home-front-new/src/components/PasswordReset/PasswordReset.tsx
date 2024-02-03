@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {Button, Grid, TextField, Typography} from "@mui/material";
 import {UserService} from "../../services/UserService.ts";
 import React from "react";

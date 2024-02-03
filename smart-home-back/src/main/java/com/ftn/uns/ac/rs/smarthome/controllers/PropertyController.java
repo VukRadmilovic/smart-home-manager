@@ -18,7 +18,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Locale;
 
-@CrossOrigin("http://localhost:5173/")
+@CrossOrigin("*")
 @RestController
 @RequestMapping(value = "/api/property")
 @Validated
