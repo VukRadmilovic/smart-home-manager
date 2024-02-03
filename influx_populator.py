@@ -6,7 +6,7 @@ import random, datetime
 url = 'http://localhost:8086'
 token = 'U559sfYWoV3E1dYKKfajmDEEy55c4R1Hk_bJ3tLIN_Kg1BY9zUYC0gxsKr58IgVgam1KnYVwH0LifIaL_v-WRw=='
 org = 'Tiba'
-bucket = 'measurements2'
+bucket = 'measurements'
 measurements = ['humidity', 'temperature']
 
 # Create InfluxDB client
@@ -102,8 +102,8 @@ def generate_battery_data_3m(curr_timestamp):
     id_1 = 5
     id_2 = 6
     user_id = 2
-    battery_kwh_1 = random.randint(0, 100)
-    battery_kwh_2 = random.randint(0, 100)
+    battery_kwh_1 = float(random.randint(0, 100))
+    battery_kwh_2 = float(random.randint(0, 100))
 
     tags_1 = {
         "userId" : str(user_id),
@@ -114,8 +114,8 @@ def generate_battery_data_3m(curr_timestamp):
         "deviceId": str(id_2)
     }
 
-    point_1 = Point("battery").field("value", float(battery_kwh_1)).time(curr_timestamp, WritePrecision.NS)
-    point_2 = Point("battery").field("value", float(battery_kwh_2)).time(curr_timestamp, WritePrecision.NS)
+    point_1 = Point("battery").field("value", battery_kwh_1).time(curr_timestamp, WritePrecision.NS)
+    point_2 = Point("battery").field("value", battery_kwh_2).time(curr_timestamp, WritePrecision.NS)
 
     for key,value in tags_1.items():
         point_1.tag(key,str(value))
