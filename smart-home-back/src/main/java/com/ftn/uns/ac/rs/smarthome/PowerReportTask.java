@@ -127,11 +127,11 @@ public class PowerReportTask {
             influxService.save("totalProduction", powerManager.getPowerProduction(propertyId), new Date(),
                     Map.of("unit", "kWh", "deviceId", String.valueOf(propertyId)));
             influxService.save("totalBalance", powerManager.getPowerBalance(propertyId), new Date(),
-                    Map.of("unit", "kWh", "propertyId", String.valueOf(propertyId)));
-            influxService.save("totalStored", originalPowerBalance - powerBalance, new Date(),
-                    Map.of("unit", "kWh", "propertyId", String.valueOf(propertyId)));
-            influxService.save("totalSentToGrid", powerBalance, new Date(),
-                    Map.of("unit", "kWh", "propertyId", String.valueOf(propertyId)));
+                    Map.of("unit", "kWh", "deviceId", String.valueOf(propertyId)));
+//            influxService.save("totalStored", Math.max(originalPowerBalance - powerBalance, 0), new Date(),
+//                    Map.of("unit", "kWh", "propertyId", String.valueOf(propertyId)));
+//            influxService.save("totalSentToGrid", Math.max(powerBalance, 0), new Date(),
+//                    Map.of("unit", "kWh", "propertyId", String.valueOf(propertyId)));
             try {
                 DecimalFormat df = new DecimalFormat("#.###", new DecimalFormatSymbols(Locale.ENGLISH));
                 df.setRoundingMode(RoundingMode.CEILING);
