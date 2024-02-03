@@ -58,7 +58,7 @@ export class PropertyService {
     public async getAllUserProperty(): Promise<Property[]> {
         return axios({
             method: 'GET',
-            url: `${this.api_host}/api/property/getProperty/` + sessionStorage.getItem('username'),
+            url: `${this.api_host}/api/property/getApprovedProperties/` + sessionStorage.getItem('username'),
             headers: {
                 'Authorization': 'Bearer ' + sessionStorage.getItem('user')
             },

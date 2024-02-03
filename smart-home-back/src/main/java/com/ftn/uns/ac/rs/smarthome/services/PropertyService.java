@@ -3,6 +3,7 @@ package com.ftn.uns.ac.rs.smarthome.services;
 import com.ftn.uns.ac.rs.smarthome.models.Property;
 import com.ftn.uns.ac.rs.smarthome.models.PropertyStatus;
 import com.ftn.uns.ac.rs.smarthome.models.Town;
+import com.ftn.uns.ac.rs.smarthome.models.User;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.PropertyDTO;
 import com.ftn.uns.ac.rs.smarthome.repositories.PropertyRepository;
 import com.ftn.uns.ac.rs.smarthome.repositories.TownRepository;
@@ -12,7 +13,6 @@ import com.ftn.uns.ac.rs.smarthome.services.interfaces.IUserService;
 import org.slf4j.Logger;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
-import com.ftn.uns.ac.rs.smarthome.models.User;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -85,7 +85,7 @@ public class PropertyService implements IPropertyService {
     }
 
     @Override
-    public List<PropertyDTO> getProperty(String username) {
+    public List<PropertyDTO> getApprovedProperties(String username) {
         Optional<User> owner = userRepository.findByUsername(username);
         if (owner.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("user.notExisting", null, Locale.getDefault()));

@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface IPropertyService {
     void registerProperty(PropertyDTO propertyDTO);
 
-    List<PropertyDTO> getProperty(String username);
+    List<PropertyDTO> getApprovedProperties(String username);
 
     Object getAllProperty();
 

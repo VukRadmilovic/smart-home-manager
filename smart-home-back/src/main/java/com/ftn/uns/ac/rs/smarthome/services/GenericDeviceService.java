@@ -13,6 +13,8 @@ import com.ftn.uns.ac.rs.smarthome.utils.ImageCompressor;
 import com.ftn.uns.ac.rs.smarthome.utils.S3API;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.context.MessageSource;
 
 import javax.validation.Valid;
@@ -49,6 +51,7 @@ public abstract class GenericDeviceService<D extends Device, DDTO extends Device
     }
 
     @Override
+    @CacheEvict(value = "devices", key = "'user-' + #user.id")
     public void register(@Valid DDTO dto, User user) throws IOException {
         Optional<Property> property = propertyRepository.findByName(dto.getPropertyId().toString());
         if (property.isEmpty()) {

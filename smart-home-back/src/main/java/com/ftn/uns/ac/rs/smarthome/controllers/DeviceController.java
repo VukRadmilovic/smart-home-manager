@@ -7,6 +7,7 @@ import com.ftn.uns.ac.rs.smarthome.models.UserSearchInfo;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.*;
 import com.ftn.uns.ac.rs.smarthome.models.dtos.devices.*;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.*;
+import org.slf4j.Logger;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,6 +28,7 @@ import java.util.Locale;
 @RequestMapping("/api/devices")
 @Validated
 public class DeviceController {
+    private final Logger log = org.slf4j.LoggerFactory.getLogger(this.getClass());
     private final IDeviceService deviceService;
     private final MessageSource messageSource;
     private final IThermometerService thermometerService;
@@ -199,7 +201,9 @@ public class DeviceController {
     @GetMapping(value = "/ownerAll")
     public ResponseEntity<?> getAllOwnersDevices() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        log.info("User: " + user.getUsername() + " is fetching all devices.");
         List<DeviceDetailsDTO> devices = this.deviceService.findByOwnerId(user.getId());
+//        log.info("User: " + user.getUsername() + " fetched all devices.");
         return new ResponseEntity<>(devices, HttpStatus.OK);
     }
 

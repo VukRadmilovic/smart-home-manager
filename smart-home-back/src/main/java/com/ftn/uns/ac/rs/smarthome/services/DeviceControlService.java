@@ -12,6 +12,7 @@ import com.ftn.uns.ac.rs.smarthome.services.interfaces.IDeviceControlService;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IDeviceService;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IPropertyService;
 import com.ftn.uns.ac.rs.smarthome.services.interfaces.IUserService;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -115,6 +116,7 @@ public class DeviceControlService implements IDeviceControlService {
             if (device instanceof SolarPanelSystem) type = "SPS";
             if (device instanceof AirConditioner) type = "AC";
             if (device instanceof WashingMachine) type = "WM";
+            if (device instanceof Charger) type = "CHARGER";
             DeviceDetailsDTO details = new DeviceDetailsDTO(
                     device.getId(),
                     type,
