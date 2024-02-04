@@ -103,3 +103,33 @@ VALUES (5,
         0.0);
 
 UPDATE device_generator SET next_val = 7;
+
+-- INSERT INTO properties (address, floors, name, picture, property_type, size, status, owner_id)
+-- SELECT 'TestAddress',
+-- 		'1',
+-- 		CONCAT('Property ', substr(md5(random()::text), 1, 10)),
+-- 		'http://127.0.0.1:9000/images/profilePictures/admin.jpg',
+-- 		0,
+-- 		'100',
+-- 		0,
+--        (SELECT id FROM users WHERE username = 'vuk')
+-- FROM generate_series(1,1000);
+--
+-- INSERT INTO towns_properties (town_id, properties_id)
+-- SELECT 1,
+--        i
+-- FROM generate_series(2,1001) i;
+-- INSERT INTO chargers
+-- SELECT
+--     i,
+--     100,
+--     'http://127.0.0.1:9000/images/profilePictures/admin.jpg',
+--     CONCAT('Charger ', substr(md5(random()::text), 1, 10)),
+--     FALSE,
+--     'HOUSE',
+--     FALSE,
+--     1,
+--     100.0,
+--     2,
+--     90.0
+-- FROM generate_series(8, 1008) i;
