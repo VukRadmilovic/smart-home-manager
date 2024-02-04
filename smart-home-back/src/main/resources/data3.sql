@@ -39,7 +39,7 @@ VALUES (1,
         1,
         TRUE,
         10,
-        25.0,
+        0.25,
         15),
        (2,
         1,
@@ -51,7 +51,7 @@ VALUES (1,
         1,
         TRUE,
         8,
-        22.0,
+        0.22,
         10);
 
 
@@ -103,3 +103,48 @@ VALUES (5,
         0.0);
 
 UPDATE device_generator SET next_val = 7;
+
+-- INSERT INTO chargers
+-- SELECT
+--     i,
+--     100,
+--     'http://127.0.0.1:9000/images/profilePictures/admin.jpg',
+--     CONCAT('Charger ', substr(md5(random()::text), 1, 10)),
+--     FALSE,
+--     'HOUSE',
+--     FALSE,
+--     1,
+--     100.0,
+--     2,
+--     90.0
+-- FROM generate_series(8, 1008) i;
+
+-- INSERT INTO batteries
+-- SELECT
+--     i,
+--     5,
+--     'http://127.0.0.1:9000/images/profilePictures/admin.jpg',
+--     CONCAT('Battery ', substr(md5(random()::text), 1, 10)),
+--     FALSE,
+--     'AUTONOMOUS',
+--     FALSE,
+--     1,
+--     100.0,
+--     0.0
+-- FROM generate_series(8, 1008) i;
+
+INSERT INTO solar_panel_systems
+SELECT
+    i,
+    0,
+    'http://127.0.0.1:9000/images/profilePictures/admin.jpg',
+    CONCAT('Solar panels ', substr(md5(random()::text), 1, 10)),
+    FALSE,
+    'AUTONOMOUS',
+    FALSE,
+    1,
+    TRUE,
+    10,
+    0.25,
+    5
+FROM generate_series(8, 1008) i;
