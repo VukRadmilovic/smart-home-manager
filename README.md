@@ -1,9 +1,9 @@
 # Smart Home
 
 ## Tim 11 - članovi
-Maja Varga SV54/2020
-Vuk Radmilović SV73/2020
-Marko Milijanović SV56/2020
+- Maja Varga SV54/2020 - **Student 1**
+- Vuk Radmilović SV73/2020 - **Student 3**
+- Marko Milijanović SV56/2020 - **Student 2**
 
 ## Korišćene tehnologije
 - Server - Spring Boot sa Maven-om
