@@ -1,5 +1,5 @@
 from locust import HttpUser, task, between, tag
-import random, datetime
+import random, datetime, string
 
 
 class Test(HttpUser):
@@ -7,6 +7,26 @@ class Test(HttpUser):
     host = "http://localhost:8080"
     user_token = "eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJzbWFydC1ob21lIiwic3ViIjoidnVrIiwiYXVkIjoid2ViIiwiaWF0IjoxNzA3MDEyOTg1LCJleHAiOjE3MDkxNjA0NjksInJvbGUiOiJST0xFX1VTRVIifQ.ZQcW5XHcAw-Hd5W6a8_lu7nNIXjUuNjYhWg3xH1E0almlWFQbbYwFwBI6mSU3wZTKFFzzKj_dwc65NC5V-7fIA"
     admin_token = "eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJzbWFydC1ob21lIiwic3ViIjoiYWRtaW4iLCJhdWQiOiJ3ZWIiLCJpYXQiOjE3MDcwMjE1MTgsImV4cCI6MTcwOTE2OTAwMiwicm9sZSI6IlJPTEVfU1VQRVJBRE1JTiJ9.x5OT_59DFTOBJ7OkVUly2rc8zqgpygxPnHrViXuYp35UuwnwoOv9r1pXU_i-hksb_lNnaJ5fVQjq79oFllq1dg"
+
+    @tag('scene1')
+    @task
+    def register_thermometer(self):
+        picture = open('castrovalva_escher.jpg', 'rb')
+        files = {'image': ('castrovalva_escher.jpg', picture, 'image/jpeg')}
+        thermo = {
+            'name': ''.join(random.choices(string.ascii_letters, k=7)),
+            'propertyId': 1,
+            'powerSource': 'AUTONOMOUS',
+            'energyConsumption': 2,
+            'temperatureUnit': 'CELSIUS'
+        }
+        headers = {"Authorization": f"Bearer {self.user_token}"}
+        with self.client.post("/api/devices/registerThermometer", headers=headers, data=thermo, files=files, catch_response=True) as response:
+            if response.status_code == 200:
+                response.success()
+            else:
+                print(response.text)
+                response.failure("Failed to register thermometer because of status code: " + str(response.status_code))
 
     @tag("scene2")
     @task
@@ -111,6 +131,28 @@ class Test(HttpUser):
                 response.failure("Failed to view charger commands")
             else:
                 response.success()
+
+    @tag("scene9")
+    @task
+    def register_solar_panel(self):
+        picture = open('castrovalva_escher.jpg', 'rb')
+        files = {'image': ('castrovalva_escher.jpg', picture, 'image/jpeg')}
+        solar = {
+            'name': ''.join(random.choices(string.ascii_letters, k=7)),
+            'propertyId': 1,
+            'powerSource': 'AUTONOMOUS',
+            'energyConsumption': 2,
+            'numberOfPanels': random.randint(1, 10),
+            'panelSize': random.randint(1, 10),
+            'panelEfficiency': random.random()
+        }
+        headers = {"Authorization": f"Bearer {self.user_token}"}
+        with self.client.post("/api/devices/registerSolarPanelSystem", headers=headers, data=solar, files=files, catch_response=True) as response:
+            if response.status_code == 200:
+                response.success()
+            else:
+                print(response.text)
+                response.failure("Failed to register solar panel system because of status code: " + str(response.status_code))
 
     @tag("scene10")
     @task

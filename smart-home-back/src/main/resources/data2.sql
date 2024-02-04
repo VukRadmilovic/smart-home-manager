@@ -101,3 +101,5 @@ VALUES (5,
         1,
         125.0,
         0.0);
+
+UPDATE device_generator SET next_val = 7;
