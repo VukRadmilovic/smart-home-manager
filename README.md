@@ -6,13 +6,13 @@ Vuk Radmilović SV73/2020
 Marko Milijanović SV56/2020
 
 ## Korišćene tehnologije
-Server - Spring Boot sa Maven-om
-Korisnička aplikacija - React
-Reverse Proxy/Server statičkog sadržaja - nginx
-Fajl server za slike - MinIO
-Relaciona baza podataka - PostgreSQL
-Time-series baza podataka - InfluxDB
-MQTT broker - Mosquitto
+- Server - Spring Boot sa Maven-om
+- Korisnička aplikacija - React
+- Reverse Proxy/Server statičkog sadržaja - nginx
+- Fajl server za slike - MinIO
+- Relaciona baza podataka - PostgreSQL
+- Time-series baza podataka - InfluxDB
+- MQTT broker - Mosquitto
 
 
 ## Pokretanje
