@@ -5,7 +5,7 @@ import {
     Button,
     Card,
     CardContent,
-    CardMedia,
+    CardMedia, CircularProgress,
     CssBaseline,
     Fab,
     Grid,
@@ -90,6 +90,7 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
     const [errorPopupOpen, setErrorPopupOpen] = React.useState<boolean>(false);
     const [isSuccess, setIsSuccess] = React.useState(true);
     const shouldLoad = useRef(true);
+    const [isLoading, setIsLoading] = React.useState<boolean>(true);
     const [devices, setDevices] = React.useState<DeviceDetailsDto[]>([]);
     const [remoteType, setRemoteType] = React.useState<string>("");
     const [isSharedControl, setIsSharedControl] = React.useState<boolean>(false);
@@ -132,17 +133,20 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
     }
 
     const handleSharedControlDevices = () => {
+        setIsLoading(true);
         const sharedControl = !isSharedControl;
         setIsSharedControl(sharedControl);
         if(sharedControl) {
             if(sharedDevices.length > 0) {
                 setCurrentView(sharedDevices);
+                setIsLoading(false);
             }
             else {
                 if(hasSharedDevices) {
                     deviceService.getUserSharedDevices().then((shared) => {
                         if(shared.length == 0)
                             setHasSharedDevices(false);
+                        setIsLoading(false);
                         setSharedDevices(shared);
                         setCurrentView(shared);
                     })
@@ -151,6 +155,7 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
         }
         else {
             setCurrentView(devices);
+            setIsLoading(false);
         }
     }
 
@@ -179,6 +184,7 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
                 setDevices(response);
                 setCurrentView(response);
             }
+            setIsLoading(false);
         } catch (err) {
             setErrorMessage(err.response?.data || "An error occurred while fetching devices.");
             setIsSuccess(false);
@@ -288,6 +294,9 @@ export function UserDevices({userService, deviceService} : UserDevicesProps) {
                         ml={{xl: '20%', lg: '20%', md: '25%', sm: '0', xs: '0'}}
                         mt={{xl: 0, lg: 0, md: 0, sm: '64px', xs: '64px'}}>
                         <Grid item container justifyContent={'center'}>
+                            {!isLoading? null :
+                                <CircularProgress sx={{position:'absolute',right:'40px'}} />
+                            }
                             <Button  color={isSharedControl? 'primary' : 'secondary'} variant={'contained'} sx={{padding:'15px 30px'}}
                                      onClick={() => handleSharedControlDevices()}>{isSharedControl? 'See Your Own Devices' : 'See Devices Shared With You'}</Button>
                         </Grid>

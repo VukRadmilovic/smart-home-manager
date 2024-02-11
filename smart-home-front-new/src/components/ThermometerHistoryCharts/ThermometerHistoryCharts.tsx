@@ -201,10 +201,14 @@ export function ThermometerChartsHistory({userService, deviceService} : Thermome
         const tempDataRaw: ChartData[] = [];
         const humDataRaw: ChartData[] = [];
         await getMeasurement("temperature", fromLocal, toLocal).then((r) => {
-                tempDataRaw.push(...r)
+            for(let i = 0; i < r.length; i++) {
+                tempDataRaw.push(r[i])
+            }
             });
         await getMeasurement("humidity", fromLocal, toLocal).then((r) => {
-            humDataRaw.push(...r)
+            for(let i = 0; i < r.length; i++) {
+                humDataRaw.push(r[i])
+            }
         });
 
         const preparedTemp = prepareData(tempDataRaw,targetLength);

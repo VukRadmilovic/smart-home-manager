@@ -4,7 +4,7 @@ import random, datetime
 
 # InfluxDB connection settings
 url = 'http://localhost:8086'
-token = 'U559sfYWoV3E1dYKKfajmDEEy55c4R1Hk_bJ3tLIN_Kg1BY9zUYC0gxsKr58IgVgam1KnYVwH0LifIaL_v-WRw=='
+token = 'cq6nclb3oF18TopO-KJ20Iq1U1b2tPhnl-KCaPiDXcs9RuidUxrkRNrGXpwkrmibyT4nkFmHTcPqEyGV8pJbfw=='
 org = 'Tiba'
 bucket = 'measurements'
 measurements = ['humidity', 'temperature']
@@ -17,32 +17,38 @@ write_api = client.write_api(write_options=SYNCHRONOUS)
 def generate_data():
     now = datetime.datetime.utcnow()
     timestamp = now - datetime.timedelta(days=90)
-    limit = now - datetime.timedelta(days=30)
-    while timestamp <= limit:
-        device_id = random.randint(3, 10000)
+    while timestamp <= now:
         for measurement in measurements:
             unit = 'C'
-            value = 0
+            value_1 = 0
+            value_2 = 0
             if measurement == "humidity":
                 unit = "%"
-                value = random.uniform(30, 60)
+                value_1 = random.uniform(30, 60)
+                value_2 = random.uniform(30, 60)
             else:
-                value = random.uniform(-5, 5)
-            point = Point(measurement).field("value", value).tag("deviceId", str(1)).tag("unit", unit).time(timestamp, WritePrecision.NS)
+                value_1 = random.uniform(-5, 5)
+                value_2 = random.uniform(30, 60)
+            point = Point(measurement).field("value", value_1).tag("deviceId", str(7)).tag("unit", unit).time(timestamp, WritePrecision.NS)
+            write_to_influxdb(point)
+            point = Point(measurement).field("value", value_2).tag("deviceId", str(8)).tag("unit", unit).time(timestamp, WritePrecision.NS)
             write_to_influxdb(point)
         timestamp += datetime.timedelta(seconds=5)
 
 
 def generate_states_data():
     now = datetime.datetime.utcnow()
-    timestamp = now - datetime.timedelta(days=62)
-    limit = now - datetime.timedelta(days=30)
-    while timestamp <= limit:
-        ac_point = generate_ac_data(timestamp)
+    timestamp = now - datetime.timedelta(days=90)
+    while timestamp <= now:
+        ac_point = generate_ac_data(timestamp,11)
         write_to_influxdb(ac_point)
-        wm_point = generate_wm_data(timestamp)
+        ac_point = generate_ac_data(timestamp,12)
+        write_to_influxdb(ac_point)
+        wm_point = generate_wm_data(timestamp,9)
         write_to_influxdb(wm_point)
-        timestamp += datetime.timedelta(seconds=5)
+        wm_point = generate_wm_data(timestamp,10)
+        write_to_influxdb(wm_point)
+        timestamp += datetime.timedelta(seconds=60)
 
 
 
@@ -271,15 +277,14 @@ def generate_production_data(curr_timestamp):
     return point
 
 
-def generate_ac_data(curr_timestamp):
-    id = random.randint(800016, 900017)
-    user_id = random.randint(1,1000002)
+def generate_ac_data(curr_timestamp, ac_id):
+    user_id = 2
     modes = ['HEAT_MODE', 'COOL_MODE', 'AUTO_MODE', 'DRY_MODE', 'FUNGUS_CHANGE', 'HEALTH_CHANGE', 'FAN_SPEED_CHANGE', 'TEMP_CHANGE',
              'CANCEL_SCHEDULED', 'SCHEDULE', 'SCHEDULE_OFF', 'ON', 'OFF', 'SCHEDULE_ON', 'CHANGE']
     state_idx = random.randint(8,14)
     tags = {
             "userId" : str(user_id),
-            "deviceId": str(id)
+            "deviceId": str(ac_id)
         }
     val = modes[state_idx]
     if val == 'CHANGE':
@@ -305,9 +310,8 @@ def generate_ac_data(curr_timestamp):
     return point
 
 
-def generate_wm_data(curr_timestamp):
-    id = random.randint(100002, 200003)
-    user_id = random.randint(1,1000002)
+def generate_wm_data(curr_timestamp, wm_id):
+    user_id = 2
     states = ['ON', 'OFF', 'SCHEDULE_ON', 'SCHEDULE_OFF', 'SCHEDULE', 'CANCEL_SCHEDULED']
     modes = ['COTTONS_MODE', 'SYNTHETICS_MODE', 'DAILY_EXPRESS_MODE', 'WOOL_MODE', 'DARK_WASH_MODE',
     'OUTDOOR_MODE', 'SHIRTS_MODE', 'DUVET_MODE', 'MIXED_MODE', 'STEAM_MODE', 'RINSE_SPIN_MODE', 'SPIN_ONLY_MODE', 'HYGIENE_MODE']
@@ -316,7 +320,7 @@ def generate_wm_data(curr_timestamp):
     state_idx = random.randint(0,5)
     tags = {
             "userId" : str(user_id),
-            "deviceId": str(id)
+            "deviceId": str(wm_id)
         }
     if states[state_idx] == 'ON':
         tags['mode'] = modes[random.randint(0,12)]
@@ -339,5 +343,7 @@ def write_to_influxdb(point):
 
 # Main execution
 if __name__ == "__main__":
-    generate_data_2()
+    #generate_data()
+    generate_states_data()
+    #generate_data_2()
     print('Done')

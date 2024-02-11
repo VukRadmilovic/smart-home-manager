@@ -1,5 +1,13 @@
 
-import {Autocomplete, Button, CssBaseline, Grid, IconButton, TextField, Typography} from "@mui/material";
+import {
+    Autocomplete,
+    Button, CircularProgress,
+    CssBaseline,
+    Grid,
+    IconButton,
+    TextField,
+    Typography
+} from "@mui/material";
 import {SideNav} from "../Sidenav/SideNav.tsx";
 import {UserService} from "../../services/UserService.ts";
 import {DeviceService} from "../../services/DeviceService.ts";
@@ -61,7 +69,7 @@ export function ACCommandsReport({userService, deviceService} : ACCommandsReport
     const [usernames, setUsernames] = React.useState<UserIdUsernamePair[]>([]);
     const [to, setTo] = React.useState<Dayjs | null>(null);
     const firstLoad = useRef(true);
-    const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const [isLoading, setIsLoading] = React.useState<boolean>(true);
     const [page, setPage] = React.useState<number>(0);
     const [rowCount, setRowCount] = React.useState<number>(100);
     const [prevPage, setPrevPage] = React.useState<number>(0);
@@ -70,7 +78,8 @@ export function ACCommandsReport({userService, deviceService} : ACCommandsReport
     const [inputValueUser, setInputValueUser] = React.useState('');
     const [isFilteredData, setIsFilteredData] = React.useState<boolean>(false);
     const [filteredCommands, setFilteredCommands] = React.useState<CommandSummary[]>([]);
-    const [hasAllLoaded, setHasAllLoaded] = React.useState<boolean>(false);
+    const hasAllLoaded = React.useRef(false);
+    const [isLoadingOutside, setIsLoadingOutside] = React.useState<boolean>(false);
     const handleErrorPopupClose = (reason?: string) => {
         if (reason === 'clickaway') return;
         setErrorPopupOpen(false);
@@ -80,11 +89,13 @@ export function ACCommandsReport({userService, deviceService} : ACCommandsReport
     const resetTo = () => setTo(null);
 
     const filter = () => {
+        hasAllLoaded.current = false;
+        setIsLoadingOutside(true);
         setIsFilteredData(true);
         const userId : number = user == null ? -1 : user.id;
-        const fromTime : number = from == null ? 0 : from.valueOf();
-        const toTime : number = to == null ? Number.MAX_SAFE_INTEGER : to.valueOf();
-        if(hasAllLoaded) {
+        const fromTime : number = from == null ? 0 : from.valueOf() / 1000;
+        const toTime : number = to == null ? Number.MAX_SAFE_INTEGER : to.valueOf() / 1000;
+        if(hasAllLoaded.current) {
             let filtered: CommandSummary[];
             filtered = commands.filter((command) => command.timestamp >= (fromTime - 999) && command.timestamp <= (toTime + 999));
             if(userId != -1) {
@@ -92,22 +103,26 @@ export function ACCommandsReport({userService, deviceService} : ACCommandsReport
             }
             setFilteredCommands(filtered)
             setRowCount(filtered.length);
+            setIsLoadingOutside(false);
         }
         else {
             deviceService.getPaginatedCommands(+deviceId,fromTime,
-                toTime, 0, Number.MAX_SAFE_INTEGER,false, userId)
+                toTime, page, 100,false, userId)
                 .then((val) => {
                     setFilteredCommands(val.commands);
+
                     if(val.commands.length < 100) {
                         setRowCount(val.commands.length);
-                        setHasAllLoaded(true);
+                        hasAllLoaded.current = false;
                     }
                     else
                         setRowCount(val.commands.length + 1);
+                    setIsLoadingOutside(false);
                 }).catch((error) => {
                 setErrorMessage(error.response.data);
                 setIsSuccess(false);
                 setErrorPopupOpen(true);
+                console.log(error)
             })
         }
     }
@@ -119,9 +134,10 @@ export function ACCommandsReport({userService, deviceService} : ACCommandsReport
                 setCommands(val.commands);
                 setCurrentPageCommands(val.commands.slice(0,10))
                 setUsernames(val.allUsers)
+                setIsLoading(false);
                 if(val.commands.length < 100) {
                     setRowCount(val.commands.length);
-                    setHasAllLoaded(true);
+                    hasAllLoaded.current = true;
                 }
                 else
                     setRowCount(val.commands.length + 1);
@@ -243,6 +259,9 @@ export function ACCommandsReport({userService, deviceService} : ACCommandsReport
                                 <CloseIcon />
                             </IconButton>
                         </LocalizationProvider>
+                        {!isLoadingOutside? null :
+                            <CircularProgress sx={{position:'absolute',right:'150px'}} />
+                        }
                         <Button variant={'contained'}
                                 color={'secondary'}
                                 onClick={filter}

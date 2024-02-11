@@ -113,7 +113,6 @@ public class DeviceService implements IDeviceService {
             else
                 page += 1;
         }
-
         return batches;
     }
 

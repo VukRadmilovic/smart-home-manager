@@ -45,8 +45,14 @@ export class DeviceService {
             const  url = `${this.api_host}/api/devices/measurements?from=${request.from}&to=${request.to}&deviceId=${request.deviceId}&measurement=${request.measurementName}`
             const  es = new EventSource(url, eventSourceHeader);
             es.addEventListener("message", (event) => {
-                result.push(...JSON.parse(event.data as string))
-                es.close();
+                const arr = JSON.parse(event.data as string)
+                if(arr.length < 5000 || (result.length > 0 &&arr[0].timestamp == result[0].timestamp))
+                    es.close()
+                result.push(...arr)
+            });
+            es.addEventListener("notice", (event) => {
+                console.log(event)
+
             });
             es.addEventListener("close", () => {
                 resolve(result)

@@ -83,7 +83,7 @@ public class UserService implements IUserService {
             String hashedRandomPassword = passwordEncoder().encode(randomPassword);
             List<Role> role = List.of(roleService.getByName("ROLE_SUPERADMIN").get());
             String profilePictureLocation = "http://127.0.0.1:9000/images/profilePictures/admin.jpg";
-            User superadmin = new User(1,
+            User superadmin = new User(3,
                     "admin",
                     "Admin",
                     "Admin",
@@ -175,13 +175,14 @@ public class UserService implements IUserService {
                    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
                  </head>
                  <body style="font-family: 'Roboto', sans-serif;height:100%; color:black; display:flex; justify-content: center; align-items: center; padding:1.5em 10em; background-color:#1a1a1a">
-                   <div style="width:100%; background-color:white;text-align:center;border-radius:1.2em; ">
-                     <h1>Activation</h1>
-                     <p>To activate your account, click on the button below:<p/>
+                   <div style="width:100%;height:350px; background-color:white;text-align:center;border-radius:1.2em; ">
+                     <h1 style="font-size:xxx-large;">Activation</h1>
+                     <p style="font-size:x-large;">To activate your account, click on the button below:<p/>
+                     <br>
                      <br>
                      <form action='http://127.0.0.1:80/api/user/activate/""" + saved.getId() + "'" + """
                        >
-                       <input type="submit" style="border-radius:1.2em; cursor:pointer !important; padding:1em 2em; background-color:#00ADB5; color:white; font-size:18px; font-family: Arial, Helvetica, sans-serif; border:none;" value="Activate"/>
+                       <input type="submit" style="border-radius:1.2em; font-size:x-large; cursor:pointer !important; padding:1em 2em; background-color:#00ADB5; color:white; font-size:18px; font-family: Arial, Helvetica, sans-serif; border:none;" value="Activate"/>
                      </form>
                      <br>
                    </div>
@@ -236,16 +237,21 @@ public class UserService implements IUserService {
                    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
                  </head>
                  <body style="font-family: 'Roboto', sans-serif;height:100%; color:black; display:flex; justify-content: center; align-items: center; padding:1.5em 10em; background-color:#1a1a1a">
-                   <div style="width:100%; background-color:white;text-align:center;border-radius:1.2em; ">
-                     <h1>Password Reset</h1>
-                     <p>To reset your password, click on the button below:<p/>
+                   <br>
+                   <br>
+                   <div style="width:100%;height:350px; background-color:white;text-align:center;border-radius:1.2em; ">
+                     <h1 style="font-size:xxx-large;">Password Reset</h1>
+                     <p style="font-size:x-large;">To reset your password, click on the button below:<p/>
+                     <br>
                      <br>
                      <form action='http://localhost:5173/passwordReset/""" + user.get().getId() + "'" + """
                        >
-                       <input type="submit" style="border-radius:1.2em; cursor:pointer !important; padding:1em 2em; background-color:#00ADB5; color:white; font-size:18px; font-family: Arial, Helvetica, sans-serif; border:none;" value="Password Reset"/>
+                       <input type="submit" style="border-radius:1.2em; cursor:pointer; padding:1em 2em; background-color:#00ADB5; color:white; font-size:x-large; font-family: Arial, Helvetica, sans-serif; border:none;" value="Password Reset"/>
                      </form>
                      <br>
                    </div>
+                   <br>
+                   <br>
                  </body>
                </html>
                 """;

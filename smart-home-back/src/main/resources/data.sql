@@ -6,26 +6,16 @@ INSERT INTO TOWNS (ID, NAME) VALUES(1, 'Novi Sad') ON CONFLICT (ID) DO NOTHING;
 INSERT INTO TOWNS (ID, NAME) VALUES(2, 'Beograd') ON CONFLICT (ID) DO NOTHING;
 INSERT INTO TOWNS (ID, NAME) VALUES(3, 'Sombor') ON CONFLICT (ID) DO NOTHING;
 
-INSERT INTO users (email, is_confirmed, name, surname, profile_picture, username, full_text, password)
-SELECT CONCAT(substr(md5(random()::text), 1, 10), '@mail.com'),
-	   TRUE,
-	   'TestName',
-	   'TestSurname',
-	   'http://127.0.0.1:9000/images/profilePictures/admin.jpg',
-        CONCAT('username',i::text),
-        CONCAT('username',i::text, ' ', 'testname', ' ', 'testsurname'),
-       '$2a$10$RkfUMnbazK4E7Uuyqf2fSe.3iVOa/vQB9dAi66ORgzFba1paXp58S'
-FROM generate_series(1, 1000000) i;
 
 INSERT INTO users (email, is_confirmed, name, surname, profile_picture, username, full_text, password)
-VALUES ('maya.grudge.12@gmail.com',true, 'Maja', 'Varga', 'http://127.0.0.1:9000/images/profilePictures/admin.jpg', 'maja', 'maja maja varga','$2a$10$RkfUMnbazK4E7Uuyqf2fSe.3iVOa/vQB9dAi66ORgzFba1paXp58S');
+VALUES ('maya.grudge.12@gmail.com',true, 'Maja', 'Varga', 'http://127.0.0.1:9000/images/profilePictures/maja.jpg', 'maja', 'maja maja varga','$2a$10$RkfUMnbazK4E7Uuyqf2fSe.3iVOa/vQB9dAi66ORgzFba1paXp58S');
 
 INSERT INTO users (email, is_confirmed, name, surname, profile_picture, username, full_text, password)
-VALUES ('marina.grudge.12@gmail.com',true, 'Marina', 'Varga', 'http://127.0.0.1:9000/images/profilePictures/admin.jpg', 'marina', 'marina marina varga','$2a$10$RkfUMnbazK4E7Uuyqf2fSe.3iVOa/vQB9dAi66ORgzFba1paXp58S');
+VALUES ('marina.grudge.12@gmail.com',true, 'Marina', 'Varga', 'http://127.0.0.1:9000/images/profilePictures/marina.jpg', 'marina', 'marina marina varga','$2a$10$RkfUMnbazK4E7Uuyqf2fSe.3iVOa/vQB9dAi66ORgzFba1paXp58S');
 
 INSERT INTO user_role (user_id, role_id)
 SELECT i,3
-FROM generate_series(1, 1000002) i;
+FROM generate_series(1, 2) i;
 
 
 /*INSERT INTO properties (address, floors, name, picture, property_type, size, status, owner_id)
@@ -43,11 +33,11 @@ INSERT INTO properties (address, floors, name, picture, property_type, size, sta
 VALUES ('TestAddress',
 		'1',
 		'1',
-		'http://127.0.0.1:9000/images/profilePictures/admin.jpg',
+		'http://127.0.0.1:9000/images/properties/house.jpeg',
 		0,
 		'100',
 		0,
-		1000001);
+		1);
 
 INSERT INTO towns_properties VALUES (1,1)
 
