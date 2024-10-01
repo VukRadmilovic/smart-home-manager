@@ -1,34 +1,50 @@
-# Smart Home
+# Smart Home Manager Project
 
-## Tim 11 - članovi
-- Maja Varga SV54/2020 - **Student 1**
-- Vuk Radmilović SV73/2020 - **Student 3**
-- Marko Milijanović SV56/2020 - **Student 2**
+## Tech Stack
+- Spring Boot
+- React
+- Nginx
+- MinIO
+- PostgreSQL
+- InfluxDB
+- Mosquitto
 
-## Korišćene tehnologije
-- Server - Spring Boot sa Maven-om
-- Korisnička aplikacija - React
-- Reverse Proxy/Server statičkog sadržaja - nginx
-- Fajl server za slike - MinIO
-- Relaciona baza podataka - PostgreSQL
-- Time-series baza podataka - InfluxDB
-- MQTT broker - Mosquitto
+## Description
+This project is a smart home manager web application developed by a team of university students as part of their engineering software course. The project is a software solution for monitoring smart homes within smart cities. Each smart home contains various devices that measure values such as temperature, humidity, and energy consumption. Some devices have manual commands (e.g., turning on air conditioning) or automatic functions (e.g., lowering blinds when the sunlight is intense). The system provides a platform where homeowners can log in and monitor their home in real-time. Multiple users can track their properties, while administrators oversee energy consumption and production across neighborhoods or entire cities.
 
+## Functionalities per role
 
-## Pokretanje
-1. Potrebno je da instalirate sve navedene tehnologije
-2. Za pokretanje REST servera, pozicionirajte se u folder *smart-home-back* i izvršite komandu **mvn spring-boot:run** terminalu
-3. Za pokretanje Socket servera, pozicionirajte se u folder *smart-home-sockets* i izvršite komandu **mvn spring-boot:run** u terminalu
-4. Za pokretanje simulacionog servera, pozicionirajte se u folder *smart-home-simulator* i izvršite komandu **mvn spring-boot:run** u terminalu
-5. Za pokretanje nginx-a, pozicionirajte se u folder *nginx* i izvršite komandu **./nginx** ili **nginx** u terminalu, ili dvokliknite na istoimenu datoteku
-6. Za pokretanje InfluxDB-a, pozicionirajte se u folder u kome se nalazi vaša instalacija (ukoliko niste menjali podrazumevanu putanju prilikom instalacije *C:\Program Files\InfluxData\influxdb*) i izvršite komandu **./influxd**
-ili **influxd** u terminalu
-7. Za pokretanje Mosquitto MQTT brokera, pozicionirajte se u folder u kome se nalazi vaša instalacija (ukoliko niste menjali podrazumevanu putanju prilikom instalacije *C:\Program Files\mosquitto*) i izvršite komandu **./mosquitto** ili **mosquitto** u terminalu
-8. Za pokretanje MinIO fajl servera, pozicionirajte se u folder u kome se nalazi vaša instalacija (ukoliko niste menjali podrazumevanu putanju prilikom instalacije *C:\Program Files\minio*) i izvršite komandu **.\minio.exe server C:\minio --console-address :9090**
-9. Da pristupite korisničkoj aplikaciji, u pretraživaču ukucajte **http://localhost:80**
+### Unregistered user
+- Register an account
+- Login onto the system
 
-## Napomene
-1. Aplikacija podrazumeva da u okviru InfluxDB-a postoji organizacija pod imenom **Tiba** i *bucket* pod imenom *measurements*. Takođe, API token koji se nalazi u fajlu *application.properties* u *smart-home-back* folderu neće biti validan, pa je potrebno izgenerisati novi i njega kopirati umesto postojećeg. Sve ove akcije možete izvršiti na putanji **http://localhost:8086**
-2. MQTT username i password koji su navedeni u *application.properties* fajlu **svake Spring Boot aplikacije (smart-home-back, smart-home-sockets i smart-home-simulator)** neće biti validni. Unesite username i password koji ste podesili prilikom instalacije.
-3. Podrazumevani folder u kome se privremeno smeštaju slike prilikom kompresije je **C:/temp**. Ovu putanju možete menjati u skladu sa vašim potrebama.
-4. Aplikacija podrazumeva da u PostgreSQL serveru imate kreiranu praznu bazu podataka pod imenom **smart-home**. Šemu baze i podatke će aplikacija automatski kreirati prilikom prvog pokretanja.
+### Registered user
+- Register smart homes and devices within them
+- Monitor smart device status
+- Control smart devices (lights, thermostats, etc.)
+- Share access to devices
+- Set up automation rules for devices
+- Access historical data and analytics from InfluxDB
+- Receive notifications for device alerts
+
+### Administrator
+- Review home registration requests
+- View energy production and expenditure data
+
+## How to run
+1. Install all required technologies.
+2. To run the REST server, navigate to the `smart-home-back` folder and execute the command `mvn spring-boot:run` in the terminal.
+3. To run the socket server, navigate to the `smart-home-sockets` folder and execute the command `mvn spring-boot:run` in the terminal.
+4. To run the simulation server, navigate to the `smart-home-simulator` folder and execute the command `mvn spring-boot:run` in the terminal.
+5. To run Nginx, navigate to the `nginx` folder and execute `./nginx` or `nginx` in the terminal, or double-click the corresponding file.
+6. To run InfluxDB, navigate to the installation folder (default: `C:\Program Files\InfluxData\influxdb`) and execute `./influxd` or `influxd` in the terminal.
+7. To run the Mosquitto MQTT broker, navigate to the installation folder (default: `C:\Program Files\mosquitto`) and execute `./mosquitto` or `mosquitto` in the terminal.
+8. To run the MinIO file server, navigate to the installation folder (default: `C:\Program Files\minio`) and execute `. \minio.exe server C:\minio --console-address :9090`.
+9. To access the user application, open a browser and go to `http://localhost:80`.
+
+## Notes
+- The application assumes that there is an organization named "ftn" and a bucket named "measurements" in InfluxDB.
+- The API token located in the `application.properties` file in the `smart-home-back` folder will not be valid and needs to be regenerated.
+- The MQTT username and password specified in the `application.properties` files for each Spring Boot application (smart-home-back, smart-home-sockets, and smart-home-simulator) need to be set according to your installation.
+- The default folder for temporarily storing images during compression is `C:/temp`. This path can be changed as per your requirements.
+- The application requires an empty PostgreSQL database named "smart-home" to be created beforehand. The schema and data will be automatically generated on the first run.
