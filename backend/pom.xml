@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.ftn.uns.ac.rs</groupId>
-	<artifactId>smart-home</artifactId>
+	<artifactId>backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>smart-home</name>
 	<description>Smart Home App</description>
